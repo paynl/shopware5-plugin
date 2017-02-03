@@ -188,5 +188,12 @@ class Shopware_Plugins_Frontend_PaymentPayNL_Bootstrap extends Shopware_Componen
             'require' => true,
             'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
         ));
+
+        $form->setElement('text', 'transactionDescription',
+            array(
+                'label' => 'Transactie omschrijving',
+                'require' => false,
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+            ));
     }
 }

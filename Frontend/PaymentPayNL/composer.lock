@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "paynl/sdk",
-            "version": "v1.1.13",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paynl/sdk.git",
-                "reference": "ef02a96a1e1bcb8b3a9d14c6adb3ff0a07aa3ac7"
+                "reference": "1eb9b06727f84c7e247443263ff25f2c02ad3be3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paynl/sdk/zipball/ef02a96a1e1bcb8b3a9d14c6adb3ff0a07aa3ac7",
-                "reference": "ef02a96a1e1bcb8b3a9d14c6adb3ff0a07aa3ac7",
+                "url": "https://api.github.com/repos/paynl/sdk/zipball/1eb9b06727f84c7e247443263ff25f2c02ad3be3",
+                "reference": "1eb9b06727f84c7e247443263ff25f2c02ad3be3",
                 "shasum": ""
             },
             "require": {
@@ -41,20 +41,20 @@
                     "email": "andy@pay.nl"
                 }
             ],
-            "time": "2016-05-31 15:37:29"
+            "time": "2017-01-26 15:11:56"
         },
         {
             "name": "php-curl-class/php-curl-class",
-            "version": "4.11.0",
+            "version": "4.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-curl-class/php-curl-class.git",
-                "reference": "f85d7aebe750c1ac21b40c7d433d5a615ffdc5f1"
+                "reference": "debe0a89ee1eb9a2f15c0bb63ce8b347130af50d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/f85d7aebe750c1ac21b40c7d433d5a615ffdc5f1",
-                "reference": "f85d7aebe750c1ac21b40c7d433d5a615ffdc5f1",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/debe0a89ee1eb9a2f15c0bb63ce8b347130af50d",
+                "reference": "debe0a89ee1eb9a2f15c0bb63ce8b347130af50d",
                 "shasum": ""
             },
             "require": {
@@ -97,7 +97,7 @@
                 "web service",
                 "xml"
             ],
-            "time": "2016-03-09 00:50:07"
+            "time": "2016-07-25 19:31:39"
         }
     ],
     "packages-dev": [],
