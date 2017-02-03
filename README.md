@@ -1,0 +1,1 @@
+# Pay.nl Shopware plugin
