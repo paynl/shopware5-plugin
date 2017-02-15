@@ -5,13 +5,19 @@
  *
  * @author andy
  */
-class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Frontend_Payment implements \Shopware\Components\CSRFWhitelistAware
 {
 
     const STATUS_PENDING = 17;
     const STATUS_CANCEL = 35;
     const STATUS_PAID = 12;
     const STATUS_PARTIAL_PAID = 11;
+
+    public function getWhitelistedCSRFActions()
+    {
+        return['notify'];
+    }
+
 
     public function preDispatch()
     {
