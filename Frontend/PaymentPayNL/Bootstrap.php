@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
 class Shopware_Plugins_Frontend_PaymentPayNL_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -14,7 +15,7 @@ class Shopware_Plugins_Frontend_PaymentPayNL_Bootstrap extends Shopware_Componen
      */
     public function getVersion()
     {
-        return '2.0.2';
+        return '2.0.4';
     }
 
     /**
