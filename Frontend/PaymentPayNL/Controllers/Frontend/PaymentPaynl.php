@@ -63,9 +63,12 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
             }
             $this->saveOrder($transactionId, $transactionId, $status);
 
-
         } elseif ($transaction->isCanceled()) {
             $strStatus = "CANCELED";
+        } elseif($transaction->isBeingVerified()){
+            // Save the order to prevent the session from expiring
+            $strStatus = "VERIFY";
+            $this->saveOrder($transactionId, $transactionId, self::STATUS_PENDING);
         }
 
         die('TRUE| Status updated to ' . $strStatus . $extraMessage);
@@ -176,6 +179,19 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         else
             return substr($language, 0, 2);
     }
+    private function isOrderCreated($transactionId){
+        $sql = '
+            SELECT id FROM s_order
+            WHERE transactionID=? AND temporaryID=?
+            AND status!=-1
+        ';
+        $orderId = Shopware()->Db()->fetchOne($sql, [
+            $transactionId,
+            $transactionId,
+        ]);
+
+        return !empty($orderId);
+    }
 
     public function returnAction()
     {
@@ -191,6 +207,9 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         $transaction = \Paynl\Transaction::get($transactionId);
 
         if ($transaction->isPaid() || $transaction->isPending()) {
+            if(!$this->isOrderCreated($transactionId)){
+                $this->saveOrder($transactionId, $transactionId, self::STATUS_PENDING);
+            }
             $this->forward('finish', 'checkout', null, array('sUniqueID' => $transactionId));
             return true;
         } else {

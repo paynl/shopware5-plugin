@@ -15,7 +15,7 @@ class Shopware_Plugins_Frontend_PaymentPayNL_Bootstrap extends Shopware_Componen
      */
     public function getVersion()
     {
-        return '2.0.4';
+        return '2.0.5';
     }
 
     /**
