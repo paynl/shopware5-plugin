@@ -13,6 +13,15 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
     const STATUS_PAID = 12;
     const STATUS_PARTIAL_PAID = 11;
 
+    const CONFIRM_BEFORE_PAYMENT = array(
+        136,// overboeking
+        577, // sofort (digital services)
+        559, // sofort (e-commerce)
+        595, // sofort (high-risk)
+    );
+
+    protected $config;
+
     public function getWhitelistedCSRFActions()
     {
         return['notify'];
@@ -21,6 +30,18 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
 
     public function preDispatch()
     {
+        $shop = false;
+        if ($this->container->has('shop')) {
+            $shop = $this->container->get('shop');
+        }
+
+        if (!$shop) {
+            $shop = $this->container->get('models')->getRepository(Shopware\Models\Shop\Shop::class)->getActiveDefault();
+        }
+
+        $config = $this->container->get('shopware.plugin.config_reader')->getByPluginName('PaymentPayNL', $shop);
+        $this->config = $config;
+
         if ($this->Request()->get('action')) {
             $actionName = $this->Request()->get('action') . 'Action';
             if (!method_exists($this, $actionName)) {
@@ -33,8 +54,8 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
     {
         $transactionId = $this->Request()->get('order_id');
 
-        $serviceId = Shopware()->Config()->serviceId;
-        $apiToken = Shopware()->Config()->apiToken;
+        $serviceId = $this->config['serviceId'];
+        $apiToken = $this->config['apiToken'];
 
         \Paynl\Config::setApiToken($apiToken);
         \Paynl\Config::setServiceId($serviceId);
@@ -65,6 +86,10 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
 
         } elseif ($transaction->isCanceled()) {
             $strStatus = "CANCELED";
+            // only update if the order exists, if it doesn't, don't touch it because we want to keep the basket alive
+            if($this->isOrderCreated($transactionId)) {
+                $this->saveOrder($transactionId, $transactionId, self::STATUS_CANCEL);
+            }
         } elseif($transaction->isBeingVerified()){
             // Save the order to prevent the session from expiring
             $strStatus = "VERIFY";
@@ -83,10 +108,10 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
     {
         $router = $this->Front()->Router();
 
-        $serviceId = Shopware()->Config()->serviceId;
-        $apiToken = Shopware()->Config()->apiToken;
+        $serviceId = $this->config['serviceId'];
+        $apiToken = $this->config['apiToken'];
 
-        $description = Shopware()->Config()->transactionDescription;
+        $description = $this->config['transactionDescription'];
         if(!$description){
             $description = null;
         }
@@ -162,6 +187,11 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
 
         try {
             $result = \Paynl\Transaction::start($startData);
+
+            if(in_array($paymentMethodId, self::CONFIRM_BEFORE_PAYMENT)){
+                $this->saveOrder($result->getTransactionId(), $result->getTransactionId(), self::STATUS_PENDING);
+            }
+
             $this->redirect($result->getRedirectUrl());
         } catch (Exception $ex) {
             var_dump($ex->getMessage());
@@ -198,8 +228,8 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         $transactionId = $this->Request()->get('orderId');
 
 
-        $serviceId = Shopware()->Config()->serviceId;
-        $apiToken = Shopware()->Config()->apiToken;
+        $serviceId = $this->config['serviceId'];
+        $apiToken = $this->config['apiToken'];
 
         \Paynl\Config::setApiToken($apiToken);
         \Paynl\Config::setServiceId($serviceId);
