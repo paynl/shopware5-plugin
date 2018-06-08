@@ -24,7 +24,7 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
 
     public function getWhitelistedCSRFActions()
     {
-        return['notify'];
+        return ['notify'];
     }
 
 
@@ -87,10 +87,10 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         } elseif ($transaction->isCanceled()) {
             $strStatus = "CANCELED";
             // only update if the order exists, if it doesn't, don't touch it because we want to keep the basket alive
-            if($this->isOrderCreated($transactionId)) {
+            if ($this->isOrderCreated($transactionId)) {
                 $this->saveOrder($transactionId, $transactionId, self::STATUS_CANCEL);
             }
-        } elseif($transaction->isBeingVerified()){
+        } elseif ($transaction->isBeingVerified()) {
             // Save the order to prevent the session from expiring
             $strStatus = "VERIFY";
             $this->saveOrder($transactionId, $transactionId, self::STATUS_PENDING);
@@ -112,7 +112,7 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         $apiToken = $this->config['apiToken'];
 
         $description = $this->config['transactionDescription'];
-        if(!$description){
+        if (!$description) {
             $description = null;
         }
 
@@ -188,7 +188,7 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         try {
             $result = \Paynl\Transaction::start($startData);
 
-            if(in_array($paymentMethodId, self::CONFIRM_BEFORE_PAYMENT)){
+            if (in_array($paymentMethodId, self::CONFIRM_BEFORE_PAYMENT)) {
                 $this->saveOrder($result->getTransactionId(), $result->getTransactionId(), self::STATUS_PENDING);
             }
 
@@ -209,7 +209,9 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         else
             return substr($language, 0, 2);
     }
-    private function isOrderCreated($transactionId){
+
+    private function isOrderCreated($transactionId)
+    {
         $sql = '
             SELECT id FROM s_order
             WHERE transactionID=? AND temporaryID=?
@@ -227,7 +229,6 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
     {
         $transactionId = $this->Request()->get('orderId');
 
-
         $serviceId = $this->config['serviceId'];
         $apiToken = $this->config['apiToken'];
 
@@ -237,13 +238,15 @@ class Shopware_Controllers_Frontend_PaymentPaynl extends Shopware_Controllers_Fr
         $transaction = \Paynl\Transaction::get($transactionId);
 
         if ($transaction->isPaid() || $transaction->isPending()) {
-            if(!$this->isOrderCreated($transactionId)){
+            if (!$this->isOrderCreated($transactionId)) {
                 $this->saveOrder($transactionId, $transactionId, self::STATUS_PENDING);
             }
-            $this->forward('finish', 'checkout', null, array('sUniqueID' => $transactionId));
+
+            $this->redirect(array('controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $transactionId));
             return true;
         } else {
-            $this->forward('confirm', 'checkout', null, array('sUniqueID' => $transactionId));
+
+            $this->redirect(array('controller' => 'checkout', 'action' => 'confirm', 'sUniqueID' => $transactionId));
             return true;
         }
     }
