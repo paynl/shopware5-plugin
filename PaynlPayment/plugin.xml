@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/plugin.xsd">
+    <label>Pay.nl Payment Methods</label>
+    <label lang="de">Pay.nl Zahlungsmethoden</label>
+    <label lang="nl">Pay.nl Betaalmethoden</label>
+    <version>3.0.0</version>
+    <copyright>(c) by Pay.nl</copyright>
+    <license>MIT</license>
+    <link>https://www.pay.nl</link>
+    <author>Pay.nl</author>
+    <compatibility minVersion="5.3.0"/>
+    <changelog version="3.0.0">
+        <changes>First v3 release</changes>
+        <changes lang="de">Erste v3-Veröffentlichung</changes>
+        <changes lang="nl">Eerste v3 release</changes>
+    </changelog>
+</plugin>
