@@ -110,10 +110,7 @@ class PaynlPayment extends Plugin
                 'action' => 'PaynlPayment',
                 'active' => true,
                 'additionalDescription' =>
-                    '<img src="https://www.pay.nl/images/payment_profiles/75x75/' . $method['id'] . '.png" />'
-                    . '<div id="payment_desc">'
-                    . '  You are redirected to Pay.nl to complete the payment'
-                    . '</div>'
+                    '<img src="https://www.pay.nl/images/payment_profiles/50x32/' . $method['id'] . '.png" />'
             ];
             $installer->createOrUpdate($plugin->getName(), $options);
         }
