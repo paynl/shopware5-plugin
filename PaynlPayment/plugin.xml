@@ -4,7 +4,7 @@
     <label>Pay.nl Payment Methods</label>
     <label lang="de">Pay.nl Zahlungsmethoden</label>
     <label lang="nl">Pay.nl Betaalmethoden</label>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <copyright>(c) by Pay.nl</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
@@ -14,5 +14,10 @@
         <changes>First v3 release</changes>
         <changes lang="de">Erste v3-Veröffentlichung</changes>
         <changes lang="nl">Eerste v3 release</changes>
+    </changelog>
+    <changelog version="3.0.1">
+        <changes>Added link between salutations and gender</changes>
+        <changes lang="de">Link zwischen Begrüßung und Geschlecht hinzugefügt</changes>
+        <changes lang="nl">Koppeling tussen begroetingen en geslacht toegevoegd</changes>
     </changelog>
 </plugin>
