@@ -92,11 +92,11 @@ class Config
     }
 
     /**
-     * @return array Female salutations to determine the sex of the customer
+     * @return array Female salutations to determine the gender of the customer
      */
     public function femaleSalutations()
     {
-        $salutations = $this->get('female_salutations');
+        $salutations = $this->get('female_salutations', "mrs, ms, miss, ma'am, frau, mevrouw, mevr");
         $arrSalutations = explode(',', $salutations);
         return array_map('trim', $arrSalutations);
     }
