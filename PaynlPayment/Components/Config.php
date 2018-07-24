@@ -31,11 +31,12 @@ class Config
      * @param mixed $default If the config key is not found, this value will be returned
      * @return mixed
      */
-    public function get($key = null, $default = null){
-        if(is_null($this->data)){
-            try{
+    public function get($key = null, $default = null)
+    {
+        if (is_null($this->data)) {
+            try {
                 $shop = Shopware()->Shop();
-            } catch(ServiceNotFoundException $e){
+            } catch (ServiceNotFoundException $e) {
                 $shop = null;
             }
             $parts = explode('\\', __NAMESPACE__);
@@ -44,8 +45,8 @@ class Config
             $this->data = $this->configReader->getByPluginName($pluginName, $shop);
         }
 
-        if(!is_null($key)){
-            return isset($this->data[$key])?$this->data[$key]:$default;
+        if (!is_null($key)) {
+            return isset($this->data[$key]) ? $this->data[$key] : $default;
         }
         return $this->data;
     }
@@ -53,39 +54,55 @@ class Config
     /**
      * @return string
      */
-    public function tokenCode(){
+    public function tokenCode()
+    {
         return $this->get('tokenCode');
     }
 
     /**
      * @return string
      */
-    public function apiToken(){
+    public function apiToken()
+    {
         return $this->get('apiToken');
     }
 
     /**
      * @return string
      */
-    public function serviceId(){
+    public function serviceId()
+    {
         return $this->get('serviceId');
     }
 
     /**
      * @return boolean
      */
-    public function testMode(){
+    public function testMode()
+    {
         return $this->get('testMode', false);
     }
 
     /**
      * @return boolean
      */
-    public function sendStatusMail(){
+    public function sendStatusMail()
+    {
         return $this->get('status_mail', false);
     }
 
-    public function loginSDK(){
+    /**
+     * @return array Female salutations to determine the sex of the customer
+     */
+    public function femaleSalutations()
+    {
+        $salutations = $this->get('female_salutations');
+        $arrSalutations = explode(',', $salutations);
+        return array_map('trim', $arrSalutations);
+    }
+
+    public function loginSDK()
+    {
         SDKConfig::setTokenCode($this->tokenCode());
         SDKConfig::setApiToken($this->apiToken());
         SDKConfig::setServiceId($this->serviceId());

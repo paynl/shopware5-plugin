@@ -85,12 +85,14 @@ class Api
         $paymentOptionId = $paymentOptionId[1];
 
         $arrUser = $controller->getUser();
+        /** @var Customer\Customer $customer */
         $customer = $this->customerRepository->find($arrUser['additional']['user']['id']);
 
         $basket = $controller->getBasket();
         $amount = $controller->getAmount();
         $currency = $controller->getCurrencyShortName();
 
+        /** @var Payment\Payment $payment */
         $payment = $this->paymentRepository->findOneBy(['name' => $payment_name]);
 
         $transaction = $this->transactionRepository->createNew($customer, $paymentId, $payment, $signature, $amount, $currency);
@@ -179,12 +181,20 @@ class Api
         $arrShippingAddress = \Paynl\Helper::splitAddress($arrUser['shippingaddress']['street']);
         $arrBillingAddress = \Paynl\Helper::splitAddress($arrUser['billingaddress']['street']);
 
+        $femaleSalutations = $this->config->femaleSalutations();
+        $genderShipping = 'M';
+        $genderBilling = 'M';
+
+        if(in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $genderShipping = 'F';
+        if(in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $genderBilling = 'F';
+
         $arrResult = [
             'enduser' => [
                 'initials' => $arrUser['additional']['user']['firstname'],
                 'lastName' => $arrUser['additional']['user']['lastname'],
                 'emailAddress' => $arrUser['additional']['user']['email'],
-                'customerReference' => $arrUser['additional']['user']['customernumber']
+                'customerReference' => $arrUser['additional']['user']['customernumber'],
+                'gender' => $genderShipping
             ],
             'address' => [
                 'streetName' => $arrShippingAddress[0],
@@ -200,7 +210,8 @@ class Api
                 'houseNumber' => $arrBillingAddress[1],
                 'zipCode' => $arrUser['billingaddress']['zipcode'],
                 'city' => $arrUser['billingaddress']['city'],
-                'country' => $arrUser['additional']['country']['countryiso']
+                'country' => $arrUser['additional']['country']['countryiso'],
+                'gender' => $genderBilling
             ]
         ];
 

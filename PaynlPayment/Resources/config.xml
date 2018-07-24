@@ -2,21 +2,21 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
-        <element required="true" type="text">
+        <element>
             <name>tokenCode</name>
             <label>Token-Code (AT-xxxx-xxxx)</label>
             <description>The AT-code belonging to your API-token, you can find your tokencode at: https://admin.pay.nl/company/tokens</description>
             <description lang="nl">De AT-code die bij je API-token hoort, je kunt deze vinden op: https://admin.pay.nl/company/tokens</description>
             <description lang="de">Der AT-Code, der zu Ihrem API-token gehört, finden Sie unter: https://admin.pay.nl/company/tokens</description>
         </element>
-        <element required="true" type="text">
+        <element>
             <name>apiToken</name>
             <label>API-token</label>
             <description>Your API token, you can find your API tokens at: https://admin.pay.nl/company/tokens</description>
             <description lang="nl">Uw API-token, u kunt uw API-tokens vinden op: https://admin.pay.nl/company/tokens</description>
             <description lang="de">Ihr API-Token finden Sie unter https://admin.pay.nl/company/tokens</description>
         </element>
-        <element required="true" type="text">
+        <element>
             <name>serviceId</name>
             <label>Service-ID (SL-xxxx-xxxx)</label>
             <description>Your Service-ID (SL-xxxx-xxxx), You can find your Service-ID at: https://admin.pay.nl/programs/programs</description>
@@ -36,6 +36,16 @@
             <description>Enable this if you want the plugin to send an email everytime the status gets updated</description>
             <description lang="nl">Schakel dit in als u een email naar de klant wilt sturen, elke keer dat de status van een tranactie wijzigt</description>
             <description lang="de">Aktivieren Sie diese Option, wenn Sie bei jeder Änderung des Status einer Transaktion eine E-Mail an den Kunden senden möchten</description>
+        </element>
+        <element>
+            <name>female_salutations</name>
+            <label>Female salutations</label>
+            <label lang="de">Weibliche Anrede</label>
+            <label lang="nl">Vrouwelijke begroetingen</label>
+            <value>mrs, ms, miss, ma'am, frau, mevrouw, mevr</value>
+            <description>Female salutations, used to determine the gender of the customer</description>
+            <description lang="de">Weibliche Anreden, verwendet, um das Geschlecht des Kunden zu bestimmen</description>
+            <description lang="nl">Vrouwelijke begroetingen, gebruikt om het geslacht van de klant te bepalen</description>
         </element>
     </elements>
 </config>
