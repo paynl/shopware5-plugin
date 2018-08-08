@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5c577f591fbee097e263a31b3e887d2",
+    "content-hash": "3e0ae3c78c32316ddbe6241fdddc7fd6",
     "packages": [
         {
             "name": "paynl/sdk",
-            "version": "v1.5.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paynl/sdk.git",
-                "reference": "d837f4cace6940da7f56187ae3940bd58d01e3cb"
+                "reference": "bef740c8eb15f2ac57f20f62d06c31c5bf4c7d6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paynl/sdk/zipball/d837f4cace6940da7f56187ae3940bd58d01e3cb",
-                "reference": "d837f4cace6940da7f56187ae3940bd58d01e3cb",
+                "url": "https://api.github.com/repos/paynl/sdk/zipball/bef740c8eb15f2ac57f20f62d06c31c5bf4c7d6b",
+                "reference": "bef740c8eb15f2ac57f20f62d06c31c5bf4c7d6b",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                     "email": "andy@pay.nl"
                 }
             ],
-            "time": "2018-05-16T13:32:39+00:00"
+            "time": "2018-08-01T15:49:41+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
@@ -102,7 +102,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "paynl/sdk": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

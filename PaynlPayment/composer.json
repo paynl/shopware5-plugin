@@ -3,7 +3,7 @@
     "description": "The pay.nl Shopware Plugin",
     "type": "project",
     "require": {
-        "paynl/sdk": "^1.5"
+        "paynl/sdk": "dev-master"
     },
     "license": "MIT",
     "authors": [

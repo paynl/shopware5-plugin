@@ -9,13 +9,15 @@
 namespace PaynlPayment\Components;
 
 
-use League\Flysystem\Exception;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\NumberRangeIncrementerInterface;
 use Shopware\Components\Routing\Router;
 use Shopware\Models\Customer;
+use Shopware\Models\Order\Status;
 use Shopware\Models\Payment;
+use Shopware\Models\Article;
+use Shopware\Models\Shop\Shop;
 
 class Api
 {
@@ -71,6 +73,11 @@ class Api
         $this->paymentRepository = $modelManager->getRepository(Payment\Payment::class);
     }
 
+    public function setShop(Shop $shop)
+    {
+        $this->config->setShop($shop);
+    }
+
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
 
@@ -111,6 +118,45 @@ class Api
             throw $e;
         }
     }
+
+    public function getTransaction($transactionId)
+    {
+        $this->config->loginSDK();
+        return \Paynl\Transaction::status($transactionId);
+    }
+
+    public function refund(Transaction\Transaction $transaction, $amount, $description = '', $products = [])
+    {
+        $this->config->loginSDK();
+        $transactionId = $transaction->getTransactionId();
+        \Paynl\Transaction::refund($transactionId, $amount, $description);
+
+        $order = $transaction->getOrder();
+
+        $refundedStatus = $this->modelManager->find(Status::class, Transaction\Transaction::STATUS_REFUND);
+
+        $order->setPaymentStatus($refundedStatus);
+
+        $this->modelManager->persist($order);
+
+        $articleDetailRepository = $this->modelManager->getRepository(Article\Detail::class);
+
+        if (!empty($products)) {
+            foreach ($products as $id => $product) {
+                if ($product['restock']) {
+                    // Restock it
+                    /** @var Article\Detail $articleDetail */
+                    $articleDetail = $articleDetailRepository->findOneBy(['articleId' => $id]);
+                    if (is_null($articleDetail)) continue;
+                    $newStock = $articleDetail->getInStock() + $product['qty'];
+                    $articleDetail->setInStock($newStock);
+                    $this->modelManager->persist($articleDetail);
+                }
+            }
+        }
+        $this->modelManager->flush();
+    }
+
 
     private function getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket)
     {
@@ -157,6 +203,18 @@ class Api
             ]);
         }
 
+        if ($basket['sShippingcostsWithTax'] > 0) {
+            $shipping = [
+                'id' => 'shipping',
+                'name' => 'Shipping',
+                'price' => $basket['sShippingcostsWithTax'],
+                'vatPercentage' => $basket['sShippingCostsTax'],
+                'qty' => 1,
+                'type' => \Paynl\Transaction::PRODUCT_TYPE_SHIPPING
+            ];
+            array_push($products, $shipping);
+        }
+
         return $products;
     }
 
@@ -185,8 +243,8 @@ class Api
         $genderShipping = 'M';
         $genderBilling = 'M';
 
-        if(in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $genderShipping = 'F';
-        if(in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $genderBilling = 'F';
+        if (in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $genderShipping = 'F';
+        if (in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $genderBilling = 'F';
 
         $arrResult = [
             'enduser' => [
