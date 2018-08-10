@@ -125,11 +125,24 @@ class Api
         return \Paynl\Transaction::status($transactionId);
     }
 
+    /**
+     * @param Transaction\Transaction $transaction
+     * @param $amount
+     * @param string $description
+     * @param array $products
+     * @return \Paynl\Result\Transaction\Refund
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function refund(Transaction\Transaction $transaction, $amount, $description = '', $products = [])
     {
+        if(!$this->config->isRefundAllowed()){
+            throw new \Exception('Cannot refund, because refund is disabled');
+        }
         $this->config->loginSDK();
         $transactionId = $transaction->getTransactionId();
-        \Paynl\Transaction::refund($transactionId, $amount, $description);
+        $refundResult = \Paynl\Transaction::refund($transactionId, $amount, $description);
 
         $order = $transaction->getOrder();
 
@@ -155,6 +168,7 @@ class Api
             }
         }
         $this->modelManager->flush();
+        return $refundResult;
     }
 
 

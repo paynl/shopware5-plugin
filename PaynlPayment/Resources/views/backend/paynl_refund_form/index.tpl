@@ -14,43 +14,84 @@
         <input type="hidden" name="paynlPaymentId" value="{$paynlPaymentId}">
         <div class="row">
             <div class="col-6">
-                <div>
-                    <strong>Customer: </strong>
-                    <span>{$customerName}</span>
+
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/order/main" name="column/amount"}Amount{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$currencySymbol} {$orderAmount|number_format:2:",":"."}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/order/main" name="column/customer"}Customer{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$customerName}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/order/main" name="column/number"}Ordernumber{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$orderNumber}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/order/main" name="column/transaction"}Transactions{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$transactionId}
+                    </div>
                 </div>
 
-                <div>
-                    <strong>OrderNumber:</strong>
-                    <span>{$orderNumber}</span>
+                <div class="row">
+                    <div class="col-12"><hr /></div>
                 </div>
-                <div>
-                    <strong>Amount:</strong>
-                    <span>{$currencySymbol} {$orderAmount|number_format:2:",":"."}</span>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/paynl/refund" name="column/transaction_id"}Pay.nl Transaction id{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$paynlOrderId}
+                    </div>
                 </div>
-                {if $currencyFactor != 1}
-                <div>
-                    <strong>Currency factor:</strong>
-                    <span> {$currencyFactor}</span>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/paynl/refund" name="column/paid_amount"}Paid amount{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$currencySymbol} {$paidCurrencyAmount|number_format:2:",":"."}
+                    </div>
                 </div>
-                {/if}
-                <div>
-                    <strong>Amount refunded:</strong>
-                    <span>&euro; {$refundedAmount|number_format:2:",":"."}</span>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/paynl/refund" name="column/refunded_amount"}Refunded amount{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$currencySymbol} {$refundedCurrencyAmount|number_format:2:",":"."}
+                    </div>
                 </div>
-
-                <div>
-                    <strong>Available for refund:</strong>
-                    <span>&euro; {($availableForRefund)|number_format:2:",":"."}</span>
+                <div class="row">
+                    <div class="col-6 font-weight-bold">
+                        {s namespace="backend/paynl/refund" name="column/refund_available"}Available for refund{/s}
+                    </div>
+                    <div class="col-6 ">
+                        {$currencySymbol} {($paidCurrencyAmount-$refundedCurrencyAmount)|number_format:2:",":"."}
+                    </div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="form-group">
-                    <label for="refundAmount">Amount</label>
+                    <label for="refundAmount">{s namespace="backend/order/main" name="column/amount"}Amount{/s}</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&euro;</span>
+                            <span class="input-group-text">{$currencySymbol}</span>
                         </div>
-                        <input name="amount" step=".01" max="{$availableForRefund}" type="number" class="form-control" id="refundAmount">
+                        <input name="amount" step=".01" type="number" class="form-control" id="refundAmount">
                     </div>
 
                 </div>
@@ -59,7 +100,7 @@
                     <input name="description" type="text" class="form-control" id="refundDescription">
                 </div>
                 <div class="form-group">
-                    <input class="btn btn-primary" type="submit" value="Refund">
+                    <input class="btn btn-primary" type="submit" value="{s namespace="backend/paynl/refund" name="column/refund"}Refund{/s}">
                 </div>
             </div>
         </div>
@@ -68,11 +109,11 @@
         <table class="table">
             <thead>
             <tr>
-                <th>Product</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Refund</th>
-                <th>Restock</th>
+                <th>{s namespace="backend/paynl/refund" name="column/product"}Product{/s}</th>
+                <th>{s namespace="backend/paynl/refund" name="column/price"}Price{/s}</th>
+                <th>{s namespace="backend/paynl/refund" name="column/quantity"}Quantity{/s}</th>
+                <th>{s namespace="backend/paynl/refund" name="column/refund"}Refund{/s}</th>
+                <th>{s namespace="backend/paynl/refund" name="column/restock"}Restock{/s}</th>
             </tr>
             </thead>
             <tbody>
@@ -82,7 +123,7 @@
                     <td>{$currencySymbol} {$detail['price']|number_format:2:",":"."}</td>
                     <td>{$detail['quantity']}</td>
                     <td>
-                        <select data-price="{$detail['price']/$currencyFactor}" class="form-control select-refund-qty"
+                        <select data-price="{$detail['price']}" class="form-control select-refund-qty"
                                 name="product[{$detail['id']}][qty]" id="">
                             {for $i=0;$i<=$detail['quantity'];$i++}
                                 <option value="{$i}">{$i}</option>
@@ -90,22 +131,24 @@
                         </select>
                     </td>
                     <td>
+                        {if $detail['id'] != 0}
                         <div class="form-check">
                             <input class="form-check-input position-static" type="checkbox"
-                                   name="product[{$detail['id']}][restock]" value="1" aria-label="...">
+                                   name="product[{$detail['id']}][restock]" value="1" aria-label="{s namespace="backend/paynl/refund" name="column/restock"}Restock{/s}">
                         </div>
+                        {/if}
                     </td>
                 </tr>
             {/foreach}
             {if $shippingAmount != 0}
                 <tr>
-                    <td>Shipping</td>
+                    <td>{s namespace="backend/paynl/refund" name="column/shipping"}Shipping{/s}</td>
                     <td>{$currencySymbol} {$shippingAmount|number_format:2:",":"."}</td>
                     <td colspan="3">
                         <div class="form-check">
-                            <input data-price="{$shippingAmount/$currencyFactor}" id="checkRefundShipping" type="checkbox"
+                            <input data-price="{$shippingAmount}" id="checkRefundShipping" type="checkbox"
                                    class="form-check-input">
-                            Refund shipping costs</label>
+                            {s namespace="backend/paynl/refund" name="text/refund_shipping"}Refund shipping cost{/s}</label>
                         </div>
                     </td>
                 </tr>

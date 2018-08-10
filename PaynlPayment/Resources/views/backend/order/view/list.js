@@ -43,7 +43,8 @@ Ext.override(Shopware.apps.Order.view.list.List, {
             handler: function (view, rowIndex, colIndex, item, opts, record) {
 
 
-                var url = "https://admin.pay.nl/transactions/info/" + record.get('temporaryId');
+                var url = "https://admin.pay.nl/transactions/details/" + record.get('temporaryId');
+
                 window.open(url, 'paynl_info', 'toolbar=no,' +
                     ' location=no,' +
                     ' status=no,' +
@@ -53,8 +54,8 @@ Ext.override(Shopware.apps.Order.view.list.List, {
                     ' width=800,' +
                     ' height=800');
             },
-            getClass: function(value, metadata, record) {
-                if(
+            getClass: function (value, metadata, record) {
+                if (
                     me.hasOrderPaymentName(record) &&
                     me.getOrderPaymentName(record).substring(0, 6) === 'paynl_'
                 ) {
@@ -73,14 +74,14 @@ Ext.override(Shopware.apps.Order.view.list.List, {
             tooltip: '{s name="tooltip/paynl_refund"}Refund this transaction{/s}',
             iconCls: 'sprite-arrow-circle',
             handler: function (view, rowIndex, colIndex, item, opts, record) {
-                return Shopware.ModuleManager.createSimplifiedModule("PaynlRefundForm?paynlPaymentId="+ record.data.transactionId, {
+                return Shopware.ModuleManager.createSimplifiedModule("PaynlRefundForm?paynlPaymentId=" + record.data.transactionId, {
                     title: "Refund Order " + record.data.transactionId,
                     width: '800px',
                     height: '600px'
                 });
             },
-            getClass: function(value, metadata, record) {
-                if(
+            getClass: function (value, metadata, record) {
+                if (
                     me.hasOrderPaymentName(record) &&
                     me.getOrderPaymentName(record).substring(0, 6) === 'paynl_' &&
                     (

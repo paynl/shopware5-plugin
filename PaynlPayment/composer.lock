@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e0ae3c78c32316ddbe6241fdddc7fd6",
+    "content-hash": "e5c577f591fbee097e263a31b3e887d2",
     "packages": [
         {
             "name": "paynl/sdk",
-            "version": "dev-master",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paynl/sdk.git",
@@ -102,9 +102,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "paynl/sdk": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

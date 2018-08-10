@@ -21,8 +21,10 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
         /** @var \PaynlPayment\Components\Api $paynlApi */
         $paynlApi = $this->get('paynl_payment.api');
 
+        /** @var \PaynlPayment\Components\Config $paynlConfig */
+        $paynlConfig = $this->get('paynl_payment.config');
+
         $paynlPaymentId = $this->request->getParam('paynlPaymentId');
-        $messages = $this->request->getParam('messages');
 
         /** @var Transaction\Repository $transactionRepository */
         $transactionRepository = $this->getModelManager()->getRepository(Transaction\Transaction::class);
@@ -33,6 +35,13 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
 
         $shop = $order->getShop();
         $paynlApi->setShop($shop);
+        $paynlConfig->setShop($shop);
+
+        if($paynlConfig->get('allow_refunds') == 0){
+            $this->forward('disabled');
+        }
+
+        $messages = $this->request->getParam('messages');
 
         $customer = $transaction->getCustomer();
         $arrDetails = [];
@@ -58,17 +67,25 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
         return $this->view->assign([
             'customerName' => $customer->getFirstname() . ' ' . $customer->getLastname(),
             'orderNumber' => $order->getNumber(),
+            'transactionId' => $order->getTransactionId(),
             'currency' => $transaction->getCurrency(),
             'currencyFactor' => $order->getCurrencyFactor(),
             'currencySymbol' => $currencyObj->getSymbol(),
             'orderAmount' => $transaction->getAmount(),
+            'paidCurrencyAmount' => $apiTransaction->getCurrencyAmount(),
             'shippingAmount' => $order->getInvoiceShipping(),
             'details' => $arrDetails,
             'paynlPaymentId' => $paynlPaymentId,
-            'refundedAmount' => $apiTransaction->getRefundedAmount(),
-            'availableForRefund' => $apiTransaction->getAmount()-$apiTransaction->getRefundedAmount(),
+            'paynlOrderId' => $transaction->getTransactionId(),
+            'refundedCurrencyAmount' => $apiTransaction->getRefundedCurrencyAmount(),
+            'availableForRefund' => $apiTransaction->getAmount() - $apiTransaction->getRefundedAmount(),
             'messages' => $messages
         ]);
+    }
+
+    public function disabledAction()
+    {
+        // empty action, only shows a message
     }
 
     public function refundAction()
@@ -94,8 +111,10 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
         $messages = [];
 
         try {
-            $paynlApi->refund($transaction, $amount, $description, $products);
-            $messages[] = ['type' => 'success', 'content' => 'Refund successful'];
+            $refundResult = $paynlApi->refund($transaction, $amount, $description, $products);
+
+            $messages[] = ['type' => 'success', 'content' => 'Refund successful (' . $refundResult->getData()['description'] . ')'];
+
         } catch (\Exception $e) {
             $messages[] = ['type' => 'danger', 'content' => $e->getMessage()];
         }
@@ -105,6 +124,6 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
 
     public function getWhitelistedCSRFActions()
     {
-        return ['index', 'refund'];
+        return ['index', 'refund','disabled'];
     }
 }

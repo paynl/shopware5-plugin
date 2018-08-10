@@ -16,19 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Paynl\Api\Transaction;
+namespace Paynl\Result\Refund;
 
-use Paynl\Api\Api;
+use Paynl\Error\Error;
+use Paynl\Result\Result;
 
 /**
- * Description of Instore
+ * Description of Refund
  *
  * @author Andy Pieters <andy@pay.nl>
  */
-class Transaction extends Api
+class Refund extends Result
 {
     /**
-     * @var int the version of the api
+     * @return string The Refund id
      */
-    protected $version = 12;
+    public function getId()
+    {
+        return $this->data['refundId'];
+    }
 }

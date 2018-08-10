@@ -111,6 +111,14 @@ class Config
     }
 
     /**
+     * @return boolean
+     */
+    public function isRefundAllowed()
+    {
+        return $this->get('allow_refunds', false);
+    }
+
+    /**
      * @return array Female salutations to determine the gender of the customer
      */
     public function femaleSalutations()

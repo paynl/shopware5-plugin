@@ -31,6 +31,14 @@
             <description lang="de">Aktivieren Sie dies, wenn Sie alle Transaktionen im Testmodus starten möchten</description>
         </element>
         <element scope="shop" type="boolean">
+            <name>allow_refunds</name>
+            <label>Allow refunds</label>
+            <label lang="nl">Restituties toestaan</label>
+            <description>Enable this to allow refunds to be processed from the order list</description>
+            <description lang="nl">Schakel dit in om toe te staan dat restituties worden verwerkt vanuit de bestellijst</description>
+            <description lang="de">AAktivieren Sie diese Option, damit Rückerstattungen von der Bestellliste verarbeitet werden können</description>
+        </element>
+        <element scope="shop" type="boolean">
             <name>status_mail</name>
             <label>Send status mails</label>
             <description>Enable this if you want the plugin to send an email everytime the status gets updated</description>
