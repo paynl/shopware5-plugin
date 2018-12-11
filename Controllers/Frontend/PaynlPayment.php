@@ -2,8 +2,6 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
-use Shopware\Models\Payment;
-use Shopware\Models\Customer;
 use Shopware\Models\Order;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
@@ -53,11 +51,12 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
     public function notifyAction()
     {
-        $action = $this->request->get('action');
+        $action = $this->request->isPost()?$this->request->getPost('action'):$this->request->get('action');
+        $transactionId = $this->request->isPost()?$this->request->getPost('order_id'):$this->request->get('order_id');
+
         if ($action == 'pending') die('TRUE| Ignoring pending');
 
         try {
-            $transactionId = $this->request->get('order_id');
             $result = $this->processPayment($transactionId, true);
             die('TRUE|' . $result);
         } catch (Exception $e) {
@@ -85,6 +84,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $transaction = $transactionRepository->findOneBy(['transactionId' => $transactionId]);
 
         $canceled = false;
+        $shouldCreate = false;
 
         try {
             // status en amount ophalen.
@@ -92,18 +92,23 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $apiTransaction = \Paynl\Transaction::get($transactionId);
 
             if ($apiTransaction->isBeingVerified()) {
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, true);
+                $shouldCreate = true;
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, $shouldCreate);
             } elseif ($apiTransaction->isPending() && !$isExchange) {
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, true);
+                $shouldCreate = true;
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, $shouldCreate);
             } elseif ($apiTransaction->isRefunded()) {
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_REFUND, true);
+                $shouldCreate = true;
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_REFUND, $shouldCreate);
             } elseif ($apiTransaction->isAuthorized()) {
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_AUTHORIZED, true);
+                $shouldCreate = true;
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_AUTHORIZED, $shouldCreate);
             } elseif ($apiTransaction->isPaid()) {
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PAID, true);
+                $shouldCreate = true;
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PAID, $shouldCreate);
             } elseif ($apiTransaction->isCanceled()) {
                 $canceled = true;
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_CANCEL, false);
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_CANCEL, $shouldCreate);
             }
         } catch (Exception $e) {
             if ($isExchange && $e->getCode() == 999) {
@@ -125,6 +130,9 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $transaction->getOrder()->getNumber()
             );
         } else {
+            if($shouldCreate){
+                throw new \Exception('Order should have been created, but an error has occurred');
+            }
             return "No action, order was not created";
         }
     }
@@ -176,6 +184,10 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         return $this->container->get('models')->getRepository(Transaction\Transaction::class);
     }
 
+    /**
+     * @param $orderNumber
+     * @return Order\Order|null
+     */
     private function getOrder($orderNumber)
     {
         /** @var Order\Repository $repository */
