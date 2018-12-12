@@ -12,7 +12,7 @@
     <compatibility minVersion="5.3.0"/>
     <changelog version="3.1.1">
         <changes>
-            Added setting to use additional address 1 and 2 for house number and extension
+            Added setting to use additional address 1 and 2 for house number and extension.
             Additional error handling on exchange
         </changes>
     </changelog>
