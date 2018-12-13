@@ -55,5 +55,14 @@
             <description lang="de">Weibliche Anreden, verwendet, um das Geschlecht des Kunden zu bestimmen</description>
             <description lang="nl">Vrouwelijke begroetingen, gebruikt om het geslacht van de klant te bepalen</description>
         </element>
+        <element scope="shop" type="boolean">
+            <name>additional_address_fields</name>
+            <label>Use additional address fields</label>
+            <label lang="nl">Extra adres velden gebruiken</label>
+            <label lang="de">Zusätzliche adressfelder verwenden</label>
+            <description>Enable this when you are using additional address field 1 and 2 for house number and house number addition</description>
+            <description lang="nl">Schakel dit in wanneer u extra adresveld 1 en 2 gebruikt voor huisnummer en huisnummertoevoeging </description>
+            <description lang="de">Aktivieren Sie dies, wenn Sie das zusätzliche Adressfeld 1 und 2 für das Hinzufügen von Hausnummer und Hausnummer verwenden</description>
+        </element>
     </elements>
 </config>

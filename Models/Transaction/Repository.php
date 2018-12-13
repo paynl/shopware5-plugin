@@ -6,8 +6,6 @@ use Shopware\Components\Model\ModelRepository;
 use DateTime;
 use Shopware\Models\Customer\Customer;
 use Shopware\Models\Payment\Payment;
-use Shopware\Models\Shop\Currency;
-use Shopware\Models\User\User;
 
 class Repository extends ModelRepository
 {
@@ -15,11 +13,11 @@ class Repository extends ModelRepository
      * Initialize a new transaction
      *
      * @param Customer $customer
-     * @param int $transactionId
+     * @param int $paymentId
      * @param Payment $payment
      * @param string $signature
      * @param float $amount
-     * @param Currency $currency
+     * @param string $currency
      * @return Transaction
      */
     public function createNew(Customer $customer, int $paymentId, Payment $payment, string $signature, float $amount, string $currency){

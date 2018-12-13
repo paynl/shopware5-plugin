@@ -83,7 +83,7 @@ class Api
 
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new Exception('Payment is not a Pay.nl Payment method');
+            throw new \Exception('Payment is not a Pay.nl Payment method');
         }
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
@@ -250,15 +250,11 @@ class Api
      */
     private function formatAddresses($arrUser)
     {
-        $arrShippingAddress = \Paynl\Helper::splitAddress($arrUser['shippingaddress']['street']);
-        $arrBillingAddress = \Paynl\Helper::splitAddress($arrUser['billingaddress']['street']);
 
         $femaleSalutations = $this->config->femaleSalutations();
-        $genderShipping = 'M';
-        $genderBilling = 'M';
+        $gender = 'M';
 
-        if (in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $genderShipping = 'F';
-        if (in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $genderBilling = 'F';
+        if (in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $gender = 'F';
 
         $arrResult = [
             'enduser' => [
@@ -266,28 +262,69 @@ class Api
                 'lastName' => $arrUser['additional']['user']['lastname'],
                 'emailAddress' => $arrUser['additional']['user']['email'],
                 'customerReference' => $arrUser['additional']['user']['customernumber'],
-                'gender' => $genderShipping
+                'gender' => $gender
             ],
-            'address' => [
-                'streetName' => $arrShippingAddress[0],
-                'houseNumber' => $arrShippingAddress[1],
-                'zipCode' => $arrUser['shippingaddress']['zipcode'],
-                'city' => $arrUser['shippingaddress']['city'],
-                'country' => $arrUser['additional']['countryShipping']['countryiso']
-            ],
-            'invoiceAddress' => [
-                'initials' => $arrUser['billingaddress']['firstname'],
-                'lastName' => $arrUser['billingaddress']['lastname'],
-                'streetName' => $arrBillingAddress[0],
-                'houseNumber' => $arrBillingAddress[1],
-                'zipCode' => $arrUser['billingaddress']['zipcode'],
-                'city' => $arrUser['billingaddress']['city'],
-                'country' => $arrUser['additional']['country']['countryiso'],
-                'gender' => $genderBilling
-            ]
+            'address' => $this->getShippingAddress($arrUser),
+            'invoiceAddress' => $this->getInvoiceAddress($arrUser)
         ];
 
         return $arrResult;
     }
 
+    private function getShippingAddress($arrUser){
+        $street = '';
+        $houseNumber = '';
+        $houseNumberExtension = '';
+
+        if(!$this->config->useAdditionalAddressFields()){
+            $arrShippingAddress = \Paynl\Helper::splitAddress($arrUser['shippingaddress']['street']);
+            if(isset($arrShippingAddress[0])) $street = $arrShippingAddress[0];
+            if(isset($arrShippingAddress[1])) $houseNumber = $arrShippingAddress[1];
+        } else {
+            $street = $arrUser['shippingaddress']['street'];
+            $houseNumber = $arrUser['shippingaddress']['additionalAddressLine1'];
+            $houseNumberExtension = $arrUser['shippingaddress']['additionalAddressLine2'];
+        }
+
+
+        return ['streetName' => $street,
+                'houseNumber' => $houseNumber,
+                'houseNumberExtension' => $houseNumberExtension,
+                'zipCode' => $arrUser['shippingaddress']['zipcode'],
+                'city' => $arrUser['shippingaddress']['city'],
+                'country' => $arrUser['additional']['countryShipping']['countryiso']
+            ];
+    }
+
+    private function getInvoiceAddress($arrUser){
+        $street = '';
+        $houseNumber = '';
+        $houseNumberExtension = '';
+
+        if(!$this->config->useAdditionalAddressFields()){
+            $arrAddress = \Paynl\Helper::splitAddress($arrUser['billingaddress']['street']);
+            if(isset($arrAddress[0])) $street = $arrAddress[0];
+            if(isset($arrAddress[1])) $houseNumber = $arrAddress[1];
+        } else {
+            $street = $arrUser['billingaddress']['street'];
+            $houseNumber = $arrUser['billingaddress']['additionalAddressLine1'];
+            $houseNumberExtension = $arrUser['billingaddress']['additionalAddressLine2'];
+        }
+
+        $gender = 'M';
+        $femaleSalutations = $this->config->femaleSalutations();
+        if (in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $gender = 'F';
+
+        return  [
+            'initials' => $arrUser['billingaddress']['firstname'],
+            'lastName' => $arrUser['billingaddress']['lastname'],
+            'streetName' => $street,
+            'houseNumber' => $houseNumber,
+            'houseNumberExtension' => $houseNumberExtension,
+            'zipCode' => $arrUser['billingaddress']['zipcode'],
+            'city' => $arrUser['billingaddress']['city'],
+            'country' => $arrUser['additional']['country']['countryiso'],
+            'gender' => $gender
+        ];
+    }
 }
