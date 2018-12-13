@@ -2,6 +2,15 @@
 
 namespace PaynlPayment;
 
+/**
+ * The plugin can be installed via composer or via the package file.
+ * When installed via composer, the sdk is automaticly loaded in the vendor directory.
+ * In the package file this is included, but need to be loaded
+ */
+if(!class_exists('\Paynl\Config') && file_exists(__DIR__.'/vendor/autoload.php')){
+    require_once (__DIR__.'/vendor/autoload.php');
+}
+
 use Doctrine\ORM\Tools\SchemaTool;
 use Paynl\Paymentmethods;
 use PaynlPayment\Components\Config;
