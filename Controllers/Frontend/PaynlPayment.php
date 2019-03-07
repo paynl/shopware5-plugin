@@ -119,6 +119,8 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             if ($canceled) {
                 return $this->redirect($cancelUrl);
             } else {
+                // remove the basket
+                Shopware()->Modules()->Basket()->clearBasket();
                 return $this->redirect($successUrl);
             }
         }

@@ -186,7 +186,7 @@ class Api
 
             // Urls
             'returnUrl' => $this->router->assemble(['controller' => 'PaynlPayment', 'action' => 'return', 'forceSecure' => true]),
-            'exchangeUrl' => $this->router->assemble(['controller' => 'PaynlPayment', 'action' => 'notify', 'forceSecure' => true, 'appendSession' => true]),
+            'exchangeUrl' => $this->router->assemble(['controller' => 'PaynlPayment', 'action' => 'notify', 'forceSecure' => true]),
 
             // Products
             'products' => $this->getProducts($basket),
