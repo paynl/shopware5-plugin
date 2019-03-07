@@ -6,6 +6,7 @@
         <entry>
             <name>PaynlTransactions</name>
             <label lang="en">Pay.nl</label>
+            <label lang="nl">Pay.nl</label>
             <label lang="de">Pay.nl</label>
             <controller>PaynlTransactions</controller>
             <action>index</action>

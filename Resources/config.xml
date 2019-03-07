@@ -4,63 +4,74 @@
     <elements>
         <element scope="shop">
             <name>tokenCode</name>
-            <label>Token-Code (AT-xxxx-xxxx)</label>
-            <description>The AT-code belonging to your API-token, you can find your tokencode at: https://admin.pay.nl/company/tokens</description>
+            <label lang="en">Token-Code (AT-xxxx-xxxx)</label>
+            <label lang="nl">Token-Code (AT-xxxx-xxxx)</label>
+            <label lang="de">Token-Code (AT-xxxx-xxxx)</label>
+            <description lang="en">The AT-code belonging to your API-token, you can find your tokencode at: https://admin.pay.nl/company/tokens</description>
             <description lang="nl">De AT-code die bij je API-token hoort, je kunt deze vinden op: https://admin.pay.nl/company/tokens</description>
             <description lang="de">Der AT-Code, der zu Ihrem API-token gehört, finden Sie unter: https://admin.pay.nl/company/tokens</description>
         </element>
         <element scope="shop">
             <name>apiToken</name>
-            <label>API-token</label>
-            <description>Your API token, you can find your API tokens at: https://admin.pay.nl/company/tokens</description>
+            <label lang="em">API-token</label>
+            <label lang="nl">API-token</label>
+            <label lang="de">API-token</label>
+            <description lang="en">Your API token, you can find your API tokens at: https://admin.pay.nl/company/tokens</description>
             <description lang="nl">Uw API-token, u kunt uw API-tokens vinden op: https://admin.pay.nl/company/tokens</description>
             <description lang="de">Ihr API-Token finden Sie unter https://admin.pay.nl/company/tokens</description>
         </element>
         <element scope="shop">
             <name>serviceId</name>
-            <label>Service-ID (SL-xxxx-xxxx)</label>
-            <description>Your Service-ID (SL-xxxx-xxxx), You can find your Service-ID at: https://admin.pay.nl/programs/programs</description>
+            <label lang="en">Service-ID (SL-xxxx-xxxx)</label>
+            <label lang="nl">Service-ID (SL-xxxx-xxxx)</label>
+            <label lang="de">Service-ID (SL-xxxx-xxxx)</label>
+            <description lang="en">Your Service-ID (SL-xxxx-xxxx), You can find your Service-ID at: https://admin.pay.nl/programs/programs</description>
             <description lang="nl">Uw Service-ID (SL-xxxx-xxxx), u kunt uw Service-ID vinden op: https://admin.pay.nl/programs/programs</description>
             <description lang="de">Ihre Service-ID (SL-xxxx-xxxx), Ihre Service-ID finden Sie unter: https://admin.pay.nl/programs/programs</description>
         </element>
         <element scope="shop" type="boolean">
             <name>testMode</name>
-            <label>Test mode</label>
-            <description>Enable this if you want to start all transactions in test mode</description>
+            <label lang="en">Test mode</label>
+            <label lang="nl">Test mode</label>
+            <label lang="de">Test mode</label>
+            <description lang="en">Enable this if you want to start all transactions in test mode</description>
             <description lang="nl">Schakel dit in als u alle transacties in de testmodus wilt starten</description>
             <description lang="de">Aktivieren Sie dies, wenn Sie alle Transaktionen im Testmodus starten möchten</description>
         </element>
         <element scope="shop" type="boolean">
             <name>allow_refunds</name>
-            <label>Allow refunds</label>
+            <label lang="en">Allow refunds</label>
             <label lang="nl">Restituties toestaan</label>
-            <description>Enable this to allow refunds to be processed from the order list</description>
+            <label lang="de">Erstattungen zulassen</label>
+            <description lang="en">Enable this to allow refunds to be processed from the order list</description>
             <description lang="nl">Schakel dit in om toe te staan dat restituties worden verwerkt vanuit de bestellijst</description>
             <description lang="de">AAktivieren Sie diese Option, damit Rückerstattungen von der Bestellliste verarbeitet werden können</description>
         </element>
         <element scope="shop" type="boolean">
             <name>status_mail</name>
-            <label>Send status mails</label>
-            <description>Enable this if you want the plugin to send an email everytime the status gets updated</description>
+            <label lang="en">Send status mails</label>
+            <label lang="nl">Status mails versturen</label>
+            <label lang="de">Status-E-Mails senden</label>
+            <description lang="en">Enable this if you want the plugin to send an email everytime the status gets updated</description>
             <description lang="nl">Schakel dit in als u een email naar de klant wilt sturen, elke keer dat de status van een tranactie wijzigt</description>
             <description lang="de">Aktivieren Sie diese Option, wenn Sie bei jeder Änderung des Status einer Transaktion eine E-Mail an den Kunden senden möchten</description>
         </element>
         <element scope="shop">
             <name>female_salutations</name>
-            <label>Female salutations</label>
+            <label lang="en">Female salutations</label>
             <label lang="de">Weibliche Anrede</label>
             <label lang="nl">Vrouwelijke begroetingen</label>
             <value>mrs, ms, miss, ma'am, frau, mevrouw, mevr</value>
-            <description>Female salutations, used to determine the gender of the customer</description>
+            <description lang="en">Female salutations, used to determine the gender of the customer</description>
             <description lang="de">Weibliche Anreden, verwendet, um das Geschlecht des Kunden zu bestimmen</description>
             <description lang="nl">Vrouwelijke begroetingen, gebruikt om het geslacht van de klant te bepalen</description>
         </element>
         <element scope="shop" type="boolean">
             <name>additional_address_fields</name>
-            <label>Use additional address fields</label>
+            <label lang="en">Use additional address fields</label>
             <label lang="nl">Extra adres velden gebruiken</label>
             <label lang="de">Zusätzliche adressfelder verwenden</label>
-            <description>Enable this when you are using additional address field 1 and 2 for house number and house number addition</description>
+            <description lang="en">Enable this when you are using additional address field 1 and 2 for house number and house number addition</description>
             <description lang="nl">Schakel dit in wanneer u extra adresveld 1 en 2 gebruikt voor huisnummer en huisnummertoevoeging </description>
             <description lang="de">Aktivieren Sie dies, wenn Sie das zusätzliche Adressfeld 1 und 2 für das Hinzufügen von Hausnummer und Hausnummer verwenden</description>
         </element>

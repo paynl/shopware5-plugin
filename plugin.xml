@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/plugin.xsd">
-    <label>Pay.nl Payment Methods</label>
+    <label lang="en">Pay.nl Payment Methods</label>
     <label lang="de">Pay.nl Zahlungsmethoden</label>
     <label lang="nl">Pay.nl Betaalmethoden</label>
     <version>3.1.1</version>
@@ -11,23 +11,23 @@
     <author>Pay.nl</author>
     <compatibility minVersion="5.3.0"/>
     <changelog version="3.1.1">
-        <changes>
+        <changes  lang="en">
             Added setting to use additional address 1 and 2 for house number and extension.
             Additional error handling on exchange
         </changes>
     </changelog>
     <changelog version="3.1.0">
-        <changes>Added refund functionality</changes>
+        <changes lang="en">Added refund functionality</changes>
         <changes lang="de">Rückerstattungsfunktion hinzugefügt</changes>
         <changes lang="nl">Terugbetalingsfunctionaliteit toegevoegd</changes>
     </changelog>
     <changelog version="3.0.1">
-        <changes>Added link between salutations and gender</changes>
+        <changes lang="en">Added link between salutations and gender</changes>
         <changes lang="de">Link zwischen Begrüßung und Geschlecht hinzugefügt</changes>
         <changes lang="nl">Koppeling tussen begroetingen en geslacht toegevoegd</changes>
     </changelog>
     <changelog version="3.0.0">
-        <changes>First v3 release</changes>
+        <changes lang="en">First v3 release</changes>
         <changes lang="de">Erste v3-Veröffentlichung</changes>
         <changes lang="nl">Eerste v3 release</changes>
     </changelog>
