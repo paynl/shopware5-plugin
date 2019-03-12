@@ -4,12 +4,18 @@
     <label lang="en">Pay.nl Payment Methods</label>
     <label lang="de">Pay.nl Zahlungsmethoden</label>
     <label lang="nl">Pay.nl Betaalmethoden</label>
-    <version>3.1.2</version>
+    <version>3.1.3</version>
     <copyright>(c) by Pay.nl</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
     <author>Pay.nl</author>
     <compatibility minVersion="5.3.0"/>
+    <changelog version="3.1.3">
+        <changes lang="en">
+            Removed dutch translation of the menu item.
+            Shopware throws an exeption when the menu item is not english or german
+        </changes>
+    </changelog>
     <changelog version="3.1.2">
         <changes lang="en">
             Updated plugin icon
