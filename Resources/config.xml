@@ -13,7 +13,7 @@
         </element>
         <element scope="shop">
             <name>apiToken</name>
-            <label lang="em">API-token</label>
+            <label lang="en">API-token</label>
             <label lang="nl">API-token</label>
             <label lang="de">API-token</label>
             <description lang="en">Your API token, you can find your API tokens at: https://admin.pay.nl/company/tokens</description>
