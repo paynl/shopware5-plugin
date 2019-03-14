@@ -103,6 +103,13 @@ class Api
         $payment = $this->paymentRepository->findOneBy(['name' => $payment_name]);
 
         $transaction = $this->transactionRepository->createNew($customer, $paymentId, $payment, $signature, $amount, $currency);
+
+        $sComment = Shopware()->Session()->sComment;
+        $sDispatch = Shopware()->Session()->sDispatch;
+
+        $transaction->setSComment($sComment);
+        $transaction->setSDispatch($sDispatch);
+
         $arrStartData = $this->getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket);
 
         try {

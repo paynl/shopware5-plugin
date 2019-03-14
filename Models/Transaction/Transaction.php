@@ -117,6 +117,20 @@ class Transaction
     private $status;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", name="s_comment", nullable=true)
+     */
+    private $sComment;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", name="s_dispatch", nullable=true)
+     */
+    private $sDispatch;
+
+    /**
      * @return int
      */
     public function getId()
@@ -124,6 +138,39 @@ class Transaction
         return $this->id;
 
     }
+
+    /**
+     * @return string
+     */
+    public function getSComment()
+    {
+        return $this->sComment;
+    }
+
+    /**
+     * @param string $sComment
+     */
+    public function setSComment($sComment)
+    {
+        $this->sComment = $sComment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSDispatch()
+    {
+        return $this->sDispatch;
+    }
+
+    /**
+     * @param string $sDispatch
+     */
+    public function setSDispatch($sDispatch)
+    {
+        $this->sDispatch = $sDispatch;
+    }
+
 
     /**
      * @return Customer

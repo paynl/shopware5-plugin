@@ -72,7 +72,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
     private function processPayment($transactionId, $isExchange = false)
     {
-        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish']) . '?utm_nooverride=1';
+        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID'=>$transactionId]) . '?utm_nooverride=1';
         $cancelUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'confirm']);
 
         /** @var \PaynlPayment\Components\Config $config */
@@ -119,8 +119,8 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             if ($canceled) {
                 return $this->redirect($cancelUrl);
             } else {
-                // remove the basket
-                Shopware()->Modules()->Basket()->clearBasket();
+                $this->fixSession($transaction);
+
                 return $this->redirect($successUrl);
             }
         }
@@ -138,7 +138,14 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             return "No action, order was not created";
         }
     }
+    private function fixSession(Transaction\Transaction $transaction){
+        // remove the basket
+        Shopware()->Modules()->Basket()->clearBasket();
+        $sOrderVariables = Shopware()->Session()->offsetGet('sOrderVariables');
 
+        $sOrderVariables['sOrderNumber'] = $transaction->getOrder()->getNumber();
+        Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
+    }
     private function updateStatus(Transaction\Transaction $transaction, $status, $shouldCreate = false)
     {
         /** @var \PaynlPayment\Components\Config $config */
@@ -159,11 +166,15 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         if (!$shouldCreate) {
             return false;
         }
-        // if no userId is in the session, we need to put it there in order to verify the signature
+        // Exchange has a new session, so we need to add the variables used for order creation
         if (!$this->get('session')->sUserId) {
             $this->get('session')->sUserId = $transaction->getCustomer()->getId();
+            $this->get('session')->sComment = $transaction->getSComment();
+            $this->get('session')->sDispatch = $transaction->getSDispatch();
         }
 
+
+        $transaction->getSDispatch();
         $basket = $this->loadBasketFromSignature($transaction->getSignature());
         $this->verifyBasketSignature($transaction->getSignature(), $basket);
 
