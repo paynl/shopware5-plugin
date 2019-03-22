@@ -109,6 +109,20 @@ class Transaction
     private $exceptions = [];
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="is_restocked", nullable=false)
+     */
+    private $isRestocked;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(type="json_array", name="ordermail_variables", nullable=true)
+     */
+    private $orderMailVariables;
+
+    /**
      * @var string
      *
      * @ORM\ManyToOne(targetEntity="Shopware\Models\Order\Status")
@@ -131,12 +145,41 @@ class Transaction
     private $sDispatch;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="is_order_mail_sent")
+     */
+    private $isOrderMailSent;
+
+    public function __construct()
+    {
+        $this->isRestocked = false;
+        $this->isOrderMailSent = false;
+    }
+
+    /**
      * @return int
      */
     public function getId()
     {
         return $this->id;
 
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrderMailSent()
+    {
+        return $this->isOrderMailSent;
+    }
+
+    /**
+     * @param bool $isOrderMailSent
+     */
+    public function setIsOrderMailSent($isOrderMailSent)
+    {
+        $this->isOrderMailSent = $isOrderMailSent;
     }
 
     /**
@@ -367,16 +410,50 @@ class Transaction
     /**
      * @param int $statusId
      */
-    public function setStatusById($statusId){
+    public function setStatusById($statusId)
+    {
         $status = \Shopware()->Models()->getRepository(Status::class)->find($statusId);
         $this->setStatus($status);
     }
+
     /**
      * @param Status $status
      */
     public function setStatus(Status $status)
     {
         $this->status = $status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRestocked()
+    {
+        return $this->isRestocked;
+    }
+
+    /**
+     * @param bool $isRestocked
+     */
+    public function setIsRestocked($isRestocked)
+    {
+        $this->isRestocked = $isRestocked;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderMailVariables()
+    {
+        return $this->orderMailVariables;
+    }
+
+    /**
+     * @param array $orderMailVariables
+     */
+    public function setOrderMailVariables($orderMailVariables)
+    {
+        $this->orderMailVariables = $orderMailVariables;
     }
 
 

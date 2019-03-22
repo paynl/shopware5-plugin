@@ -37,12 +37,25 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
      */
     public function redirectAction()
     {
+        /** @var \PaynlPayment\Components\Config $config */
+        $config = $this->container->get('paynl_payment.config');
+
+        /** @var Transaction\Repository $transactionRepository */
+        $transactionRepository = $this->getTransactionRepository();
+
+
         $signature = $this->persistBasket();
 
         /** @var \PaynlPayment\Components\Api $paynlApi */
         $paynlApi = $this->get('paynl_payment.api');
         try {
             $result = $paynlApi->startPayment($this, $signature);
+            if($config->placeOrderOnStart()){
+                /** @var Transaction\Transaction $transaction */
+                $transaction = $transactionRepository->findOneBy(['transactionId' => $result->getTransactionId()]);
+
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, true);
+            }
             if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
         } catch (Exception $e) {
             // todo error handling
@@ -77,6 +90,9 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         /** @var \PaynlPayment\Components\Config $config */
         $config = $this->container->get('paynl_payment.config');
+
+        /** @var \PaynlPayment\Components\Basket $basketService */
+        $basketService = $this->container->get('paynl_payment.basket');
 
         /** @var Transaction\Repository $transactionRepository */
         $transactionRepository = $this->getTransactionRepository();
@@ -117,10 +133,13 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
         if (!$isExchange) {
             if ($canceled) {
+                if($config->placeOrderOnStart()){
+                    // basket moet terug worden geplaatst
+                    $basketService->restoreBasket($transaction);
+                }
                 return $this->redirect($cancelUrl);
             } else {
                 $this->fixSession($transaction);
-
                 return $this->redirect($successUrl);
             }
         }
@@ -156,10 +175,23 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
         // order exists
         if ($transaction->getOrder()) {
+            /** @var \PaynlPayment\Components\Order $orderService */
+            $orderService = $this->container->get('paynl_payment.order');
             $this->savePaymentStatus($transaction->getPaynlPaymentId(), $transaction->getTransactionId(), $status, $config->sendStatusMail());
             $transaction->setStatusById($status);
             $this->getTransactionRepository()->save($transaction);
 
+            if(!$transaction->isOrderMailSent()){
+                $sOrder = Shopware()->Modules()->Order();
+                $sOrder->sendMail($transaction->getOrderMailVariables());               
+            }
+            if($status == Transaction\Transaction::STATUS_CANCEL){
+                $orderService->restockOrder($transaction);
+            }
+            if($status == Transaction\Transaction::STATUS_PAID && $transaction->isRestocked()){
+                // we need to uncancel the order (decrease stock)
+                $orderService->unCancelOrder($transaction);
+            }
             return true;
         }
         // order does not exist

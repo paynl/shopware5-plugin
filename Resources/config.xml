@@ -75,5 +75,14 @@
             <description lang="nl">Schakel dit in wanneer u extra adresveld 1 en 2 gebruikt voor huisnummer en huisnummertoevoeging </description>
             <description lang="de">Aktivieren Sie dies, wenn Sie das zusätzliche Adressfeld 1 und 2 für das Hinzufügen von Hausnummer und Hausnummer verwenden</description>
         </element>
+        <element scope="shop" type="boolean">
+            <name>place_order_on_start</name>
+            <label lang="en">Place order on transaction start</label>
+            <label lang="nl">Plaats de bestelling bij het starten van de transactie</label>
+            <label lang="de">Bestellung bei Transaktionsbeginn aufgeben</label>
+            <description lang="en">Enable this to place the order when the transaction is started</description>
+            <description lang="nl">Schakel dit in om de bestelling te plaatsen wanneer de transactie wordt gestart</description>
+            <description lang="de">Aktivieren Sie diese Option, um die Bestellung zu tätigen, wenn die Transaktion gestartet wird</description>
+        </element>
     </elements>
 </config>

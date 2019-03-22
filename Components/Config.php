@@ -117,9 +117,21 @@ class Config
     {
         return $this->get('allow_refunds', false);
     }
+
+    /**
+     * @return boolean
+     */
     public function useAdditionalAddressFields(){
         return $this->get('additional_address_fields', false);
     }
+
+    /**
+     * @return boolean
+     */
+    public function placeOrderOnStart(){
+        return $this->get('place_order_on_start', false);
+    }
+
 
     /**
      * @return array Female salutations to determine the gender of the customer

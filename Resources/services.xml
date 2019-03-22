@@ -8,7 +8,6 @@
             <argument type="service" id="template"/>
             <tag name="shopware.event_subscriber"/>
         </service>
-
         <service id="paynl_payment.config" class="PaynlPayment\Components\Config">
             <argument type="service" id="shopware.plugin.cached_config_reader"/>
         </service>
@@ -17,6 +16,16 @@
             <argument type="service" id="models"/>
             <argument type="service" id="router"/>
             <argument type="service" id="shopware.number_range_incrementer"/>
+        </service>
+        <service id="paynl_payment.order" class="PaynlPayment\Components\Order">
+            <argument type="service" id="models"/>
+        </service>
+        <service id="paynl_payment.basket" class="PaynlPayment\Components\Basket">
+            <argument type="service" id="models"/>
+        </service>
+        <service id="paynl_payment.subscriber.order-mail" class="PaynlPayment\Subscriber\OrderMailRegistration">
+            <argument type="service" id="models"/>
+            <tag name="shopware.event_subscriber"/>
         </service>
     </services>
 </container>
