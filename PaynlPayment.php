@@ -15,6 +15,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Paynl\Paymentmethods;
 use PaynlPayment\Components\Config;
 use PaynlPayment\Models\Transaction;
+use PaynlPayment\Models\TransactionLog;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
@@ -145,7 +146,9 @@ class PaynlPayment extends Plugin
     private function getClasses(ModelManager $modelManager)
     {
         return [
-            $modelManager->getClassMetadata(Transaction\Transaction::class)
+            $modelManager->getClassMetadata(Transaction\Transaction::class),
+            $modelManager->getClassMetadata(TransactionLog\TransactionLog::class),
+            $modelManager->getClassMetadata(TransactionLog\Detail::class)
         ];
     }
 

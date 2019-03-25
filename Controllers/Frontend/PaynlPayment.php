@@ -3,6 +3,8 @@
 use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order;
+use \PaynlPayment\Models\TransactionLog;
+
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -50,7 +52,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $paynlApi = $this->get('paynl_payment.api');
         try {
             $result = $paynlApi->startPayment($this, $signature);
-            if($config->placeOrderOnStart()){
+            if ($config->placeOrderOnStart()) {
                 /** @var Transaction\Transaction $transaction */
                 $transaction = $transactionRepository->findOneBy(['transactionId' => $result->getTransactionId()]);
 
@@ -64,8 +66,8 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
     public function notifyAction()
     {
-        $action = $this->request->isPost()?$this->request->getPost('action'):$this->request->get('action');
-        $transactionId = $this->request->isPost()?$this->request->getPost('order_id'):$this->request->get('order_id');
+        $action = $this->request->isPost() ? $this->request->getPost('action') : $this->request->get('action');
+        $transactionId = $this->request->isPost() ? $this->request->getPost('order_id') : $this->request->get('order_id');
 
         if ($action == 'pending') die('TRUE| Ignoring pending');
 
@@ -85,7 +87,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
     private function processPayment($transactionId, $isExchange = false)
     {
-        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID'=>$transactionId]) . '?utm_nooverride=1';
+        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $transactionId]) . '?utm_nooverride=1';
         $cancelUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'confirm']);
 
         /** @var \PaynlPayment\Components\Config $config */
@@ -93,6 +95,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         /** @var \PaynlPayment\Components\Basket $basketService */
         $basketService = $this->container->get('paynl_payment.basket');
+
 
         /** @var Transaction\Repository $transactionRepository */
         $transactionRepository = $this->getTransactionRepository();
@@ -133,7 +136,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
         if (!$isExchange) {
             if ($canceled) {
-                if($config->placeOrderOnStart()){
+                if ($config->placeOrderOnStart()) {
                     // basket moet terug worden geplaatst
                     $basketService->restoreBasket($transaction);
                 }
@@ -151,13 +154,15 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $transaction->getOrder()->getNumber()
             );
         } else {
-            if($shouldCreate){
+            if ($shouldCreate) {
                 throw new \Exception('Order should have been created, but an error has occurred');
             }
             return "No action, order was not created";
         }
     }
-    private function fixSession(Transaction\Transaction $transaction){
+
+    private function fixSession(Transaction\Transaction $transaction)
+    {
         // remove the basket
         Shopware()->Modules()->Basket()->clearBasket();
         $sOrderVariables = Shopware()->Session()->offsetGet('sOrderVariables');
@@ -165,6 +170,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $sOrderVariables['sOrderNumber'] = $transaction->getOrder()->getNumber();
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
     }
+
     private function updateStatus(Transaction\Transaction $transaction, $status, $shouldCreate = false)
     {
         /** @var \PaynlPayment\Components\Config $config */
@@ -177,21 +183,52 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         if ($transaction->getOrder()) {
             /** @var \PaynlPayment\Components\Order $orderService */
             $orderService = $this->container->get('paynl_payment.order');
+            $transactionLog = new TransactionLog\TransactionLog();
+
+            $transactionLog->setTransaction($transaction);
+            $transactionLog->setStatusBefore($transaction->getStatus());
+            $transactionLog->setStatusAfterById($status);
+            $this->getModelManager()->persist($transactionLog);
+
+            $stockBefore = $orderService->getStock($transaction->getOrder());
+
             $this->savePaymentStatus($transaction->getPaynlPaymentId(), $transaction->getTransactionId(), $status, $config->sendStatusMail());
             $transaction->setStatusById($status);
             $this->getTransactionRepository()->save($transaction);
 
-            if(!$transaction->isOrderMailSent()){
+            if (!$transaction->isOrderMailSent()) {
                 $sOrder = Shopware()->Modules()->Order();
-                $sOrder->sendMail($transaction->getOrderMailVariables());               
+                $sOrder->sendMail($transaction->getOrderMailVariables());
             }
-            if($status == Transaction\Transaction::STATUS_CANCEL){
+            if ($status == Transaction\Transaction::STATUS_CANCEL) {
                 $orderService->restockOrder($transaction);
             }
-            if($status == Transaction\Transaction::STATUS_PAID && $transaction->isRestocked()){
+            if ($status == Transaction\Transaction::STATUS_PAID && $transaction->isRestocked()) {
                 // we need to uncancel the order (decrease stock)
                 $orderService->unCancelOrder($transaction);
             }
+
+            $stockAfter = $orderService->getStock($transaction->getOrder());
+
+            foreach ($stockAfter as $row) {
+                /** @var \Shopware\Models\Article\Detail $articleDetail */
+                $articleDetail = $row['articleDetail'];
+                $stock = $row['stock'];
+                $before = array_filter($stockBefore,
+                    function ($var) use ($articleDetail) {
+                        return $articleDetail->getId() == $var['articleDetail']->getId();
+                    });
+                if(!empty($before)){
+                    $before = array_pop($before);
+                    $logDetail = new TransactionLog\Detail();
+                    $logDetail->setArticleDetail($articleDetail);
+                    $logDetail->setTransactionLog($transactionLog);
+                    $logDetail->setStockBefore($before['stock']);
+                    $logDetail->setStockAfter($stock);
+                    $this->getModelManager()->persist($logDetail);
+                }
+            }
+            $this->getModelManager()->flush();
             return true;
         }
         // order does not exist

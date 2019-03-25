@@ -39,7 +39,7 @@ class Order
 
     public function unCancelOrder(Transaction $transaction)
     {
-        if(!$transaction->isRestocked()) return; // no need to un-cancel
+        if (!$transaction->isRestocked()) return; // no need to un-cancel
         $order = $transaction->getOrder();
         if (!empty($order)) {
             $orderComment = $order->getInternalComment();
@@ -62,7 +62,7 @@ class Order
 
     public function restockOrder(Transaction $transaction)
     {
-        if($transaction->isRestocked()) return; // already restocked
+        if ($transaction->isRestocked()) return; // already restocked
         $order = $transaction->getOrder();
         if (!empty($order)) {
             $orderComment = $order->getInternalComment();
@@ -83,25 +83,48 @@ class Order
         }
     }
 
-    private function subtractOrderDetail(Detail $orderDetail){
+    private function subtractOrderDetail(Detail $orderDetail)
+    {
         $quantity = $orderDetail->getQuantity();
         /** @var Article\Detail $article */
         $article = $this->articleDetailRepository->findOneBy(['number' => $orderDetail->getArticleNumber()]);
-        if(!empty($article)){
+        if (!empty($article)) {
             $article->setInStock($article->getInStock() - $quantity);
             $this->modelManager->persist($article);
         }
         return $orderDetail;
     }
+
     private function restockOrderDetail(Detail $orderDetail)
     {
         $quantity = $orderDetail->getQuantity();
         /** @var Article\Detail $article */
         $article = $this->articleDetailRepository->findOneBy(['number' => $orderDetail->getArticleNumber()]);
-        if(!empty($article)){
+        if (!empty($article)) {
             $article->setInStock($article->getInStock() + $quantity);
             $this->modelManager->persist($article);
         }
         return $orderDetail;
     }
+
+    public function getStock(\Shopware\Models\Order\Order $order)
+    {
+        $result = [];
+
+        $orderDetails = $order->getDetails();
+        if (empty($orderDetails)) return $result;
+
+        foreach ($orderDetails as $orderDetail) {
+            /** @var Article\Detail $articleDetail */
+            $articleDetail = $this->articleDetailRepository->findOneBy(['number' => $orderDetail->getArticleNumber()]);
+
+            $stock = $articleDetail->getInStock();
+            $result[] = [
+                'articleDetail' => $articleDetail,
+                'stock' => $stock
+            ];
+        }
+        return $result;
+    }
+
 }
