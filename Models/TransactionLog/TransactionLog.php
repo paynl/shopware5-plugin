@@ -29,11 +29,15 @@ class TransactionLog
      */
     private $transaction;
     /**
+     * @var \Shopware\Models\Order\Status
+     *
      * @ORM\ManyToOne(targetEntity="Shopware\Models\Order\Status")
      * @ORM\JoinColumn(nullable=true)
      */
     private $statusBefore;
     /**
+     * @var \Shopware\Models\Order\Status
+     *
      * @ORM\ManyToOne(targetEntity="Shopware\Models\Order\Status")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -66,7 +70,7 @@ class TransactionLog
     }
 
     /**
-     * @return mixed
+     * @return \Shopware\Models\Order\Status
      */
     public function getStatusBefore()
     {
@@ -90,7 +94,7 @@ class TransactionLog
     }
 
     /**
-     * @return mixed
+     * @return \Shopware\Models\Order\Status
      */
     public function getStatusAfter()
     {
@@ -115,7 +119,7 @@ class TransactionLog
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -123,10 +127,17 @@ class TransactionLog
     }
 
     /**
-     * @param mixed $createdAt
+     * @param DateTime $createdAt
      */
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return Detail[]
+     */
+    public function getDetails(){
+        return \Shopware()->Models()->getRepository(Detail::class)->findBy(['transactionLog' => $this]);
     }
 }

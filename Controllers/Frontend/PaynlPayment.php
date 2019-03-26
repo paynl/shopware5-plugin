@@ -149,8 +149,8 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         if ($transaction->getOrder()) {
             return sprintf("Status updated to: %s (%s) orderNumber: %s",
-                $transaction->getOrder()->getPaymentStatus()->getName(),
-                $transaction->getOrder()->getPaymentStatus()->getId(),
+                $transaction->getStatus()->getName(),
+                $transaction->getStatus()->getId(),
                 $transaction->getOrder()->getNumber()
             );
         } else {
@@ -181,6 +181,9 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
         // order exists
         if ($transaction->getOrder()) {
+            if($transaction->getOrder()->getPaymentStatus()->getId() === Transaction\Transaction::STATUS_PAID){
+                throw new Exception('Not updating, order already paid', 999);
+            }
             /** @var \PaynlPayment\Components\Order $orderService */
             $orderService = $this->container->get('paynl_payment.order');
             $transactionLog = new TransactionLog\TransactionLog();
@@ -228,6 +231,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                     $this->getModelManager()->persist($logDetail);
                 }
             }
+
             $this->getModelManager()->flush();
             return true;
         }
@@ -253,6 +257,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $transaction->setStatusById($status);
 
         $this->getTransactionRepository()->save($transaction);
+        $this->getModelManager()->flush();
 
         return true;
     }

@@ -22,5 +22,4 @@ class Shopware_Controllers_Backend_PaynlTransactions extends Shopware_Controller
 
         return $builder;
     }
-
 }

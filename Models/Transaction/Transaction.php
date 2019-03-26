@@ -3,6 +3,8 @@
 namespace PaynlPayment\Models\Transaction;
 
 use Doctrine\ORM\Mapping as ORM;
+use PaynlPayment\Models\TransactionLog\Detail;
+use PaynlPayment\Models\TransactionLog\TransactionLog;
 use Shopware\Models\Customer\Customer;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
@@ -260,6 +262,25 @@ class Transaction
      */
     public function setOrder(Order $order)
     {
+        $modelManager = \Shopware()->Models();
+        /** @var \PaynlPayment\Components\Order $orderService */
+        $orderService = \Shopware()->Container()->get('paynl_payment.order');
+
+        $transactionLog = new TransactionLog();
+        $transactionLog->setTransaction($this);
+        $transactionLog->setStatusAfter($order->getPaymentStatus());
+
+        $arrStock = $orderService->getStock($order);
+        $modelManager->persist($transactionLog);
+        foreach($arrStock as $stockRow){
+            $logDetail = new Detail();
+            $logDetail->setStockBefore($stockRow['stock'] + $stockRow['quantity']);
+            $logDetail->setStockAfter($stockRow['stock']);
+            $logDetail->setArticleDetail($stockRow['articleDetail']);
+            $logDetail->setTransactionLog($transactionLog);
+            $modelManager->persist($logDetail);
+        }
+
         $this->order = $order;
     }
 

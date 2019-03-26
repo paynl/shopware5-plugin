@@ -114,6 +114,7 @@ class Order
         $orderDetails = $order->getDetails();
         if (empty($orderDetails)) return $result;
 
+        /** @var Detail $orderDetail */
         foreach ($orderDetails as $orderDetail) {
             /** @var Article\Detail $articleDetail */
             $articleDetail = $this->articleDetailRepository->findOneBy(['number' => $orderDetail->getArticleNumber()]);
@@ -121,6 +122,7 @@ class Order
             $stock = $articleDetail->getInStock();
             $result[] = [
                 'articleDetail' => $articleDetail,
+                'quantity'=> $orderDetail->getQuantity(),
                 'stock' => $stock
             ];
         }
