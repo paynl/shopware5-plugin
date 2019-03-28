@@ -113,8 +113,8 @@ Ext.define('Shopware.apps.PaynlTransactions.view.list.Transaction', {
         });
         // Order details button
         items.push({
-            action: 'notice',
-            tooltip: '{s name="tooltip/paynl_refund"}Refund this transaction{/s}',
+            // action: 'notice',
+            tooltip: '{s name="tooltip/paynl_transaction_log"}Transaction Log{/s}',
             iconCls: 'sprite-documents-stack',
             handler: function (view, rowIndex, colIndex, item, opts, record) {
                 return Shopware.ModuleManager.createSimplifiedModule("PaynlTransactionLog?id=" + record.data.id, {

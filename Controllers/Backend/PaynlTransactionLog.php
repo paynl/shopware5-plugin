@@ -24,8 +24,14 @@ class Shopware_Controllers_Backend_PaynlTransactionLog extends Enlight_Controlle
 
 
         $transactionId = $this->request->getParam('id');
+        $paynlPaymentId = $this->request->getParam('paynlPaymentId');
+        if(!empty($transactionId)) {
+            $transaction = $transactionRepository->findOneBy(['id' => $transactionId]);
+        } elseif(!empty($paynlPaymentId)){
+            $transaction = $transactionRepository->findOneBy(['paynlPaymentId' => $paynlPaymentId]);
+        }
         /** @var Transaction\Transaction $transaction */
-        $transaction = $transactionRepository->findOneBy(['id' => $transactionId]);
+
 
         /** @var TransactionLog\TransactionLog[] $statusLog */
         $statusLog = $transactionLogRepository->findBy(['transaction' => $transaction]);

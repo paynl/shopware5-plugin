@@ -22,9 +22,10 @@ Ext.override(Shopware.apps.Order.view.list.List, {
         var me = this;
 
         var columnAction = Ext.create('Ext.grid.column.Action', {
-            width: 50,
+            width: 70,
             items: [
                 me.getPaynlInfoButton(),
+                me.getPaynlLogButton(),
                 me.getPaynlRefundButton(),
             ],
             header: me.snippets.columns.paynl || 'Paynl'
@@ -88,6 +89,32 @@ Ext.override(Shopware.apps.Order.view.list.List, {
                         record.data.cleared == me.paymentStatus.COMPLETELY_PAID ||
                         record.data.cleared == me.paymentStatus.RE_CREDITING
                     )
+                ) {
+                    return '';
+                }
+                return 'paynl-hidden';
+            }
+        }
+    },
+
+    getPaynlLogButton: function () {
+        var me = this;
+
+        return {
+            // action: 'index',
+            tooltip: '{s name="tooltip/paynl_transaction_log"}Show transaction log{/s}',
+            iconCls: 'sprite-documents-stack',
+            handler: function (view, rowIndex, colIndex, item, opts, record) {
+                return Shopware.ModuleManager.createSimplifiedModule("PaynlTransactionLog?paynlPaymentId=" + record.data.transactionId, {
+                    title: "Transaction Log " + record.data.transactionId,
+                    width: '800px',
+                    height: '600px'
+                });
+            },
+            getClass: function (value, metadata, record) {
+                if (
+                    me.hasOrderPaymentName(record) &&
+                    me.getOrderPaymentName(record).substring(0, 6) === 'paynl_'
                 ) {
                     return '';
                 }

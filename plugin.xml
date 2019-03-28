@@ -4,7 +4,7 @@
     <label lang="en">Pay.nl Payment Methods</label>
     <label lang="de">Pay.nl Zahlungsmethoden</label>
     <label lang="nl">Pay.nl Betaalmethoden</label>
-    <version>3.1.4</version>
+    <version>3.2.0</version>
     <copyright>(c) by Pay.nl</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>

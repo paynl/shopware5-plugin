@@ -52,6 +52,8 @@ class OrderMailRegistration implements SubscriberInterface
 
     public function onSendOrderMail(\Enlight_Event_EventArgs $args)
     {
+        //todo uit de config halen of place_order_on_start aan staat
+
         $variables = $args->get('variables');
         $paymentId = (isset($variables['sBookingID']) ? $variables['sBookingID'] : null);
         /** @var Transaction\Transaction $transaction */

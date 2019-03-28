@@ -23,6 +23,7 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
+use Shopware\Models\Payment\Payment;
 
 class PaynlPayment extends Plugin
 {
@@ -90,8 +91,10 @@ class PaynlPayment extends Plugin
 
         $payments = $plugin->getPayments();
 
+        /** @var Payment $payment */
         foreach ($payments as $payment) {
             $payment->setActive(false);
+            $payment->setEsdActive(false);
         }
 
         $em->flush();
@@ -117,6 +120,7 @@ class PaynlPayment extends Plugin
                 'description' => $method['name'],
                 'action' => 'PaynlPayment',
                 'active' => true,
+                'esdActive' => true,
                 'additionalDescription' =>
                     '<img src="https://www.pay.nl/images/payment_profiles/50x32/' . $method['id'] . '.png" />'
             ];

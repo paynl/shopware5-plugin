@@ -118,7 +118,7 @@ class Order
         foreach ($orderDetails as $orderDetail) {
             /** @var Article\Detail $articleDetail */
             $articleDetail = $this->articleDetailRepository->findOneBy(['number' => $orderDetail->getArticleNumber()]);
-
+            if(!$articleDetail) continue;
             $stock = $articleDetail->getInStock();
             $result[] = [
                 'articleDetail' => $articleDetail,

@@ -109,10 +109,17 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             // status en amount ophalen.
             $config->loginSDK();
             $apiTransaction = \Paynl\Transaction::get($transactionId);
-
+            $order = $transaction->getOrder();
+            if(!empty($order) && $order->getPaymentStatus()->getId() == Transaction\Transaction::STATUS_NEEDS_REVIEW){
+                // if order status is 'in review', only handle manual declined or paid
+                $transactionData = $apiTransaction->getData();
+                if($transactionData['paymentDetails']['state'] != -64 && !$apiTransaction->isPaid()){
+                    throw new Exception('Invalid status for \'needs review\' Only manual declined and paid are handled', 999);
+                }
+            }
             if ($apiTransaction->isBeingVerified()) {
                 $shouldCreate = true;
-                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, $shouldCreate);
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_NEEDS_REVIEW, $shouldCreate);
             } elseif ($apiTransaction->isPending() && !$isExchange) {
                 $shouldCreate = true;
                 $this->updateStatus($transaction, Transaction\Transaction::STATUS_PENDING, $shouldCreate);
