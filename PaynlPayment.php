@@ -7,8 +7,8 @@ namespace PaynlPayment;
  * When installed via composer, the sdk is automaticly loaded in the vendor directory.
  * In the package file this is included, but need to be loaded
  */
-if(!class_exists('\Paynl\Config') && file_exists(__DIR__.'/vendor/autoload.php')){
-    require_once (__DIR__.'/vendor/autoload.php');
+if (!class_exists('\Paynl\Config') && file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once(__DIR__ . '/vendor/autoload.php');
 }
 
 use Doctrine\ORM\Tools\SchemaTool;
@@ -23,6 +23,7 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Components\Plugin\Context\UpdateContext;
+use Shopware\Models\Mail;
 use Shopware\Models\Payment\Payment;
 
 class PaynlPayment extends Plugin
@@ -31,8 +32,42 @@ class PaynlPayment extends Plugin
     {
         $this->createTables();
         $this->initPaymentIdIncrementer();
+        $this->installMailTemplates();
 
         parent::install($context);
+    }
+
+    private function installMailTemplates()
+    {
+        /** @var ModelManager $modelManager */
+        $modelManager = $this->container->get('models');
+        /** @var Mail\Repository $mailRepository */
+        $mailRepository = $modelManager->getRepository(Mail\Mail::class);
+
+        $mail = $mailRepository->findOneBy(['name' => 'productSoldOut']);
+        if(empty($mail)) {
+            $mail = new Mail\Mail();
+            $mail->setName('productSoldOut');
+        }
+
+        $mail->setFromMail('{config name=mail}');
+        $mail->setFromName('{config name=shopName}');
+        $mail->setSubject('Product uitverkocht');
+        $mail->setIsHtml(false);
+        $mail->setContent('{include file="string:{config name=emailheaderplain}"}
+
+Er is een order opgeslagen waarbij de voorraad op dit moment niet voldoende is.
+
+Het gaat om besteling {$orderNumber}
+
+De volgende producten zijn niet meer voldoende op voorraad, controleer aub zelf de orders en onderneem actie.
+
+{foreach from=$articles item=row key=key}
+Product: {$row.articleName} Voorraad: {$row.stock}
+{/foreach}
+
+{include file="string:{config name=emailfooterplain}"}');
+        $modelManager->persist($mail);
     }
 
     public function update(UpdateContext $context)
