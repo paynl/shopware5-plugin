@@ -96,6 +96,8 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         /** @var \PaynlPayment\Components\Basket $basketService */
         $basketService = $this->container->get('paynl_payment.basket');
 
+        /** @var \PaynlPayment\Components\Order $orderService */
+        $orderService = $this->container->get('paynl_payment.order');
 
         /** @var Transaction\Repository $transactionRepository */
         $transactionRepository = $this->getTransactionRepository();
@@ -141,6 +143,10 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 return $e->getMessage();
             }
         }
+        if($transaction->getOrder()){
+            $orderService->checkStockAndMail($transaction->getOrder());
+        }
+
         if (!$isExchange) {
             if ($canceled) {
                 if ($config->placeOrderOnStart()) {
@@ -188,9 +194,18 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
         // order exists
         if ($transaction->getOrder()) {
-            if($transaction->getOrder()->getPaymentStatus()->getId() === Transaction\Transaction::STATUS_PAID){
+            $order = $transaction->getOrder();
+            if($order->getPaymentStatus()->getId() === Transaction\Transaction::STATUS_PAID){
                 throw new Exception('Not updating, order already paid', 999);
             }
+            if($status === Transaction\Transaction::STATUS_PAID && $transaction->getAmount() != $order->getInvoiceAmount()){
+                $status = Transaction\Transaction::STATUS_NEEDS_REVIEW;
+                $comment = $order->getInternalComment();
+                $comment .= "Paid amount does not match order total.\n Paid amount: {$transaction->getAmount()} Order total: {$order->getInvoiceAmount()}\n";
+                $order->setInternalComment($comment);
+                $this->getModelManager()->persist($order);
+            }
+
             /** @var \PaynlPayment\Components\Order $orderService */
             $orderService = $this->container->get('paynl_payment.order');
             $transactionLog = new TransactionLog\TransactionLog();
@@ -200,13 +215,15 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $transactionLog->setStatusAfterById($status);
             $this->getModelManager()->persist($transactionLog);
 
-            $stockBefore = $orderService->getStock($transaction->getOrder());
+            $stockBefore = $orderService->getStock($order);
 
             $this->savePaymentStatus($transaction->getPaynlPaymentId(), $transaction->getTransactionId(), $status, $config->sendStatusMail());
             $transaction->setStatusById($status);
             $this->getTransactionRepository()->save($transaction);
 
             if (!$transaction->isOrderMailSent()) {
+                $this->getModelManager()->flush();
+                // save changes to database to make sure the order is updated
                 $sOrder = Shopware()->Modules()->Order();
                 $sOrder->sendMail($transaction->getOrderMailVariables());
             }
@@ -218,7 +235,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $orderService->unCancelOrder($transaction);
             }
 
-            $stockAfter = $orderService->getStock($transaction->getOrder());
+            $stockAfter = $orderService->getStock($order);
 
             foreach ($stockAfter as $row) {
                 /** @var \Shopware\Models\Article\Detail $articleDetail */

@@ -9,7 +9,9 @@
 namespace PaynlPayment\Subscriber;
 
 
+use Aws\Chime\ChimeClient;
 use Enlight\Event\SubscriberInterface;
+use PaynlPayment\Components\Config;
 use Shopware\Models\Order;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
@@ -52,7 +54,8 @@ class OrderMailRegistration implements SubscriberInterface
 
     public function onSendOrderMail(\Enlight_Event_EventArgs $args)
     {
-        //todo uit de config halen of place_order_on_start aan staat
+        /** @var Config $config */
+        $config = \Shopware()->Container()->get('paynl_payment.config');
 
         $variables = $args->get('variables');
         $paymentId = (isset($variables['sBookingID']) ? $variables['sBookingID'] : null);
@@ -60,16 +63,19 @@ class OrderMailRegistration implements SubscriberInterface
         $transaction = $this->transactionRepository->findOneBy([
             'paynlPaymentId' => $paymentId
         ]);
+        /** @var Order\Order $order */
         $order = $this->orderRepository->findOneBy([
             'transactionId' => $paymentId
         ]);
 
         if (!empty($transaction) && !empty($order)) {
             $paymentName = $order->getPayment()->getName();
-            $payment_status_id = $order->getPaymentStatus()->getId();
+            $payment_status_id = $transaction->getStatus()?$transaction->getStatus()->getId():$order->getPaymentStatus()->getId();
             if (substr($paymentName, 0, 5) == 'paynl') {
-                if ($payment_status_id == Transaction\Transaction::STATUS_PENDING) {
+
+                if ($payment_status_id == Transaction\Transaction::STATUS_PENDING && $config->placeOrderOnStart() == true) {
                     $transaction->setOrderMailVariables($variables);
+                    $transaction->setIsOrderMailSent(false);
                     $this->transactionRepository->save($transaction);
                     return false;
                 } else {

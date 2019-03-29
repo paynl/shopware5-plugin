@@ -113,6 +113,18 @@ class Config
     /**
      * @return boolean
      */
+    public function sendStockNegativeMail()
+    {
+        return $this->get('mail_negative_stock', false);
+    }
+
+
+    public function getAdministratorEmail(){
+        return $this->get('administrator_email', '');
+    }
+    /**
+     * @return boolean
+     */
     public function isRefundAllowed()
     {
         return $this->get('allow_refunds', false);

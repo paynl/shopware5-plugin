@@ -84,5 +84,23 @@
             <description lang="nl">Schakel dit in om de bestelling te plaatsen wanneer de transactie wordt gestart</description>
             <description lang="de">Aktivieren Sie diese Option, um die Bestellung zu tätigen, wenn die Transaktion gestartet wird</description>
         </element>
+        <element scope="shop" type="boolean">
+            <name>mail_negative_stock</name>
+            <label lang="en">Mail if stock is negative</label>
+            <label lang="nl">Mail als voorraad negatief is</label>
+            <label lang="de">Mail, wenn der Vorrat negativ ist</label>
+            <description lang="en">Send an email to the administrator when a product gets a negative stock</description>
+            <description lang="nl">Stuur een email naar de administrator wanneer een product een negatieve voorraad krijgt</description>
+            <description lang="de">Senden Sie eine E-Mail an den Administrator, wenn ein Produkt einen negativen Bestand erhält</description>
+        </element>
+        <element scope="shop" type="text">
+            <name>administrator_email</name>
+            <label lang="en">Administrator email</label>
+            <label lang="nl">Administrator email</label>
+            <label lang="de">Administrator Email</label>
+            <description lang="en">The e-mail address of the employee who must receive the e-mail if there is a negative stock</description>
+            <description lang="nl">Het emailadres van de medewerker die de mail moet ontvangen bij negatieve voorraad</description>
+            <description lang="de">Die E-Mail-Adresse des Mitarbeiters, der die E-Mail erhalten muss, wenn ein negativer Bestand vorliegt</description>
+        </element>
     </elements>
 </config>

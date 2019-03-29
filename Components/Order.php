@@ -28,11 +28,18 @@ class Order
     private $orderRepository;
 
 
+    /**
+     * @var Config
+     */
+    private $config;
+
+
     private $articleDetailRepository;
 
-    public function __construct(ModelManager $modelManager)
+    public function __construct(ModelManager $modelManager, Config $config)
     {
         $this->modelManager = $modelManager;
+        $this->config = $config;
         $this->orderRepository = $modelManager->getRepository(\Shopware\Models\Order\Order::class);
         $this->articleDetailRepository = $modelManager->getRepository(Article\Detail::class);
     }
@@ -127,6 +134,36 @@ class Order
             ];
         }
         return $result;
+    }
+
+    public function checkStockAndMail(\Shopware\Models\Order\Order $order){
+        if($this->config->sendStockNegativeMail() === false) return;
+
+        $stock = $this->getStock($order);
+        $out_of_stock = array_filter($stock, function ($row){{
+            return $row['stock'] < 0;
+        }});
+
+        if(!empty($out_of_stock)){
+            $articles = array_map(function($row){
+                /** @var Article\Detail $articleDetail */
+                $articleDetail = $row['articleDetail'];
+                return [
+                    'articleName' => $articleDetail->getArticle()->getName(),
+                    'stock' => $row['stock']
+                ];
+            }, $out_of_stock);
+
+            $context = [
+                'orderNumber' => $order->getNumber(),
+                'articles' => $articles
+            ];
+
+            $mail = Shopware()->TemplateMail()->createMail('productSoldOut', $context);
+            $mail->addTo($this->config->getAdministratorEmail());
+
+            $mail->send();
+        }
     }
 
 }

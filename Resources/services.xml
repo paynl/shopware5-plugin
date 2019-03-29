@@ -19,6 +19,7 @@
         </service>
         <service id="paynl_payment.order" class="PaynlPayment\Components\Order">
             <argument type="service" id="models"/>
+            <argument type="service" id="paynl_payment.config"/>
         </service>
         <service id="paynl_payment.basket" class="PaynlPayment\Components\Basket">
             <argument type="service" id="models"/>
