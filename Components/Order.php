@@ -163,7 +163,9 @@ class Order
             $mail->addTo($this->config->getAdministratorEmail());
 
             $mail->send();
+            return true;
         }
+        return false;
     }
 
 }

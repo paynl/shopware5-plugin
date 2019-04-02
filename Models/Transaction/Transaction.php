@@ -152,11 +152,18 @@ class Transaction
      * @ORM\Column(type="boolean", name="is_order_mail_sent")
      */
     private $isOrderMailSent;
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="is_stock_mail_sent")
+     */
+    private $isStockMailSent;
 
     public function __construct()
     {
         $this->isRestocked = false;
         $this->isOrderMailSent = false;
+        $this->isStockMailSent = false;
     }
 
     /**
@@ -183,6 +190,23 @@ class Transaction
     {
         $this->isOrderMailSent = $isOrderMailSent;
     }
+
+    /**
+     * @return bool
+     */
+    public function isStockMailSent()
+    {
+        return $this->isStockMailSent;
+    }
+
+    /**
+     * @param bool $isStockMailSent
+     */
+    public function setIsStockMailSent($isStockMailSent)
+    {
+        $this->isStockMailSent = $isStockMailSent;
+    }
+
 
     /**
      * @return string

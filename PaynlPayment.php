@@ -62,9 +62,11 @@ Het gaat om besteling {$orderNumber}
 
 De volgende producten zijn niet meer voldoende op voorraad, controleer aub zelf de orders en onderneem actie.
 
+
 {foreach from=$articles item=row key=key}
 Product: {$row.articleName} Voorraad: {$row.stock}
 {/foreach}
+
 
 {include file="string:{config name=emailfooterplain}"}');
         $modelManager->persist($mail);
@@ -73,6 +75,7 @@ Product: {$row.articleName} Voorraad: {$row.stock}
     public function update(UpdateContext $context)
     {
         $this->createTables();
+        $this->installMailTemplates();
         $this->initPaymentIdIncrementer();
 
         parent::update($context);

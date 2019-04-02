@@ -143,8 +143,11 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 return $e->getMessage();
             }
         }
-        if($transaction->getOrder()){
-            $orderService->checkStockAndMail($transaction->getOrder());
+        if($transaction->getOrder() && !$transaction->isStockMailSent()){
+            $isStockMailSent = $orderService->checkStockAndMail($transaction->getOrder());
+            // make sure the email is only sent once
+            $transaction->setIsStockMailSent($isStockMailSent);
+            $transactionRepository->save($transaction);
         }
 
         if (!$isExchange) {
