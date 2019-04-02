@@ -228,7 +228,12 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $this->getModelManager()->flush();
                 // save changes to database to make sure the order is updated
                 $sOrder = Shopware()->Modules()->Order();
-                $sOrder->sendMail($transaction->getOrderMailVariables());
+
+                $variables = $transaction->getOrderMailVariables();
+                // we need to set the user email ourself
+                $sOrder->sUserData['additional']= $variables['additional'];
+
+                $sOrder->sendMail($variables);
             }
             if ($status == Transaction\Transaction::STATUS_CANCEL) {
                 $orderService->restockOrder($transaction);
