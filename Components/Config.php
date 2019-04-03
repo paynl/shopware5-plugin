@@ -118,6 +118,14 @@ class Config
         return $this->get('mail_negative_stock', false);
     }
 
+    /**
+     * @return boolean
+     */
+    public function sendTransactionDeclinedMail()
+    {
+        return $this->get('mail_transaction_declined', false);
+    }
+
 
     public function getAdministratorEmail(){
         return $this->get('administrator_email', '');

@@ -60,7 +60,6 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             }
             if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
         } catch (Exception $e) {
-
             // todo error handling
         }
     }
@@ -119,7 +118,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 if ($transactionData['paymentDetails']['state'] != -64 && !$apiTransaction->isPaid()) {
                     throw new Exception('Invalid status for \'needs review\' Only manual declined and paid are handled', 999);
                 } elseif ($transactionData['paymentDetails']['state'] == -64) {
-                    if(!$transaction->isDeclinedMailSent()){
+                    if(!$transaction->isDeclinedMailSent() && $config->sendTransactionDeclinedMail()){
                         $orderService->sendDeclinedMail($order);
                         $transaction->setIsDeclinedMailSent(true);
                         $transactionRepository->save($transaction);

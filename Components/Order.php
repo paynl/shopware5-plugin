@@ -180,6 +180,10 @@ class Order
         $mail = Shopware()->TemplateMail()->createMail('paynlTransactionDeclined', $context);
         $mail->addTo($order->getCustomer()->getEmail(), $order->getCustomer()->getFirstname().' '.$order->getCustomer()->getLastname());
 
+        if(!empty($this->config->getAdministratorEmail())){
+            $mail->addBcc($this->config->getAdministratorEmail());
+        }
+
         $mail->send();
     }
 

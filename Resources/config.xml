@@ -86,9 +86,9 @@
         </element>
         <element scope="shop" type="boolean">
             <name>mail_negative_stock</name>
-            <label lang="en">Mail if stock is negative</label>
-            <label lang="nl">Mail als voorraad negatief is</label>
-            <label lang="de">Mail, wenn der Vorrat negativ ist</label>
+            <label lang="en">Mail administrator if stock is negative</label>
+            <label lang="nl">Mail administrator als voorraad negatief is</label>
+            <label lang="de">Mail administrator, wenn der Vorrat negativ ist</label>
             <description lang="en">Send an email to the administrator when a product gets a negative stock</description>
             <description lang="nl">Stuur een email naar de administrator wanneer een product een negatieve voorraad krijgt</description>
             <description lang="de">Senden Sie eine E-Mail an den Administrator, wenn ein Produkt einen negativen Bestand erhält</description>
@@ -101,6 +101,12 @@
             <description lang="en">The e-mail address of the employee who must receive the e-mail if there is a negative stock</description>
             <description lang="nl">Het emailadres van de medewerker die de mail moet ontvangen bij negatieve voorraad</description>
             <description lang="de">Die E-Mail-Adresse des Mitarbeiters, der die E-Mail erhalten muss, wenn ein negativer Bestand vorliegt</description>
+        </element>
+        <element scope="shop" type="boolean">
+            <name>mail_transaction_declined</name>
+            <label lang="en">Mail the user when a 'verify' transaction is declined</label>
+            <label lang="nl">Mail de gebruiker wanneer een 'verify'-transactie wordt geweigerd</label>
+            <label lang="de">Mail an den Benutzer, wenn eine 'Verify'-Transaktion abgelehnt wird</label>
         </element>
     </elements>
 </config>
