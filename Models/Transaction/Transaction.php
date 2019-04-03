@@ -158,13 +158,37 @@ class Transaction
      * @ORM\Column(type="boolean", name="is_stock_mail_sent")
      */
     private $isStockMailSent;
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="is_declined_mail_sent")
+     */
+    private $isDeclinedMailSent;
 
     public function __construct()
     {
         $this->isRestocked = false;
         $this->isOrderMailSent = false;
         $this->isStockMailSent = false;
+        $this->isDeclinedMailSent = false;
     }
+
+    /**
+     * @return bool
+     */
+    public function isDeclinedMailSent()
+    {
+        return $this->isDeclinedMailSent;
+    }
+
+    /**
+     * @param bool $isDeclinedMailSent
+     */
+    public function setIsDeclinedMailSent($isDeclinedMailSent)
+    {
+        $this->isDeclinedMailSent = $isDeclinedMailSent;
+    }
+
 
     /**
      * @return int

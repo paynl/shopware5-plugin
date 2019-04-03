@@ -149,6 +149,7 @@ class Order
                 /** @var Article\Detail $articleDetail */
                 $articleDetail = $row['articleDetail'];
                 return [
+                    'articleNumber' => $articleDetail->getNumber(),
                     'articleName' => $articleDetail->getArticle()->getName(),
                     'stock' => $row['stock']
                 ];
@@ -156,16 +157,30 @@ class Order
 
             $context = [
                 'orderNumber' => $order->getNumber(),
+                'transactionNumber' => $order->getTransactionId(),
+                'transactionId' => $order->getTemporaryId(),
                 'articles' => $articles
             ];
 
-            $mail = Shopware()->TemplateMail()->createMail('productSoldOut', $context);
+            $mail = Shopware()->TemplateMail()->createMail('paynlProductSoldOut', $context);
             $mail->addTo($this->config->getAdministratorEmail());
 
             $mail->send();
             return true;
         }
         return false;
+    }
+    public function sendDeclinedMail(\Shopware\Models\Order\Order $order){
+        $context = [
+            'customer' => $order->getCustomer()->getFirstname(),
+            'orderNumber' => $order->getNumber(),
+            'transactionId' => $order->getTemporaryId(),
+        ];
+
+        $mail = Shopware()->TemplateMail()->createMail('paynlTransactionDeclined', $context);
+        $mail->addTo($order->getCustomer()->getEmail(), $order->getCustomer()->getFirstname().' '.$order->getCustomer()->getLastname());
+
+        $mail->send();
     }
 
 }

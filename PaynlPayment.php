@@ -37,18 +37,26 @@ class PaynlPayment extends Plugin
         parent::install($context);
     }
 
-    private function installMailTemplates()
+    private function installMailTemplates(){
+        $this->installSoldOutTemplate();
+        $this->installDeclinedTemplate();
+
+    }
+    private function installSoldOutTemplate()
     {
         /** @var ModelManager $modelManager */
         $modelManager = $this->container->get('models');
         /** @var Mail\Repository $mailRepository */
         $mailRepository = $modelManager->getRepository(Mail\Mail::class);
 
-        $mail = $mailRepository->findOneBy(['name' => 'productSoldOut']);
-        if(empty($mail)) {
-            $mail = new Mail\Mail();
-            $mail->setName('productSoldOut');
+        $mail = $mailRepository->findOneBy(['name' => 'paynlProductSoldOut']);
+        if (!is_null($mail)) {
+            // don't overwrite the template if it exists
+            return false;
         }
+        $mail = new Mail\Mail();
+        $mail->setName('paynlProductSoldOut');
+
 
         $mail->setFromMail('{config name=mail}');
         $mail->setFromName('{config name=shopName}');
@@ -58,14 +66,50 @@ class PaynlPayment extends Plugin
 
 Er is een order opgeslagen waarbij de voorraad op dit moment niet voldoende is.
 
-Het gaat om besteling {$orderNumber}
+Het gaat om besteling: {$orderNumber}
+Transactie nummer: {$transactionNumber}
+PAY. transactieId: {$transactionId}
 
 De volgende producten zijn niet meer voldoende op voorraad, controleer aub zelf de orders en onderneem actie.
 
 
 {foreach from=$articles item=row key=key}
-Product: {$row.articleName} Voorraad: {$row.stock}
+Product: ({$row.articleNumber}){$row.articleName} Voorraad: {$row.stock}
 {/foreach}
+
+
+{include file="string:{config name=emailfooterplain}"}');
+        $modelManager->persist($mail);
+    }
+
+    private function installDeclinedTemplate()
+    {
+        /** @var ModelManager $modelManager */
+        $modelManager = $this->container->get('models');
+        /** @var Mail\Repository $mailRepository */
+        $mailRepository = $modelManager->getRepository(Mail\Mail::class);
+
+        $mail = $mailRepository->findOneBy(['name' => 'paynlTransactionDeclined']);
+        if (!is_null($mail)) {
+            // don't overwrite the template if it exists
+            return false;
+        }
+        $mail = new Mail\Mail();
+        $mail->setName('paynlTransactionDeclined');
+
+
+        $mail->setFromMail('{config name=mail}');
+        $mail->setFromName('{config name=shopName}');
+        $mail->setSubject('Transactie afgewezen');
+        $mail->setIsHtml(false);
+        $mail->setContent('{include file="string:{config name=emailheaderplain}"}
+
+Beste {$customer},
+
+
+Uw bestelling met nummer:{$orderNumber} is helaas geannulleerd omdat de transactie bij deze bestelling is afgekeurd.
+Indien u de bestelling alsnog wenst te plaatsen, neem dan even contact met ons op. 
+Dan bespreken we hoe u de bestelling op een andere manier kunt betalen.
 
 
 {include file="string:{config name=emailfooterplain}"}');

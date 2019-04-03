@@ -60,6 +60,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             }
             if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
         } catch (Exception $e) {
+
             // todo error handling
         }
     }
@@ -112,11 +113,17 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $config->loginSDK();
             $apiTransaction = \Paynl\Transaction::get($transactionId);
             $order = $transaction->getOrder();
-            if(!empty($order) && $order->getPaymentStatus()->getId() == Transaction\Transaction::STATUS_NEEDS_REVIEW){
+            if (!empty($order) && $order->getPaymentStatus()->getId() == Transaction\Transaction::STATUS_NEEDS_REVIEW) {
                 // if order status is 'in review', only handle manual declined or paid
                 $transactionData = $apiTransaction->getData();
-                if($transactionData['paymentDetails']['state'] != -64 && !$apiTransaction->isPaid()){
+                if ($transactionData['paymentDetails']['state'] != -64 && !$apiTransaction->isPaid()) {
                     throw new Exception('Invalid status for \'needs review\' Only manual declined and paid are handled', 999);
+                } elseif ($transactionData['paymentDetails']['state'] == -64) {
+                    if(!$transaction->isDeclinedMailSent()){
+                        $orderService->sendDeclinedMail($order);
+                        $transaction->setIsDeclinedMailSent(true);
+                        $transactionRepository->save($transaction);
+                    }
                 }
             }
             if ($apiTransaction->isBeingVerified()) {
@@ -143,7 +150,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 return $e->getMessage();
             }
         }
-        if($transaction->getOrder() && !$transaction->isStockMailSent()){
+        if ($transaction->getOrder() && !$transaction->isStockMailSent()) {
             $isStockMailSent = $orderService->checkStockAndMail($transaction->getOrder());
             // make sure the email is only sent once
             $transaction->setIsStockMailSent($isStockMailSent);
@@ -198,10 +205,10 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         // order exists
         if ($transaction->getOrder()) {
             $order = $transaction->getOrder();
-            if($order->getPaymentStatus()->getId() === Transaction\Transaction::STATUS_PAID){
+            if ($order->getPaymentStatus()->getId() === Transaction\Transaction::STATUS_PAID) {
                 throw new Exception('Not updating, order already paid', 999);
             }
-            if($status === Transaction\Transaction::STATUS_PAID && $transaction->getAmount() != $order->getInvoiceAmount()){
+            if ($status === Transaction\Transaction::STATUS_PAID && $transaction->getAmount() != $order->getInvoiceAmount()) {
                 $status = Transaction\Transaction::STATUS_NEEDS_REVIEW;
                 $comment = $order->getInternalComment();
                 $comment .= "Paid amount does not match order total.\n Paid amount: {$transaction->getAmount()} Order total: {$order->getInvoiceAmount()}\n";
@@ -231,7 +238,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
                 $variables = $transaction->getOrderMailVariables();
                 // we need to set the user email ourself
-                $sOrder->sUserData['additional']= $variables['additional'];
+                $sOrder->sUserData['additional'] = $variables['additional'];
 
                 $sOrder->sendMail($variables);
             }
@@ -253,7 +260,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                     function ($var) use ($articleDetail) {
                         return $articleDetail->getId() == $var['articleDetail']->getId();
                     });
-                if(!empty($before)){
+                if (!empty($before)) {
                     $before = array_pop($before);
                     $logDetail = new TransactionLog\Detail();
                     $logDetail->setArticleDetail($articleDetail);
