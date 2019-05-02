@@ -24,7 +24,7 @@
         <service id="paynl_payment.basket" class="PaynlPayment\Components\Basket">
             <argument type="service" id="models"/>
         </service>
-        <service id="paynl_payment.subscriber.order-mail" class="PaynlPayment\Subscriber\OrderMailRegistration">
+        <service id="paynl_payment.subscriber.ordermail" class="PaynlPayment\Subscriber\OrderMailRegistration">
             <argument type="service" id="models"/>
             <tag name="shopware.event_subscriber"/>
         </service>
