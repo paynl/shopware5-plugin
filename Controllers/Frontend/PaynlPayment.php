@@ -142,8 +142,21 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         // remove the basket
         Shopware()->Modules()->Basket()->clearBasket();
         $sOrderVariables = Shopware()->Session()->offsetGet('sOrderVariables');
+        if(!is_null( $transaction->getOrder())){
+            $sOrderVariables['sOrderNumber'] = $transaction->getOrder()->getNumber();
+        } else {
+            // No order is saved with the transaction (yet)
+            // try to load the order by transactionId (other way around)
+            $paymentId = $transaction->getPaynlPaymentId();
+            $orderRepository = Shopware()->Models()->getRepository(Order\Order::class);
+            /** @var Order\Order $order */
+            $order = $orderRepository->findOneBy(['transactionId' => $paymentId]);
+            // if this fails, i have no way to get the order, it's simply not yet created.
+            if(!is_null($order)){
+                $sOrderVariables['sOrderNumber'] = $order->getNumber();
+            }
+        }
 
-        $sOrderVariables['sOrderNumber'] = $transaction->getOrder()->getNumber();
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
     }
     private function updateStatus(Transaction\Transaction $transaction, $status, $shouldCreate = false)
