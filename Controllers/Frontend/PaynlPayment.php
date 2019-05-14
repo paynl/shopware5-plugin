@@ -51,8 +51,8 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
     public function notifyAction()
     {
-        $action = $this->request->isPost()?$this->request->getPost('action'):$this->request->get('action');
-        $transactionId = $this->request->isPost()?$this->request->getPost('order_id'):$this->request->get('order_id');
+        $action = $this->request->isPost() ? $this->request->getPost('action') : $this->request->get('action');
+        $transactionId = $this->request->isPost() ? $this->request->getPost('order_id') : $this->request->get('order_id');
 
         if ($action == 'pending') die('TRUE| Ignoring pending');
 
@@ -72,7 +72,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
     private function processPayment($transactionId, $isExchange = false)
     {
-        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID'=>$transactionId]) . '?utm_nooverride=1';
+        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $transactionId]) . '?utm_nooverride=1';
         $cancelUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'confirm']);
 
         /** @var \PaynlPayment\Components\Config $config */
@@ -132,17 +132,19 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $transaction->getOrder()->getNumber()
             );
         } else {
-            if($shouldCreate){
+            if ($shouldCreate) {
                 throw new \Exception('Order should have been created, but an error has occurred');
             }
             return "No action, order was not created";
         }
     }
-    private function fixSession(Transaction\Transaction $transaction){
+
+    private function fixSession(Transaction\Transaction $transaction)
+    {
         // remove the basket
         Shopware()->Modules()->Basket()->clearBasket();
         $sOrderVariables = Shopware()->Session()->offsetGet('sOrderVariables');
-        if(!is_null( $transaction->getOrder())){
+        if (!is_null($transaction->getOrder())) {
             $sOrderVariables['sOrderNumber'] = $transaction->getOrder()->getNumber();
         } else {
             // No order is saved with the transaction (yet)
@@ -150,15 +152,19 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $paymentId = $transaction->getPaynlPaymentId();
             $orderRepository = Shopware()->Models()->getRepository(Order\Order::class);
             /** @var Order\Order $order */
-            $order = $orderRepository->findOneBy(['transactionId' => $paymentId]);
+            $order = $orderRepository->findOneBy([
+                'transactionId' => $paymentId,
+                'temporaryId' => $transaction->getTransactionId()]);
+
             // if this fails, i have no way to get the order, it's simply not yet created.
-            if(!is_null($order)){
+            if (!is_null($order)) {
                 $sOrderVariables['sOrderNumber'] = $order->getNumber();
             }
         }
 
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
     }
+
     private function updateStatus(Transaction\Transaction $transaction, $status, $shouldCreate = false)
     {
         /** @var \PaynlPayment\Components\Config $config */
