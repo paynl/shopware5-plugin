@@ -229,7 +229,7 @@ class Api
                 'id' => 'shipping',
                 'name' => 'Shipping',
                 'price' => $basket['sShippingcostsWithTax'],
-                'vatPercentage' => $basket['sShippingCostsTax'],
+                'vatPercentage' => $basket['sShippingcostsTax'],
                 'qty' => 1,
                 'type' => \Paynl\Transaction::PRODUCT_TYPE_SHIPPING
             ];
