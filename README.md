@@ -20,7 +20,7 @@ Bank Transfer | Cartasi | GivaCard | SprayPay | Przelewy24 |
 | | | Paysafecard |
 ### Quickstart
 ##### Installing
-Download the latest .tgz release and upload into *Configuration* > *Plugin Manager* > *Installed* > *Upload plugin*
+Download the latest .zip release and upload into *Configuration* > *Plugin Manager* > *Installed* > *Upload plugin*
 ##### Setup
 1. Log into the Shopware admin
 2. Go to *Configuration* > *Plugin Manager* > *Installed*
