@@ -4,7 +4,7 @@ use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order;
 
-class Shopware_Controller_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
+class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
     public function indexAction()
     {
