@@ -18,5 +18,10 @@
             <argument type="service" id="router"/>
             <argument type="service" id="shopware.number_range_incrementer"/>
         </service>
+        <service id="paynl_payment.backend_controller_paynl_api_test" class="PaynlPayment\Controller\Backend\PaynlApiTest">
+            <argument type="service" id="http_client"/>
+            <argument type="service" id="pluginlogger" />
+            <tag name="shopware.controller" module="backend" controller="PaynlApiTest"/>
+        </service>
     </services>
 </container>

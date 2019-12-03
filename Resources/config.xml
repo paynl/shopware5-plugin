@@ -75,5 +75,31 @@
             <description lang="nl">Schakel dit in wanneer u extra adresveld 1 en 2 gebruikt voor huisnummer en huisnummertoevoeging </description>
             <description lang="de">Aktivieren Sie dies, wenn Sie das zusätzliche Adressfeld 1 und 2 für das Hinzufügen von Hausnummer und Hausnummer verwenden</description>
         </element>
+        <element type="button">
+            <name>buttonTest</name>
+            <label lang="de">Test API connection</label>
+            <label lang="en">Test API connection</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                    function() {
+                      Ext.Ajax.request({
+                        url: 'PaynlApiTest/test',
+                        success: function (response) {
+                          Shopware.Msg.createGrowlMessage(response.statusText, response.responseText)
+                        },
+                        failure: function (response) {
+                          if (response.status === 404) {
+                            Shopware.Msg.createGrowlMessage('Plugin Manager', 'Please activate plugin before testing api.');
+                          } else {
+                            Shopware.Msg.createGrowlMessage(response.statusText, response.responseText)
+                          }
+                        }
+                      });
+                    }
+                    ]]>
+                </handler>
+            </options>
+        </element>
     </elements>
 </config>
