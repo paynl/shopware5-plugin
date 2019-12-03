@@ -117,7 +117,7 @@ class PaynlPayment extends Plugin
                 'action' => 'PaynlPayment',
                 'active' => true,
                 'additionalDescription' =>
-                    '<img src="https://static.pay.nl/payment_profiles/50x32/' . $method['id'] . '.png" />'
+                    '<img src="https://www.pay.nl/images/payment_profiles/50x32/' . $method['id'] . '.png" />'
             ];
             $installer->createOrUpdate($plugin->getName(), $options);
         }
