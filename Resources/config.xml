@@ -77,8 +77,9 @@
         </element>
         <element type="button">
             <name>buttonTest</name>
-            <label lang="de">Test API connection</label>
+            <label lang="de">Test API verbindung</label>
             <label lang="en">Test API connection</label>
+            <label lang="nl">Test API verbinding</label>
             <options>
                 <handler>
                     <![CDATA[
