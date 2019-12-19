@@ -80,6 +80,9 @@
             <label lang="de">Test API verbindung</label>
             <label lang="en">Test API connection</label>
             <label lang="nl">Test API verbinding</label>
+            <description lang="de">Verwenden Sie diese Taste, um die Verbindung zwischen dem PAY. API und Ihrem Webshop zu testen.</description>
+            <description lang="en">Use this button to test the connection between the PAY. API and your webshop.</description>
+            <description lang="nl">Gebruik deze knop om de verbinding tussen de PAY. API en uw webshop te testen.</description>
             <options>
                 <handler>
                     <![CDATA[
