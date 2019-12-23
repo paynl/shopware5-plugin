@@ -111,6 +111,7 @@ class Api
         $transaction->setSDispatch($sDispatch);
 
         $arrStartData = $this->getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket);
+        $arrStartData['object'] = 'shopware 3.1.6';
 
         try {
             $this->config->loginSDK();
