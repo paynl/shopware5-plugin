@@ -6,10 +6,21 @@ use Shopware\Models\Order;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-    public function indexAction()
+  private $logger;
+
+  private function log($message)
+  {
+    if(empty($this->logger)) {
+      $this->logger = $this->container->get('pluginlogger');
+    }
+
+    $this->logger->addError($message);
+  }
+
+  public function indexAction()
     {
         if (substr($this->getPaymentShortName(), 0, 6) !== 'paynl_') {
-            throw new Exception('Payment is not a Pay.nl Payment method');
+            throw new Exception('Payment is not a PAY. Payment method');
         }
 
         $this->forward('redirect');
@@ -45,7 +56,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $result = $paynlApi->startPayment($this, $signature);
             if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
         } catch (Exception $e) {
-            // todo error handling
+          $this->log('PAY.:' . $e->getMessage());
         }
     }
 
@@ -60,6 +71,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $result = $this->processPayment($transactionId, true);
             die('TRUE|' . $result);
         } catch (Exception $e) {
+            $this->log('PAY.: Could not process payment. Error: ' . $e->getMessage());
             die('FALSE|' . $e->getMessage());
         }
     }

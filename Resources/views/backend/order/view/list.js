@@ -72,7 +72,7 @@ Ext.override(Shopware.apps.Order.view.list.List, {
         return {
             action: 'notice',
             tooltip: '{s name="tooltip/paynl_refund"}Refund this transaction{/s}',
-            iconCls: 'sprite-arrow-circle',
+            iconCls: 'sprite-arrow-circle-315',
             handler: function (view, rowIndex, colIndex, item, opts, record) {
                 return Shopware.ModuleManager.createSimplifiedModule("PaynlRefundForm?paynlPaymentId=" + record.data.transactionId, {
                     title: "Refund Order " + record.data.transactionId,

@@ -83,7 +83,7 @@ class Api
 
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new \Exception('Payment is not a Pay.nl Payment method');
+            throw new \Exception('Payment is not a PAY. Payment method. Name: '. $payment_name);
         }
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
@@ -119,10 +119,10 @@ class Api
             $this->transactionRepository->save($transaction);
 
             return $result;
-        } catch (\Exception $e) {
-            $transaction->addException($e);
+        } catch (\Exception $objException) {
+            $transaction->addException($objException);
             $this->transactionRepository->save($transaction);
-            throw $e;
+            throw $objException;
         }
     }
 
