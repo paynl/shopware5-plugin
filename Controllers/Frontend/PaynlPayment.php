@@ -56,7 +56,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $result = $paynlApi->startPayment($this, $signature);
             if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
         } catch (Exception $e) {
-          $this->log('PAY.:' . $e->getMessage());
+          $this->log('PAY.: Could not start payment. Error: ' . $e->getMessage());
         }
     }
 
