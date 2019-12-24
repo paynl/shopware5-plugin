@@ -15,6 +15,7 @@ class PaynlApiTest extends Shopware_Controllers_Backend_Application
    */
   private $logger;
 
+  protected $model = 'test';
   /**
    * @var Config
    */
