@@ -99,6 +99,10 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $shouldCreate = false;
 
         try {
+
+          if(empty($transaction)) {
+            throw new Exception('Could not find transaction', 999);
+          }
             // status en amount ophalen.
             $config->loginSDK();
             $apiTransaction = \Paynl\Transaction::get($transactionId);

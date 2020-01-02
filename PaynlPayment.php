@@ -28,7 +28,8 @@ class PaynlPayment extends Plugin
     public function install(InstallContext $context)
     {
         $this->createTables();
-        $this->initPaymentIdIncrementer();
+        $this->initPaymentIdIncrementer($context);
+        $this->migrate();
 
         parent::install($context);
     }
@@ -36,7 +37,8 @@ class PaynlPayment extends Plugin
     public function update(UpdateContext $context)
     {
         $this->createTables();
-        $this->initPaymentIdIncrementer();
+        $this->initPaymentIdIncrementer($context);
+        $this->migrate();
 
         parent::update($context);
     }
@@ -104,8 +106,13 @@ class PaynlPayment extends Plugin
         /** @var Config $config */
         $config = new Config($this->container->get('shopware.plugin.cached_config_reader'));
 
-        $config->loginSDK();
-        $methods = Paymentmethods::getList();
+        try {
+          $config->loginSDK();
+          $methods = Paymentmethods::getList();
+        } catch (\Exception $e) {
+          $this->log('PAY.: Activation error: ' . $e->getMessage());
+          throw new \Exception('Activation error. Please use valid: Token-Code, API-token and Service-ID');
+        }
 
         /** @var \Shopware\Components\Plugin\PaymentInstaller $installer */
         $installer = $this->container->get('shopware.plugin_payment_installer');
@@ -149,7 +156,7 @@ class PaynlPayment extends Plugin
         ];
     }
 
-    private function initPaymentIdIncrementer()
+    private function initPaymentIdIncrementer($context)
     {
         $db = $this->container->get('db');
 
@@ -165,4 +172,25 @@ class PaynlPayment extends Plugin
             ]);
         }
     }
+
+    private function migrate()
+    {
+      $db = $this->container->get('db');
+
+      try {
+        $db->executeQuery('select 1 from `paynl_transactions` LIMIT 1');
+
+        # If `paynl_transacions` didnt exist, it would've generated an exception by now and next two queries will not be executed.
+        $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynl_transactions` SELECT * FROM `paynl_transactions` ');
+        $db->executeQuery('DROP TABLE `paynl_transactions` ');
+      } catch (\Exception $exception) {
+        $this->log('PAY.: Migration: ' . $exception->getMessage());
+      }
+    }
+
+    private function log($message)
+    {
+      $this->container->get('pluginlogger')->addNotice($message);
+    }
+
 }
