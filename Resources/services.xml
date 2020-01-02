@@ -19,6 +19,7 @@
             <argument type="service" id="shopware.number_range_incrementer"/>
         </service>
         <service id="paynl_payment.backend_controllers_paynl_api_test" class="PaynlPayment\Controllers\Backend\PaynlApiTest">
+            <argument type="service" id="http_client"/>
             <argument type="service" id="pluginlogger"/>
             <argument type="service" id="paynl_payment.config"/>
             <tag name="shopware.controller" module="backend" controller="PaynlTest"/>
