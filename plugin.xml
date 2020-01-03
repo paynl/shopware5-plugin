@@ -4,30 +4,35 @@
     <label lang="en">Pay.nl Payment Methods</label>
     <label lang="de">Pay.nl Zahlungsmethoden</label>
     <label lang="nl">Pay.nl Betaalmethoden</label>
-    <version>3.1.5</version>
-    <copyright>(c) by Pay.nl</copyright>
+    <version>3.2</version>
+    <copyright>(c) by PAY.</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
-    <author>Pay.nl</author>
+    <author>PAY.</author>
     <compatibility minVersion="5.3.0"/>
     <description lang="en">
         <![CDATA[
-            <b>Pay.nl Payment methods</b>
+            <b>PAY. Payment methods</b>
             <p>This plugin adds <a href='https://admin.pay.nl'>Pay.nl</a>'s payment methods to your store.</p>
         ]]>
     </description>
     <description lang="nl">
         <![CDATA[
-            <b>Pay.nl Betaalmethoden</b>
+            <b>PAY. Betaalmethoden</b>
             <p>Met deze plugin voeg je <a href='https://admin.pay.nl'>Pay.nl</a>'s betaalmethoden to aan je webshop.</p>
         ]]>
     </description>
     <description lang="de">
         <![CDATA[
-            <b>Pay.nl Zahlungsmethoden</b>
+            <b>PAY. Zahlungsmethoden</b>
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>Pay.nl</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.2">
+        <changes lang="nl">Testbutton toegevoegd. Logging toegevoegd.</changes>
+        <changes lang="en">Added testbutton. Added logging.</changes>
+        <changes lang="de">Testknopf hinzugefügt. Logging hinzugefügt.</changes>
+    </changelog>
     <changelog version="3.1.5">
         <changes lang="en">
             Fixed problem with vat shippingtax.            

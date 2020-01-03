@@ -111,7 +111,7 @@ class PaynlPayment extends Plugin
           $methods = Paymentmethods::getList();
         } catch (\Exception $e) {
           $this->log('PAY.: Activation error: ' . $e->getMessage());
-          throw new \Exception('Activation error. Please use valid: Token-Code, API-token and Service-ID');
+          throw new \Exception('Activation error. Please enter valid: Token-Code, API-token and Service-ID');
         }
 
         /** @var \Shopware\Components\Plugin\PaymentInstaller $installer */
