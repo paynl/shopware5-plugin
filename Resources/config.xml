@@ -88,7 +88,7 @@
                     <![CDATA[
                     function() {
                       Ext.Ajax.request({
-                        url: 'PaynlTest/test',
+                        url: 'PaynlApiTest/test',
                         success: function (response) {
                           Shopware.Msg.createGrowlMessage(response.statusText, response.responseText)
                         },

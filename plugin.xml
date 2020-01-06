@@ -29,9 +29,9 @@
         ]]>
     </description>
     <changelog version="3.2">
-        <changes lang="nl">Testbutton toegevoegd. Logging toegevoegd.</changes>
+        <changes lang="nl">Testbutton toegevoegd. Loggin toegevoegd.</changes>
         <changes lang="en">Added testbutton. Added logging.</changes>
-        <changes lang="de">Testknopf hinzugefügt. Logging hinzugefügt.</changes>
+        <changes lang="de">Testknopf hinzugefügt. Loggin hinzugefügt.</changes>
     </changelog>
     <changelog version="3.1.5">
         <changes lang="en">

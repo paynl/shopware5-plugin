@@ -1,38 +1,23 @@
 <?php
 
-namespace PaynlPayment\Controllers\Backend;
-
 use Monolog\Logger;
 use Paynl\Paymentmethods;
-use PaynlPayment\Components\Config;
-use Shopware_Controllers_Backend_Application;
 use Symfony\Component\HttpFoundation\Response;
 
-class PaynlApiTest extends Shopware_Controllers_Backend_Application
+class Shopware_Controllers_Backend_PaynlApiTest extends Enlight_Controller_Action
 {
   /**
    * @var Logger
    */
   private $logger;
 
-  protected $model = 'test';
-  /**
-   * @var Config
-   */
-  private $config;
-
-  public function __construct(Logger $logger, Config $config)
-  {
-    $this->logger = $logger;
-    $this->config = $config;
-
-    parent::__construct();
-  }
-
   public function testAction()
   {
+    $paynlConfig = $this->get('paynl_payment.config');
+    $this->logger = $this->container->get('pluginlogger');
+
     try {
-      $this->config->loginSDK();
+      $paynlConfig->loginSDK();
       $methods = Paymentmethods::getList();
 
       if (is_array($methods) && count($methods) > 0) {
@@ -44,7 +29,6 @@ class PaynlApiTest extends Shopware_Controllers_Backend_Application
       }
     } catch (\Exception $exception) {
       $this->logger->addError('PAY.: ' . $exception->getMessage());
-
       $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
       $this->View()->assign('response', 'Could not connect to PAY.');
     }
