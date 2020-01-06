@@ -178,11 +178,21 @@ class PaynlPayment extends Plugin
       $db = $this->container->get('db');
 
       try {
+        $bRenamed = false;
         $db->executeQuery('select 1 from `paynl_transactions` LIMIT 1');
 
-        # If `paynl_transacions` didnt exist, it would've generated an exception by now and next two queries will not be executed.
-        $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynl_transactions` SELECT * FROM `paynl_transactions` ');
-        $db->executeQuery('DROP TABLE `paynl_transactions` ');
+        try {
+          $db->executeQuery('select 1 from `s_plugin_paynl_transactions` LIMIT 1');
+        } catch (\Exception $e) {
+          $db->executeQuery('RENAME TABLE `paynl_transactions` TO `s_plugin_paynl_transactions`');
+          $bRenamed = true;
+        }
+
+        # If `paynl_transacions` didnt exist, it would've generated an exception by now and next two queries will not be executed .
+        if ($bRenamed === false) {
+          $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynl_transactions` SELECT * FROM `paynl_transactions` ');
+          $db->executeQuery('DROP TABLE `paynl_transactions` ');
+        }
       } catch (\Exception $exception) {
         $this->log('PAY.: Migration: ' . $exception->getMessage());
       }
