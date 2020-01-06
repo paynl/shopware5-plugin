@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/plugin.xsd">
-    <label lang="en">Pay.nl Payment Methods</label>
-    <label lang="de">Pay.nl Zahlungsmethoden</label>
-    <label lang="nl">Pay.nl Betaalmethoden</label>
+    <label lang="en">PAY. Payment Methods</label>
+    <label lang="de">PAY. Zahlungsmethoden</label>
+    <label lang="nl">PAY. Betaalmethoden</label>
     <version>3.2</version>
     <copyright>(c) by PAY.</copyright>
     <license>MIT</license>
