@@ -29,7 +29,6 @@ class Shopware_Controllers_Backend_PaynlApiTest extends Enlight_Controller_Actio
       }
     } catch (\Exception $exception) {
       $this->logger->addError('PAY.: ' . $exception->getMessage());
-      $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
       $this->View()->assign('response', 'Could not connect to PAY.');
     }
   }
