@@ -45,9 +45,24 @@ class PaynlPayment extends Plugin
 
     public function uninstall(UninstallContext $context)
     {
-        $this->disablePaymentMethods($context->getPlugin());
+      $this->disablePaymentMethods($context->getPlugin());
 
-        parent::uninstall($context);
+      if (!$context->keepUserData()) {
+        $this->removeAllTables();
+      }
+
+      parent::uninstall($context);
+    }
+
+    private function removeAllTables()
+    {
+      try {
+        $db = $this->container->get('db');
+        $db->executeQuery('DROP TABLE IF EXISTS `paynl_transactions`');
+        $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynl_transactions`');
+      } catch (\Exception $e) {
+        $this->container->get('pluginlogger')->addError('PAY. Uninstall: ' . $e->getMessage());
+      }
     }
 
     public function activate(ActivateContext $context)
