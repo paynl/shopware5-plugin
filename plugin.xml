@@ -13,25 +13,25 @@
     <description lang="en">
         <![CDATA[
             <b>PAY. Payment methods</b>
-            <p>This plugin adds <a href='https://admin.pay.nl'>Pay.nl</a>'s payment methods to your store.</p>
+            <p>This plugin adds <a href='https://admin.pay.nl'>PAY.</a>'s payment methods to your store.</p>
         ]]>
     </description>
     <description lang="nl">
         <![CDATA[
             <b>PAY. Betaalmethoden</b>
-            <p>Met deze plugin voeg je <a href='https://admin.pay.nl'>Pay.nl</a>'s betaalmethoden to aan je webshop.</p>
+            <p>Met deze plugin voeg je <a href='https://admin.pay.nl'>PAY.</a>'s betaalmethoden toe aan je webshop.</p>
         ]]>
     </description>
     <description lang="de">
         <![CDATA[
             <b>PAY. Zahlungsmethoden</b>
-            <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>Pay.nl</a> hinzu</p>
+            <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
     <changelog version="3.2">
-        <changes lang="nl">Testbutton toegevoegd. Loggin toegevoegd.</changes>
+        <changes lang="nl">Testbutton toegevoegd. Logging toegevoegd.</changes>
         <changes lang="en">Added testbutton. Added logging.</changes>
-        <changes lang="de">Testknopf hinzugefügt. Loggin hinzugefügt.</changes>
+        <changes lang="de">Testknopf hinzugefügt. Logging hinzugefügt.</changes>
     </changelog>
     <changelog version="3.1.5">
         <changes lang="en">
