@@ -194,10 +194,10 @@ class PaynlPayment extends Plugin
 
       try {
         $bRenamed = false;
-        $db->executeQuery('select 1 from `paynl_transactions` LIMIT 1');
+        $db->executeQuery('SELECT 1 FROM `paynl_transactions` LIMIT 1');
 
         try {
-          $db->executeQuery('select 1 from `s_plugin_paynlpayment_transactions` LIMIT 1');
+          $db->executeQuery('SELECT 1 FROM `s_plugin_paynlpayment_transactions` LIMIT 1');
         } catch (\Exception $e) {
           $db->executeQuery('RENAME TABLE `paynl_transactions` TO `s_plugin_paynlpayment_transactions`');
           $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_comment` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `exceptions`');
