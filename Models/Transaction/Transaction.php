@@ -12,7 +12,7 @@ use Shopware\Models\Payment\Payment;
  * Class Transaction
  * @package PaynlPayment\Models
  * @ORM\Entity(repositoryClass="PaynlPayment\Models\Transaction\Repository")
- * @ORM\Table(name="s_plugin_paynl_transactions")
+ * @ORM\Table(name="s_plugin_paynlpayment_transactions")
  */
 class Transaction
 {

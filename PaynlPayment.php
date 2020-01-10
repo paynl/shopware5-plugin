@@ -59,7 +59,7 @@ class PaynlPayment extends Plugin
       try {
         $db = $this->container->get('db');
         $db->executeQuery('DROP TABLE IF EXISTS `paynl_transactions`');
-        $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynl_transactions`');
+        $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_transactions`');
       } catch (\Exception $e) {
         $this->container->get('pluginlogger')->addError('PAY. Uninstall: ' . $e->getMessage());
       }
@@ -197,17 +197,17 @@ class PaynlPayment extends Plugin
         $db->executeQuery('select 1 from `paynl_transactions` LIMIT 1');
 
         try {
-          $db->executeQuery('select 1 from `s_plugin_paynl_transactions` LIMIT 1');
+          $db->executeQuery('select 1 from `s_plugin_paynlpayment_transactions` LIMIT 1');
         } catch (\Exception $e) {
-          $db->executeQuery('RENAME TABLE `paynl_transactions` TO `s_plugin_paynl_transactions`');
-          $db->executeQuery('ALTER TABLE `s_plugin_paynl_transactions` ADD `s_comment` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `exceptions`');
-          $db->executeQuery('ALTER TABLE `s_plugin_paynl_transactions` ADD `s_dispatch` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `s_comment`');
+          $db->executeQuery('RENAME TABLE `paynl_transactions` TO `s_plugin_paynlpayment_transactions`');
+          $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_comment` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `exceptions`');
+          $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_dispatch` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `s_comment`');
           $bRenamed = true;
         }
 
         # If `paynl_transacions` didnt exist, it would've generated an exception by now and next two queries will not be executed .
         if ($bRenamed === false) {
-          $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynl_transactions` (paynl_payment_id, transaction_id, signature, amount, currency, created_at, updated_at, customer_id, order_id, payment_id, status_id)
+          $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynlpayment_transactions` (paynl_payment_id, transaction_id, signature, amount, currency, created_at, updated_at, customer_id, order_id, payment_id, status_id)
           SELECT `paynl_payment_id`, `transaction_id`, `signature`, `amount`, `currency`, `created_at`, `updated_at`, `customer_id`, `order_id`, `payment_id`, `status_id` FROM `paynl_transactions`');
           $db->executeQuery('DROP TABLE `paynl_transactions` ');
         }
