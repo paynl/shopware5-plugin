@@ -30,7 +30,8 @@ class Config
         $this->configReader = $configReader;
     }
 
-    protected function getShop(){
+    protected function getShop()
+    {
         if($this->shop) return $this->shop;
 
         try {
@@ -41,7 +42,12 @@ class Config
 
         return $shop;
     }
-    public function setShop(Shop $shop){
+
+  /**
+   * @param Shop $shop
+   */
+    public function setShop(Shop $shop)
+    {
         $this->shop = $shop;
         $this->data = null;
     }
@@ -117,7 +123,9 @@ class Config
     {
         return $this->get('allow_refunds', false);
     }
-    public function useAdditionalAddressFields(){
+
+    public function useAdditionalAddressFields()
+    {
         return $this->get('additional_address_fields', false);
     }
 

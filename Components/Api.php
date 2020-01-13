@@ -78,9 +78,14 @@ class Api
         $this->config->setShop($shop);
     }
 
+   /**
+    * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
+    * @param $signature
+    * @return \Paynl\Result\Transaction\Start
+    * @throws \Exception
+    */
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
-
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
             throw new \Exception('Payment is not a PAY. Payment method. Name: '. $payment_name);
@@ -127,6 +132,12 @@ class Api
         }
     }
 
+  /**
+   * @param $transactionId
+   * @return \Paynl\Result\Transaction\Status
+   * @throws \Paynl\Error\Api
+   * @throws \Paynl\Error\Error
+   */
     public function getTransaction($transactionId)
     {
         $this->config->loginSDK();
@@ -181,7 +192,16 @@ class Api
         return $refundResult;
     }
 
-
+  /**
+   * @param $amount
+   * @param $paymentOptionId
+   * @param $currency
+   * @param $paymentId
+   * @param $signature
+   * @param $arrUser
+   * @param $basket
+   * @return array
+   */
     private function getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket)
     {
         $arrStartData = [
@@ -260,7 +280,6 @@ class Api
      */
     private function formatAddresses($arrUser)
     {
-
         $femaleSalutations = $this->config->femaleSalutations();
         $gender = 'M';
 
@@ -281,7 +300,12 @@ class Api
         return $arrResult;
     }
 
-    private function getShippingAddress($arrUser){
+  /**
+   * @param $arrUser
+   * @return array
+   */
+    private function getShippingAddress($arrUser)
+    {
         $street = '';
         $houseNumber = '';
         $houseNumberExtension = '';
@@ -296,7 +320,6 @@ class Api
             $houseNumberExtension = $arrUser['shippingaddress']['additionalAddressLine2'];
         }
 
-
         return ['streetName' => $street,
                 'houseNumber' => $houseNumber,
                 'houseNumberExtension' => $houseNumberExtension,
@@ -306,7 +329,12 @@ class Api
             ];
     }
 
-    private function getInvoiceAddress($arrUser){
+  /**
+   * @param $arrUser
+   * @return array
+   */
+    private function getInvoiceAddress($arrUser)
+    {
         $street = '';
         $houseNumber = '';
         $houseNumberExtension = '';

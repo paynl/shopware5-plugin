@@ -8,6 +8,9 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 {
   private $logger;
 
+  /**
+   * @param $message
+   */
   private function log($message)
   {
     if(empty($this->logger)) {
@@ -82,6 +85,12 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $this->processPayment($transactionId, false);
     }
 
+  /**
+   * @param $transactionId
+   * @param bool $isExchange
+   * @return string|void
+   * @throws Exception
+   */
     private function processPayment($transactionId, $isExchange = false)
     {
         $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $transactionId]) . '?utm_nooverride=1';
@@ -155,6 +164,9 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
     }
 
+  /**
+   * @param Transaction\Transaction $transaction
+   */
     private function fixSession(Transaction\Transaction $transaction)
     {
         // remove the basket
@@ -181,6 +193,13 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
     }
 
+  /**
+   * @param Transaction\Transaction $transaction
+   * @param $status
+   * @param bool $shouldCreate
+   * @return bool
+   * @throws Exception
+   */
     private function updateStatus(Transaction\Transaction $transaction, $status, $shouldCreate = false)
     {
         /** @var \PaynlPayment\Components\Config $config */
@@ -222,7 +241,6 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         return true;
     }
-
 
     /**
      * @return Transaction\Repository

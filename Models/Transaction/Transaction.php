@@ -171,7 +171,6 @@ class Transaction
         $this->sDispatch = $sDispatch;
     }
 
-
     /**
      * @return Customer
      */
@@ -367,7 +366,8 @@ class Transaction
     /**
      * @param int $statusId
      */
-    public function setStatusById($statusId){
+    public function setStatusById($statusId)
+    {
         $status = \Shopware()->Models()->getRepository(Status::class)->find($statusId);
         $this->setStatus($status);
     }
@@ -378,6 +378,5 @@ class Transaction
     {
         $this->status = $status;
     }
-
 
 }

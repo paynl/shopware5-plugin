@@ -9,18 +9,21 @@ use Shopware\Models\Payment\Payment;
 
 class Repository extends ModelRepository
 {
-    /**
-     * Initialize a new transaction
-     *
-     * @param Customer $customer
-     * @param int $paymentId
-     * @param Payment $payment
-     * @param string $signature
-     * @param float $amount
-     * @param string $currency
-     * @return Transaction
-     */
-    public function createNew(Customer $customer, int $paymentId, Payment $payment, string $signature, float $amount, string $currency){
+
+  /**
+   * Initialize a new transaction
+   *
+   * @param Customer $customer
+   * @param int $paymentId
+   * @param Payment $payment
+   * @param string $signature
+   * @param float $amount
+   * @param string $currency
+   * @return Transaction
+   * @throws \Exception
+   */
+    public function createNew(Customer $customer, int $paymentId, Payment $payment, string $signature, float $amount, string $currency)
+    {
         $now = new DateTime();
         $transaction = new Transaction();
 
@@ -38,7 +41,13 @@ class Repository extends ModelRepository
         return $transaction;
     }
 
-    public function save(Transaction $transaction){
+  /**
+   * @param Transaction $transaction
+   * @throws \Doctrine\ORM\ORMException
+   * @throws \Doctrine\ORM\OptimisticLockException
+   */
+    public function save(Transaction $transaction)
+    {
         $now = new DateTime();
 
         $transaction->setUpdatedAt($now);

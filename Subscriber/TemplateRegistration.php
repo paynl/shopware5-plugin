@@ -57,6 +57,9 @@ class TemplateRegistration implements SubscriberInterface
         $view->extendsTemplate('backend/paynl_transactions/menu_icon.tpl');
     }
 
+  /**
+   * @param \Enlight_Event_EventArgs $args
+   */
     public function onPostDispatchOrder(\Enlight_Event_EventArgs $args)
     {
         /** @var \Enlight_Controller_Action $controller */
