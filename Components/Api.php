@@ -291,11 +291,16 @@ class Api
                 'lastName' => $arrUser['additional']['user']['lastname'],
                 'emailAddress' => $arrUser['additional']['user']['email'],
                 'customerReference' => $arrUser['additional']['user']['customernumber'],
-                'gender' => $gender
+                'gender' => $gender,
+                'phoneNumber' => isset($arrUser['billingaddress']['phone']) ? $arrUser['billingaddress']['phone'] : '',
             ],
             'address' => $this->getShippingAddress($arrUser),
             'invoiceAddress' => $this->getInvoiceAddress($arrUser)
         ];
+
+        if (isset($arrUser['additional']['user']['birthday']) && !empty($arrUser['additional']['user']['birthday'])) {
+          $arrResult['enduser']['birthDate'] = $arrUser['additional']['user']['birthday'];
+        }
 
         return $arrResult;
     }
