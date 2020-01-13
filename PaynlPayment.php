@@ -25,24 +25,33 @@ use Shopware\Components\Plugin\Context\UpdateContext;
 
 class PaynlPayment extends Plugin
 {
+  /**
+   * @param InstallContext $context
+   */
     public function install(InstallContext $context)
     {
         $this->createTables();
-        $this->initPaymentIdIncrementer($context);
+        $this->initPaymentIdIncrementer();
         $this->migrate();
 
         parent::install($context);
     }
 
+  /**
+   * @param UpdateContext $context
+   */
     public function update(UpdateContext $context)
     {
         $this->createTables();
-        $this->initPaymentIdIncrementer($context);
+        $this->initPaymentIdIncrementer();
         $this->migrate();
 
         parent::update($context);
     }
 
+  /**
+   * @param UninstallContext $context
+   */
     public function uninstall(UninstallContext $context)
     {
       $this->disablePaymentMethods($context->getPlugin());
@@ -65,6 +74,10 @@ class PaynlPayment extends Plugin
       }
     }
 
+   /**
+    * @param ActivateContext $context
+    * @throws \Exception
+    */
     public function activate(ActivateContext $context)
     {
         $plugin = $context->getPlugin();
@@ -74,6 +87,9 @@ class PaynlPayment extends Plugin
         parent::activate($context);
     }
 
+   /**
+    * @param DeactivateContext $context
+    */
     public function deactivate(DeactivateContext $context)
     {
         $this->disablePaymentMethods($context->getPlugin());
@@ -99,7 +115,9 @@ class PaynlPayment extends Plugin
         }
     }
 
-
+    /**
+    * @param \Shopware\Models\Plugin\Plugin $plugin
+    */
     private function disablePaymentMethods(\Shopware\Models\Plugin\Plugin $plugin)
     {
         $em = $this->container->get('models');
@@ -113,9 +131,10 @@ class PaynlPayment extends Plugin
         $em->flush();
     }
 
-    /**
-     * @param \Shopware\Models\Plugin\Plugin $plugin
-     */
+   /**
+    * @param \Shopware\Models\Plugin\Plugin $plugin
+    * @throws \Exception
+    */
     private function installPaymentMethods(\Shopware\Models\Plugin\Plugin $plugin)
     {
         /** @var Config $config */
@@ -129,7 +148,7 @@ class PaynlPayment extends Plugin
           throw new \Exception('Activation error. Please enter valid: Token-Code, API-token and Service-ID');
         }
 
-        /** @var \Shopware\Components\Plugin\PaymentInstaller $installer */
+        /** @var Shopware\Components\Plugin\PaymentInstaller $installer */
         $installer = $this->container->get('shopware.plugin_payment_installer');
 
         foreach ($methods as $key => $method) {
@@ -171,7 +190,7 @@ class PaynlPayment extends Plugin
         ];
     }
 
-    private function initPaymentIdIncrementer($context)
+    private function initPaymentIdIncrementer()
     {
         $db = $this->container->get('db');
 
@@ -216,6 +235,9 @@ class PaynlPayment extends Plugin
       }
     }
 
+  /**
+   * @param $message
+   */
     private function log($message)
     {
       $this->container->get('pluginlogger')->addNotice($message);

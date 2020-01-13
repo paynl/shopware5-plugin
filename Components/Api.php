@@ -133,16 +133,18 @@ class Api
         return \Paynl\Transaction::status($transactionId);
     }
 
-    /**
-     * @param Transaction\Transaction $transaction
-     * @param $amount
-     * @param string $description
-     * @param array $products
-     * @return \Paynl\Result\Transaction\Refund
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\TransactionRequiredException
-     */
+  /**
+   * @param Transaction\Transaction $transaction
+   * @param $amount
+   * @param string $description
+   * @param array $products
+   * @return \Paynl\Result\Transaction\Refund
+   * @throws \Doctrine\ORM\ORMException
+   * @throws \Doctrine\ORM\OptimisticLockException
+   * @throws \Doctrine\ORM\TransactionRequiredException
+   * @throws \Paynl\Error\Api
+   * @throws \Paynl\Error\Error
+   */
     public function refund(Transaction\Transaction $transaction, $amount, $description = '', $products = [])
     {
         if(!$this->config->isRefundAllowed()){

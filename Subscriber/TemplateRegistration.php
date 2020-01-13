@@ -47,13 +47,13 @@ class TemplateRegistration implements SubscriberInterface
      * Handles the Enlight_Controller_Action_PostDispatchSecure_Backend_Index event.
      * Extends the backend icon set with the pay.nl icon
      *
-     * @param ActionEventArgs $args
+     * @param \Enlight_Controller_ActionEventArgs $args
      */
     public function onLoadBackendIndex(\Enlight_Controller_ActionEventArgs $args)
     {
         /** @var Enlight_View_Default $view */
         $view = $args->getSubject()->View();
-        $view->addTemplateDir($this->pluginDir . '/Resources/views/');
+        $view->addTemplateDir($this->pluginDirectory . '/Resources/views/');
         $view->extendsTemplate('backend/paynl_transactions/menu_icon.tpl');
     }
 
