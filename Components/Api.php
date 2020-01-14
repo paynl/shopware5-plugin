@@ -78,12 +78,17 @@ class Api
         $this->config->setShop($shop);
     }
 
+   /**
+    * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
+    * @param $signature
+    * @return \Paynl\Result\Transaction\Start
+    * @throws \Exception
+    */
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
-
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new \Exception('Payment is not a Pay.nl Payment method');
+            throw new \Exception('Payment is not a PAY. Payment method. Name: '. $payment_name);
         }
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
@@ -111,7 +116,7 @@ class Api
         $transaction->setSDispatch($sDispatch);
 
         $arrStartData = $this->getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket);
-        $arrStartData['object'] = 'shopware 3.1.6';
+        $arrStartData['object'] = 'shopware 3.2';
 
         try {
             $this->config->loginSDK();
@@ -120,29 +125,37 @@ class Api
             $this->transactionRepository->save($transaction);
 
             return $result;
-        } catch (\Exception $e) {
-            $transaction->addException($e);
+        } catch (\Exception $objException) {
+            $transaction->addException($objException);
             $this->transactionRepository->save($transaction);
-            throw $e;
+            throw $objException;
         }
     }
 
+  /**
+   * @param $transactionId
+   * @return \Paynl\Result\Transaction\Status
+   * @throws \Paynl\Error\Api
+   * @throws \Paynl\Error\Error
+   */
     public function getTransaction($transactionId)
     {
         $this->config->loginSDK();
         return \Paynl\Transaction::status($transactionId);
     }
 
-    /**
-     * @param Transaction\Transaction $transaction
-     * @param $amount
-     * @param string $description
-     * @param array $products
-     * @return \Paynl\Result\Transaction\Refund
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\TransactionRequiredException
-     */
+  /**
+   * @param Transaction\Transaction $transaction
+   * @param $amount
+   * @param string $description
+   * @param array $products
+   * @return \Paynl\Result\Transaction\Refund
+   * @throws \Doctrine\ORM\ORMException
+   * @throws \Doctrine\ORM\OptimisticLockException
+   * @throws \Doctrine\ORM\TransactionRequiredException
+   * @throws \Paynl\Error\Api
+   * @throws \Paynl\Error\Error
+   */
     public function refund(Transaction\Transaction $transaction, $amount, $description = '', $products = [])
     {
         if(!$this->config->isRefundAllowed()){
@@ -179,7 +192,16 @@ class Api
         return $refundResult;
     }
 
-
+  /**
+   * @param $amount
+   * @param $paymentOptionId
+   * @param $currency
+   * @param $paymentId
+   * @param $signature
+   * @param $arrUser
+   * @param $basket
+   * @return array
+   */
     private function getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket)
     {
         $arrStartData = [
@@ -258,7 +280,6 @@ class Api
      */
     private function formatAddresses($arrUser)
     {
-
         $femaleSalutations = $this->config->femaleSalutations();
         $gender = 'M';
 
@@ -270,16 +291,26 @@ class Api
                 'lastName' => $arrUser['additional']['user']['lastname'],
                 'emailAddress' => $arrUser['additional']['user']['email'],
                 'customerReference' => $arrUser['additional']['user']['customernumber'],
-                'gender' => $gender
+                'gender' => $gender,
+                'phoneNumber' => isset($arrUser['billingaddress']['phone']) ? $arrUser['billingaddress']['phone'] : '',
             ],
             'address' => $this->getShippingAddress($arrUser),
             'invoiceAddress' => $this->getInvoiceAddress($arrUser)
         ];
 
+        if (isset($arrUser['additional']['user']['birthday']) && !empty($arrUser['additional']['user']['birthday'])) {
+          $arrResult['enduser']['birthDate'] = $arrUser['additional']['user']['birthday'];
+        }
+
         return $arrResult;
     }
 
-    private function getShippingAddress($arrUser){
+  /**
+   * @param $arrUser
+   * @return array
+   */
+    private function getShippingAddress($arrUser)
+    {
         $street = '';
         $houseNumber = '';
         $houseNumberExtension = '';
@@ -294,7 +325,6 @@ class Api
             $houseNumberExtension = $arrUser['shippingaddress']['additionalAddressLine2'];
         }
 
-
         return ['streetName' => $street,
                 'houseNumber' => $houseNumber,
                 'houseNumberExtension' => $houseNumberExtension,
@@ -304,7 +334,12 @@ class Api
             ];
     }
 
-    private function getInvoiceAddress($arrUser){
+  /**
+   * @param $arrUser
+   * @return array
+   */
+    private function getInvoiceAddress($arrUser)
+    {
         $street = '';
         $houseNumber = '';
         $houseNumberExtension = '';

@@ -12,7 +12,7 @@ use Shopware\Models\Payment\Payment;
  * Class Transaction
  * @package PaynlPayment\Models
  * @ORM\Entity(repositoryClass="PaynlPayment\Models\Transaction\Repository")
- * @ORM\Table(name="paynl_transactions")
+ * @ORM\Table(name="s_plugin_paynlpayment_transactions")
  */
 class Transaction
 {
@@ -170,7 +170,6 @@ class Transaction
     {
         $this->sDispatch = $sDispatch;
     }
-
 
     /**
      * @return Customer
@@ -367,7 +366,8 @@ class Transaction
     /**
      * @param int $statusId
      */
-    public function setStatusById($statusId){
+    public function setStatusById($statusId)
+    {
         $status = \Shopware()->Models()->getRepository(Status::class)->find($statusId);
         $this->setStatus($status);
     }
@@ -378,6 +378,5 @@ class Transaction
     {
         $this->status = $status;
     }
-
 
 }

@@ -3,7 +3,7 @@
 class Shopware_Controllers_Backend_PaynlTransactions extends Shopware_Controllers_Backend_Application
 {
     protected $model = PaynlPayment\Models\Transaction\Transaction::class;
-    protected $alias = 'paynl_transactions';
+    protected $alias = 's_plugin_paynlpayment_transactions';
 
     protected $filterFields = ['paynlPaymentId', 'transactionId', 'amount', 'customer.firstname', 'customer.lastname', 's_order.number'];
 
@@ -11,9 +11,9 @@ class Shopware_Controllers_Backend_PaynlTransactions extends Shopware_Controller
     {
         $builder = parent::getListQuery();
 
-        $builder->leftJoin('paynl_transactions.status', 'status')
-                ->leftJoin('paynl_transactions.customer', 'customer')
-                ->leftJoin('paynl_transactions.order', 's_order');
+        $builder->leftJoin('s_plugin_paynlpayment_transactions.status', 'status')
+                ->leftJoin('s_plugin_paynlpayment_transactions.customer', 'customer')
+                ->leftJoin('s_plugin_paynlpayment_transactions.order', 's_order');
         $builder->addSelect([
             'status',
             'customer',
