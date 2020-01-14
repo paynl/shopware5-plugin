@@ -34,33 +34,66 @@
         <changes lang="de">Testknopf hinzugefügt. Logging hinzugefügt.</changes>
     </changelog>
     <changelog version="3.1.5">
-        <changes lang="en">
-            Fixed problem with vat shippingtax.            
-        </changes>
-    </changelog>        
+        <changes lang="nl">Probleem met shippingtax opgelost.</changes>
+        <changes lang="en">Fixed problem with vat shippingtax.</changes>
+        <changes lang="de">Problem mit der Mehrwertsteuer behoben.</changes>
+    </changelog>
     <changelog version="3.1.4">
+        <changes lang="nl">
+            Transactie verwerking bijgewerkt.
+            Sessie wordt niet meer meegegeven met exchange.
+        </changes>
         <changes lang="en">
             Updated transaction processing.
             Session is no longer shared between exchange and user.
         </changes>
+        <changes lang="de">
+            Aktualisierte Transaktionsverarbeitung.
+            Die Sitzung wird nicht mehr zwischen Exchange und Benutzer geteilt.
+        </changes>
     </changelog>
     <changelog version="3.1.3">
+        <changes lang="nl">
+            Nederlands vertaling uit het menu verwijderd.
+            Shopware geeft een fout wanneer een menu item niet engels of duits is.
+        </changes>
         <changes lang="en">
             Removed dutch translation of the menu item.
-            Shopware throws an exeption when the menu item is not english or german
+            Shopware throws an exception when the menu item is not english or german
+        </changes>
+        <changes lang="de">
+            Die Niederländische Übersetzung des Menüpunkts wurde entfernt.
+            Shopware löst eine exception aus, wenn der Menüpunkt nicht Deutsch oder Englisch ist.
         </changes>
     </changelog>
     <changelog version="3.1.2">
+        <changes lang="nl">
+            Plugin icon bijgewerkt.
+            Labels en omschrijvingen multilang gemaakt.
+            Sessie uit exchange call verwijderd.
+        </changes>
         <changes lang="en">
-            Updated plugin icon
-            Added lang attributes to all labels and descriptions
-            Removed session from exchange call
+            Updated plugin icon.
+            Added lang attributes to all labels and descriptions.
+            Removed session from exchange call.
+        </changes>
+        <changes lang="de">
+            Aktualisiertes Plugin-Symbol.
+            Allen Bezeichnungen und Beschreibungen wurden lang-Attribute hinzugefügt.
+            Session aus exchange call entfernt.
         </changes>
     </changelog>
     <changelog version="3.1.1">
+        <changes lang="nl">
+            Instelling toegevoegd voor extra adress 1 en 2 for huisnummer extensie.
+            Betere fout afhandeling bij exchangecalls.
+        </changes>
         <changes lang="en">
             Added setting to use additional address 1 and 2 for house number and extension.
-            Additional error handling on exchange
+            Additional error handling on exchange.
+        </changes>
+        <changes lang="de">
+            Einstellung hinzugefügt, um die zusätzlichen Adressen 1 und 2 für Hausnummer und Nebenstelle zu verwenden. Zusätzliche Fehlerbehandlung beim Tausch.
         </changes>
     </changelog>
     <changelog version="3.1.0">

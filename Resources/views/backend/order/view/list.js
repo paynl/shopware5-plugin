@@ -22,12 +22,12 @@ Ext.override(Shopware.apps.Order.view.list.List, {
         var me = this;
 
         var columnAction = Ext.create('Ext.grid.column.Action', {
-            width: 50,
+            width: 60,
             items: [
                 me.getPaynlInfoButton(),
                 me.getPaynlRefundButton(),
             ],
-            header: me.snippets.columns.paynl || 'Paynl'
+            header: me.snippets.columns.paynl || 'PAY.'
         });
 
         return columnAction;
