@@ -4,8 +4,8 @@
     <entries>
         <entry>
             <name>PaynlTransactions</name>
-            <label lang="en">Pay.nl</label>
-            <label lang="de">Pay.nl</label>
+            <label lang="en">PAY.</label>
+            <label lang="de">PAY.</label>
             <controller>PaynlTransactions</controller>
             <action>index</action>
             <class>sprite--paynl-logo</class>
