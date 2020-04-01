@@ -9,6 +9,7 @@
             <tag name="shopware.event_subscriber"/>
         </service>
         <service id="paynl_payment.subscriber.payment_method_issuers" class="PaynlPayment\Subscriber\PaymentMethodIssuers">
+            <argument type="service" id="paynl_payment.issuers_provider"/>
             <tag name="shopware.event_subscriber" />
         </service>
 
@@ -20,6 +21,8 @@
             <argument type="service" id="models"/>
             <argument type="service" id="router"/>
             <argument type="service" id="shopware.number_range_incrementer"/>
+        </service>
+        <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
         </service>
     </services>
 </container>
