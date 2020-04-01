@@ -8,6 +8,9 @@
             <argument type="service" id="template"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+        <service id="paynl_payment.subscriber.payment_method_issuers" class="PaynlPayment\Subscriber\PaymentMethodIssuers">
+            <tag name="shopware.event_subscriber" />
+        </service>
 
         <service id="paynl_payment.config" class="PaynlPayment\Components\Config">
             <argument type="service" id="shopware.plugin.cached_config_reader"/>
