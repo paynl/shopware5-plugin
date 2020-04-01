@@ -86,6 +86,9 @@ class Api
     */
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
+        /** @var \Enlight_Components_Session_Namespace $session */
+        $session = Shopware()->Session();
+
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
             throw new \Exception('Payment is not a PAY. Payment method. Name: '. $payment_name);
@@ -115,7 +118,18 @@ class Api
         $transaction->setSComment($sComment);
         $transaction->setSDispatch($sDispatch);
 
-        $arrStartData = $this->getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket);
+        $bank = $session->issuer;
+        $session->issuer = null;
+        $arrStartData = $this->getStartData(
+            $amount,
+            $paymentOptionId,
+            $currency,
+            $paymentId,
+            $signature,
+            $arrUser,
+            $basket,
+            $bank
+        );
         $arrStartData['object'] = 'shopware 3.2';
 
         try {
@@ -200,10 +214,19 @@ class Api
    * @param $signature
    * @param $arrUser
    * @param $basket
+   * @param $bank
    * @return array
    */
-    private function getStartData($amount, $paymentOptionId, $currency, $paymentId, $signature, $arrUser, $basket)
-    {
+    private function getStartData(
+        $amount,
+        $paymentOptionId,
+        $currency,
+        $paymentId,
+        $signature,
+        $arrUser,
+        $basket,
+        $bank = null
+    ) {
         $arrStartData = [
             // Basic data
             'amount' => $amount,
@@ -221,6 +244,10 @@ class Api
             // Products
             'products' => $this->getProducts($basket),
         ];
+
+        if (!empty($bank)) {
+            $arrStartData['bank'] = $bank;
+        }
 
         $addresses = $this->formatAddresses($arrUser);
         $arrStartData = array_merge($arrStartData, $addresses);

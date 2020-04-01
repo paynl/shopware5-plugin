@@ -128,8 +128,11 @@ class PaymentMethodIssuers implements SubscriberInterface
         ];
         $view->assign('issuers', $issuers);
 
-        $selectedIssuer = Shopware()->Front()->Request()->getPost('issuer');
+        $selectedIssuer = Shopware()->Front()->Request()->getPost('issuer') ?: $session->issuer;
         $view->assign('selectedIssuer', $selectedIssuer);
-        $session->issuer = $selectedIssuer;
+
+        if (!empty($selectedIssuer)) {
+            $session->issuer = $selectedIssuer;
+        }
     }
 }

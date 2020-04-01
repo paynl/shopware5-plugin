@@ -2,7 +2,7 @@
 
 <div class="select-field">
     <select id="issuer-select" name="issuer">
-        <option>Select your bank</option>
+        <option value="0">Select your bank</option>
         {foreach from=$issuers item=issuer}
             <option value="{$issuer->id}"{if $selectedIssuer == $issuer->id} selected{/if}>{$issuer->name}</option>
         {/foreach}
