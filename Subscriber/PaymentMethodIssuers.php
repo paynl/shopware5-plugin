@@ -37,6 +37,9 @@ class PaymentMethodIssuers implements SubscriberInterface
         /** @var \Enlight_Components_Session_Namespace $session */
         $session = Shopware()->Session();
 
+        /** @var \Enlight_Controller_Request_Request $request */
+        $request = $args->getRequest();
+
         $paymentName = $session['sOrderVariables']['sPayment']['name'];
         $paymentMethodID = $this->issuersProvider->getPaymentMethodIdByName($paymentName);
         if (!empty($paymentMethodID)) {
@@ -46,11 +49,17 @@ class PaymentMethodIssuers implements SubscriberInterface
         }
         $view->assign('issuers', $issuers);
 
-        $selectedIssuer = Shopware()->Front()->Request()->getPost('issuer') ?: $session->issuer;
-        $view->assign('selectedIssuer', $selectedIssuer);
+        $issuerFromRequest = $request->getPost('issuer');
+        $selectedIssuer = is_null($issuerFromRequest) ? $session->issuer : $issuerFromRequest;
 
+        $view->assign('selectedIssuer', $selectedIssuer);
         if (!empty($selectedIssuer)) {
             $session->issuer = $selectedIssuer;
         }
+
+        if ($selectedIssuer == 0) {
+            $session->issuer = null;
+        }
+
     }
 }
