@@ -2,26 +2,12 @@
 
 namespace PaynlPayment\Components;
 
-use Exception;
-
 class IssuersProvider
 {
-    public function getPaymentMethodIdByName(string $paymentMethodName): int
-    {
-        if (substr($paymentMethodName, 0, 6) !== 'paynl_') {
-            throw new Exception('Payment is not a PAY. Payment method. Name: '. $paymentMethodName);
-        }
-
-        $paymentOptionId = explode('_', $paymentMethodName);
-
-        return (int)($paymentOptionId[1] ?? 0);
-    }
-
     /**
-     * @param int $paymentId
      * @return mixed[]
      */
-    public function getIssuers(int $paymentId): array
+    public function getIssuers(): array
     {
         // TODO: return issuers only for payment method
 

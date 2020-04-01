@@ -118,8 +118,8 @@ class Api
         $transaction->setSComment($sComment);
         $transaction->setSDispatch($sDispatch);
 
-        $bank = $session->issuer;
-        $session->issuer = null;
+        $bank = $session->paynlIssuer;
+        $session->paynlIssuer = null;
         $arrStartData = $this->getStartData(
             $amount,
             $paymentOptionId,

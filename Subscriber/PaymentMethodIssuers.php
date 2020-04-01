@@ -30,37 +30,25 @@ class PaymentMethodIssuers implements SubscriberInterface
     {
         /** @var Enlight_Controller_Action $controller */
         $controller = $args->getSubject();
-//
+
         /** @var Enlight_View $view */
         $view = $controller->View();
-//
+
         /** @var \Enlight_Components_Session_Namespace $session */
         $session = Shopware()->Session();
-//
-        /** @var \Enlight_Controller_Request_Request $request */
-        $request = $args->getRequest();
-//
-        $paymentName = $session['sOrderVariables']['sPayment']['name'];
-        if (!is_null($paymentName)) {
-            $paymentMethodID = $this->issuersProvider->getPaymentMethodIdByName($paymentName);
-            if (!empty($paymentMethodID)) {
-                $issuers = $this->issuersProvider->getIssuers($paymentMethodID);
-            } else {
-                $issuers = [];
-            }
-            $view->assign('issuers', $issuers);
 
-            $issuerFromRequest = $request->getPost('issuer');
-            $selectedIssuer = is_null($issuerFromRequest) ? $session->issuer : $issuerFromRequest;
+        $selectedIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer') ?: $session->paynlIssuer;
 
-            $view->assign('selectedIssuer', $selectedIssuer);
-            if (!empty($selectedIssuer)) {
-                $session->issuer = $selectedIssuer;
-            }
-
-            if ($selectedIssuer == 0) {
-                $session->issuer = null;
-            }
+        if (!empty($selectedIssuer)) {
+            $session->paynlIssuer = $selectedIssuer;
         }
+        $view->assign('paynlSelectedIssuer', $selectedIssuer);
+
+        if ($selectedIssuer == 0) {
+            $session->paynlIssuer = null;
+        }
+
+        $issuers = $this->issuersProvider->getIssuers();
+        $view->assign('paynlIssuers', $issuers);
     }
 }
