@@ -31,6 +31,14 @@ class PaymentMethodIssuers implements SubscriberInterface
         /** @var Enlight_Controller_Action $controller */
         $controller = $args->getSubject();
 
+        $request = $args->getRequest();
+        $controllerName = $request->getControllerName();
+        $action = $request->getActionName();
+
+        if (!($controllerName == 'checkout' && $action == 'shippingPayment')) {
+            return;
+        }
+
         /** @var Enlight_View $view */
         $view = $controller->View();
 
