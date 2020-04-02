@@ -25,7 +25,7 @@
                                             {include file="string:{$payment_mean.additionaldescription}"}
                                         {/block}
                                     </div>
-                                    <div style="display: inline-block; vertical-align: middle">
+                                    <div class="display-inline-middle">
                                         {$payment_mean.description}
                                     </div>
                                 </label>
