@@ -17,7 +17,7 @@
 
                         {* Method Name *}
                         {block name='frontend_checkout_payment_fieldset_input_label'}
-                            <div class="method--label is--first">
+                            <div class="method--label is--first mb-xs-5">
                                 <label class="method--name is--strong"
                                        for="payment_mean{$payment_mean.id}">
                                     <div class="display-inline-middle">

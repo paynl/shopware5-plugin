@@ -6,3 +6,9 @@
 .display-inline-middle .method--bankdata {
     height: 42px;
 }
+
+@media (max-width: 767px) {
+    .mb-xs-5 {
+        margin-bottom: 5px;
+    }
+}
