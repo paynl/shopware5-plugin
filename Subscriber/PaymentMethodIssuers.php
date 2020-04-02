@@ -44,14 +44,14 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         /** @var \Enlight_Components_Session_Namespace $session */
         $session = Shopware()->Session();
-        $selectedIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer') ?: $session->paynlIssuer;
 
+        $selectedIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer') ?? $session->paynlIssuer;
         if ($action == 'confirm' || $action == 'saveShippingPayment') {
             if (!empty($selectedIssuer)) {
                 $session->paynlIssuer = $selectedIssuer;
             }
 
-            if ($selectedIssuer == 0) {
+            if (empty($selectedIssuer)) {
                 $session->paynlIssuer = null;
             }
         }
