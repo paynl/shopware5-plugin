@@ -33,30 +33,33 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         $request = $args->getRequest();
         $controllerName = $request->getControllerName();
-        $action = $request->getActionName();
-
-        if (!($controllerName == 'checkout' && $action == 'shippingPayment')) {
+        if ($controllerName != 'checkout') {
             return;
         }
+
+        $action = $request->getActionName();
 
         /** @var Enlight_View $view */
         $view = $controller->View();
 
         /** @var \Enlight_Components_Session_Namespace $session */
         $session = Shopware()->Session();
-
         $selectedIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer') ?: $session->paynlIssuer;
 
-        if (!empty($selectedIssuer)) {
-            $session->paynlIssuer = $selectedIssuer;
-        }
-        $view->assign('paynlSelectedIssuer', $selectedIssuer);
+        if ($action == 'confirm' || $action == 'saveShippingPayment') {
+            if (!empty($selectedIssuer)) {
+                $session->paynlIssuer = $selectedIssuer;
+            }
 
-        if ($selectedIssuer == 0) {
-            $session->paynlIssuer = null;
+            if ($selectedIssuer == 0) {
+                $session->paynlIssuer = null;
+            }
         }
 
-        $issuers = $this->issuersProvider->getIssuers();
-        $view->assign('paynlIssuers', $issuers);
+        if ($action == 'shippingPayment') {
+            $issuers = $this->issuersProvider->getIssuers();
+            $view->assign('paynlSelectedIssuer', $selectedIssuer);
+            $view->assign('paynlIssuers', $issuers);
+        }
     }
 }
