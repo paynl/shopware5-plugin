@@ -1,7 +1,5 @@
 {namespace name='frontend/plugins/payment/ideal'}
 
-<h4>{s name="PluginsIdealLabel" namespace="frontend/paynl/plugins"}{/s}</h4>
-
 <div class="select-field">
     <select id="issuer-select" name="paynlIssuer">
         <option value="0">{s name="PluginsIdealSelect" namespace="frontend/paynl/plugins"}{/s}</option>

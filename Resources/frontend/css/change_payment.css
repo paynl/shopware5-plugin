@@ -1,0 +1,8 @@
+.display-inline-middle {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.display-inline-middle .method--bankdata {
+    height: 42px;
+}
