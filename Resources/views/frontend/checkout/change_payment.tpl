@@ -3,10 +3,9 @@
 {block name='frontend_checkout_payment_content'}
     <div class="panel--body is--wide block-group">
         {foreach $sPayments as $payment_mean}
-            {if $payment_mean.name == 'paynl_10'}
+            {if $payment_mean.action == 'PaynlPayment'}
                 <div class="payment--method block{if $payment_mean@last} method_last{else} method{/if}">
                     <div class="display-inline-middle">
-
                         {* Radio Button *}
                         {block name='frontend_checkout_payment_fieldset_input_radio'}
                             <div class="method--input">
@@ -21,9 +20,7 @@
                                 <label class="method--name is--strong"
                                        for="payment_mean{$payment_mean.id}">
                                     <div class="display-inline-middle">
-                                        {block name='frontend_checkout_payment_fieldset_description'}
-                                            {include file="string:{$payment_mean.additionaldescription}"}
-                                        {/block}
+                                        <img src="https://static.pay.nl/payment_profiles/50x32/{$payment_mean.name|substr:6}.png" />
                                     </div>
                                     <div class="display-inline-middle">
                                         {$payment_mean.description}
@@ -39,6 +36,13 @@
                             </div>
                         {/if}
                     </div>
+
+                    {* Method Description *}
+                    {block name='frontend_checkout_payment_fieldset_description'}
+                        <div class="method--description is--last">
+                            {include file="string:{$payment_mean.additionaldescription}"}
+                        </div>
+                    {/block}
 
                     {* Method Logo *}
                     {block name='frontend_checkout_payment_fieldset_template'}
