@@ -4,7 +4,7 @@
     <div class="panel--body is--wide block-group">
         {foreach $sPayments as $payment_mean}
             {if $payment_mean.action == 'PaynlPayment'}
-                <div class="payment--method block{if $payment_mean@last} method_last{else} method{/if}">
+                <div class="payment--method paynl-payment-method block{if $payment_mean@last} method_last{else} method{/if}">
                     <div class="display-inline-middle">
 
                         {* Radio Button *}
