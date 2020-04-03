@@ -21,9 +21,7 @@
                                 <label class="method--name is--strong"
                                        for="payment_mean{$payment_mean.id}">
                                     <div class="display-inline-middle">
-                                        {block name='frontend_checkout_payment_fieldset_description'}
-                                            {include file="string:{$payment_mean.additionaldescription}"}
-                                        {/block}
+                                        <img src="https://static.pay.nl/payment_profiles/50x32/{$payment_mean.name|substr:6}.png" />
                                     </div>
                                     <div class="display-inline-middle">
                                         {$payment_mean.description}
@@ -39,6 +37,13 @@
                             </div>
                         {/if}
                     </div>
+
+                    {* Method Description *}
+                    {block name='frontend_checkout_payment_fieldset_description'}
+                        <div class="method--description is--last">
+                            {include file="string:{$payment_mean.additionaldescription}"}
+                        </div>
+                    {/block}
 
                     {* Method Logo *}
                     {block name='frontend_checkout_payment_fieldset_template'}

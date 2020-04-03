@@ -159,8 +159,7 @@ class PaynlPayment extends Plugin
                 'description' => $method['name'],
                 'action' => 'PaynlPayment',
                 'active' => true,
-                'additionalDescription' =>
-                    '<img src="https://static.pay.nl/payment_profiles/50x32/' . $method['id'] . '.png" />'
+                'additionalDescription' => ''
             ];
 
             $pluginTemplateName = strtolower(preg_replace('/[\W]/', '_', $method['name'])) . '.tpl';
