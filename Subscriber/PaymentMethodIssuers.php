@@ -46,7 +46,7 @@ class PaymentMethodIssuers implements SubscriberInterface
         $session = Shopware()->Session();
 
         $selectedIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer');
-        if (is_null($selectedIssuer)) {
+        if (empty($selectedIssuer)) {
             $selectedIssuer = $session->paynlIssuer;
         }
         if ($action == 'confirm' || $action == 'saveShippingPayment') {
