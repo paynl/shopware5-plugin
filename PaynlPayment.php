@@ -25,6 +25,8 @@ use Shopware\Components\Plugin\Context\UpdateContext;
 
 class PaynlPayment extends Plugin
 {
+    const PAYMENT_METHODS_TEMPLATES_DIRECTORY = __DIR__ . '/Resources/views/frontend/plugins/payment/';
+
   /**
    * @param InstallContext $context
    */
@@ -157,9 +159,14 @@ class PaynlPayment extends Plugin
                 'description' => $method['name'],
                 'action' => 'PaynlPayment',
                 'active' => true,
-                'additionalDescription' =>
-                    '<img src="https://static.pay.nl/payment_profiles/50x32/' . $method['id'] . '.png" />'
+                'additionalDescription' => ''
             ];
+
+            $pluginTemplateName = strtolower(preg_replace('/[\W]/', '_', $method['name'])) . '.tpl';
+            if(is_file(self:: PAYMENT_METHODS_TEMPLATES_DIRECTORY . $pluginTemplateName)) {
+                $options['template'] = $pluginTemplateName;
+            }
+
             $installer->createOrUpdate($plugin->getName(), $options);
         }
     }

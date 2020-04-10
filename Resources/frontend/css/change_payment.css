@@ -1,0 +1,14 @@
+.paynl-payment-method .display-inline-middle {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.paynl-payment-method .display-inline-middle .method--bankdata {
+    height: 42px;
+}
+
+@media (max-width: 767px) {
+    .paynl-payment-method .mb-xs-5 {
+        margin-bottom: 5px;
+    }
+}

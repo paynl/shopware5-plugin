@@ -33,6 +33,7 @@ class TemplateRegistration implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Action_PreDispatch' => 'onPreDispatch',
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onLoadFrontendCheckout',
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Index' => 'onLoadBackendIndex',
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Order' => 'onPostDispatchOrder'
         ];
@@ -71,5 +72,13 @@ class TemplateRegistration implements SubscriberInterface
         if ($request->getActionName() == 'load') {
             $view->extendsTemplate('backend/order/view/list.js');
         }
+    }
+
+    public function onLoadFrontendCheckout(\Enlight_Event_EventArgs $args)
+    {
+        /** @var \Enlight_View_Default $view */
+        $view = $args->getSubject()->View();
+        $view->addTemplateDir($this->pluginDirectory . '/Resources/');
+        $view->extendsTemplate('frontend/css/change_payment.css');
     }
 }
