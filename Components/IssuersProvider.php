@@ -7,7 +7,7 @@ class IssuersProvider
     /**
      * @return mixed[]
      */
-    public function getIssuers(): array
+    public function getIssuers()
     {
         // TODO: return issuers only for payment method
 
