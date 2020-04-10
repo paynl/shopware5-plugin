@@ -6,21 +6,21 @@ use Shopware\Models\Order;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-  private $logger;
+    private $logger;
 
-  /**
-   * @param $message
-   */
-  private function log($message)
-  {
-    if(empty($this->logger)) {
-      $this->logger = $this->container->get('pluginlogger');
+    /**
+     * @param $message
+     */
+    private function log($message)
+    {
+        if (empty($this->logger)) {
+            $this->logger = $this->container->get('pluginlogger');
+        }
+
+        $this->logger->addError($message);
     }
 
-    $this->logger->addError($message);
-  }
-
-  public function indexAction()
+    public function indexAction()
     {
         if (substr($this->getPaymentShortName(), 0, 6) !== 'paynl_') {
             throw new Exception('Payment is not a PAY. Payment method');
@@ -34,7 +34,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         parent::preDispatch();
 
         if ($this->Request()->get('action')) {
-            $actionName = $this->Request()->get('action') . 'Action';
+            $actionName = sprintf('%s%s', $this->Request()->get('action'), 'Action');
             if (!method_exists($this, $actionName)) {
                 $this->notifyAction();
             }
@@ -59,24 +59,31 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $result = $paynlApi->startPayment($this, $signature);
             if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
         } catch (Exception $e) {
-          $this->log('PAY.: Could not start payment. Error: ' . $e->getMessage());
-          $this->View()->assign('message', $e->getMessage());
+            $this->log(sprintf('PAY.: Could not start payment. Error: %s', $e->getMessage()));
+            $this->View()->assign('message', $e->getMessage());
         }
     }
 
     public function notifyAction()
     {
-        $action = $this->request->isPost() ? $this->request->getPost('action') : $this->request->get('action');
-        $transactionId = $this->request->isPost() ? $this->request->getPost('order_id') : $this->request->get('order_id');
+        $action =
+            $this->request->isPost() ? $this->request->getPost('action') : $this->request->get('action');
+        $transactionId =
+            $this->request->isPost() ? $this->request->getPost('order_id') : $this->request->get('order_id');
 
-        if ($action == 'pending') die('TRUE| Ignoring pending');
+        if ($action == 'pending') {
+            return 'TRUE| Ignoring pending';
+        };
 
         try {
             $result = $this->processPayment($transactionId, true);
-            die('TRUE|' . $result);
+
+            return sprintf('TRUE|%s', $result);
         } catch (Exception $e) {
-            $this->log('PAY.: Could not process payment. Error: ' . $e->getMessage());
-            die('FALSE|' . $e->getMessage());
+            $logMessage = sprintf('PAY.: Could not process payment. Error: %s', $e->getMessage());
+            $this->log($logMessage);
+
+            return sprintf('FALSE|%s', $e->getMessage());
         }
     }
 
@@ -86,15 +93,20 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $this->processPayment($transactionId, false);
     }
 
-  /**
-   * @param $transactionId
-   * @param bool $isExchange
-   * @return string|void
-   * @throws Exception
-   */
+    /**
+     * @param $transactionId
+     * @param bool $isExchange
+     * @return string|void
+     * @throws Exception
+     */
     private function processPayment($transactionId, $isExchange = false)
     {
-        $successUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $transactionId]) . '?utm_nooverride=1';
+        $successUrl = sprintf($this->Front()->Router()->assemble([
+            'controller' => 'checkout',
+            'action' => 'finish',
+            'sUniqueID' => $transactionId
+        ]), '?utm_nooverride=1');
+
         $cancelUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'confirm']);
 
         /** @var \PaynlPayment\Components\Config $config */
@@ -110,9 +122,9 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         try {
 
-          if(empty($transaction)) {
-            throw new Exception('Could not find transaction', 999);
-          }
+            if (empty($transaction)) {
+                throw new Exception('Could not find transaction', 999);
+            }
             // status en amount ophalen.
             $config->loginSDK();
             $apiTransaction = \Paynl\Transaction::get($transactionId);
@@ -141,6 +153,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 return $e->getMessage();
             }
         }
+
         if (!$isExchange) {
             if ($canceled) {
                 return $this->redirect($cancelUrl);
@@ -161,13 +174,14 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             if ($shouldCreate) {
                 throw new \Exception('Order should have been created, but an error has occurred');
             }
+
             return "No action, order was not created";
         }
     }
 
-  /**
-   * @param Transaction\Transaction $transaction
-   */
+    /**
+     * @param Transaction\Transaction $transaction
+     */
     private function fixSession(Transaction\Transaction $transaction)
     {
         // remove the basket
@@ -194,13 +208,13 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         Shopware()->Session()->offsetSet('sOrderVariables', $sOrderVariables);
     }
 
-  /**
-   * @param Transaction\Transaction $transaction
-   * @param $status
-   * @param bool $shouldCreate
-   * @return bool
-   * @throws Exception
-   */
+    /**
+     * @param Transaction\Transaction $transaction
+     * @param $status
+     * @param bool $shouldCreate
+     * @return bool
+     * @throws Exception
+     */
     private function updateStatus(Transaction\Transaction $transaction, $status, $shouldCreate = false)
     {
         /** @var \PaynlPayment\Components\Config $config */
@@ -211,7 +225,13 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
         // order exists
         if ($transaction->getOrder()) {
-            $this->savePaymentStatus($transaction->getPaynlPaymentId(), $transaction->getTransactionId(), $status, $config->sendStatusMail());
+            $this->savePaymentStatus(
+                $transaction->getPaynlPaymentId(),
+                $transaction->getTransactionId(),
+                $status,
+                $config->sendStatusMail()
+            );
+
             $transaction->setStatusById($status);
             $this->getTransactionRepository()->save($transaction);
 
