@@ -1,25 +1,25 @@
 function updateRefundAmount() {
-    var total = 0;
-    var selectsArray = document.getElementsByClassName("select-refund-qty");
+    let total = 0;
+    let selectsArray = document.getElementsByClassName("select-refund-qty");
 
-    for (var i = 0; i < selectsArray.length; i++) {
-        var priceAmount = selectsArray[i].dataset.price;
-        var qtyAmount = selectsArray[i].value;
+    for (let i = 0; i < selectsArray.length; i++) {
+        let priceAmount = selectsArray[i].dataset.price;
+        let qtyAmount = selectsArray[i].value;
 
         total += priceAmount * qtyAmount;
     }
 
-    var isShipingAmountRefunded = document.getElementById("checkRefundShipping").checked;
+    let isShipingAmountRefunded = document.getElementById("checkRefundShipping").checked;
     if (isShipingAmountRefunded) {
-        var refundShippingEl = document.getElementById('checkRefundShipping');
+        let refundShippingEl = document.getElementById('checkRefundShipping');
         total += refundShippingEl.dataset.price * 1;
     }
 
     document.getElementById('refundAmount').value = total.toFixed(2);
 }
 
-var selects = document.getElementsByClassName("select-refund-qty");
-for (var index = 0; index < selects.length; index++) {
+let selects = document.getElementsByClassName("select-refund-qty");
+for (let index = 0; index < selects.length; index++) {
     selects[index].onchange = updateRefundAmount;
 }
 
