@@ -3,6 +3,7 @@
 use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order;
+use PaynlPayment\Exceptions\PaynlPaymentException;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -23,7 +24,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
     public function indexAction()
     {
         if (substr($this->getPaymentShortName(), 0, 6) !== 'paynl_') {
-            throw new Exception('Payment is not a PAY. Payment method');
+            throw new PaynlPaymentException('Payment is not a PAY. Payment method');
         }
 
         $this->forward('redirect');
@@ -126,7 +127,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         try {
 
             if (empty($transaction)) {
-                throw new Exception('Could not find transaction', 999);
+                throw new PaynlPaymentException('Could not find transaction', 999);
             }
             // status en amount ophalen.
             $config->loginSDK();
@@ -151,7 +152,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $canceled = true;
                 $this->updateStatus($transaction, Transaction\Transaction::STATUS_CANCEL, $shouldCreate);
             }
-        } catch (Exception $e) {
+        } catch (PaynlPaymentException $e) {
             if ($isExchange && $e->getCode() == 999) {
                 return $e->getMessage();
             }
@@ -224,7 +225,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $config = $this->container->get('paynl_payment.config');
 
         if (!is_null($transaction->getStatus()) && $transaction->getStatus()->getId() == $status) {
-            throw new Exception('Already processed', 999);
+            throw new PaynlPaymentException('Already processed', 999);
         }
         // order exists
         if ($transaction->getOrder()) {

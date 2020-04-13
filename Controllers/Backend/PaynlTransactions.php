@@ -12,8 +12,8 @@ class Shopware_Controllers_Backend_PaynlTransactions extends Shopware_Controller
         $builder = parent::getListQuery();
 
         $builder->leftJoin('s_plugin_paynlpayment_transactions.status', 'status')
-                ->leftJoin('s_plugin_paynlpayment_transactions.customer', 'customer')
-                ->leftJoin('s_plugin_paynlpayment_transactions.order', 's_order');
+            ->leftJoin('s_plugin_paynlpayment_transactions.customer', 'customer')
+            ->leftJoin('s_plugin_paynlpayment_transactions.order', 's_order');
         $builder->addSelect([
             'status',
             'customer',

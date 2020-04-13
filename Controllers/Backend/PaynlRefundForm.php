@@ -3,6 +3,7 @@
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order\Detail;
 use \Shopware\Models\Shop\Currency;
+use PaynlPayment\Exceptions\PaynlPaymentException;
 
 /**
  * Example:
@@ -37,7 +38,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
         $paynlApi->setShop($shop);
         $paynlConfig->setShop($shop);
 
-        if($paynlConfig->get('allow_refunds') == 0){
+        if ($paynlConfig->get('allow_refunds') == 0) {
             $this->forward('disabled');
         }
 
@@ -115,7 +116,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
 
             $messages[] = ['type' => 'success', 'content' => 'Refund successful (' . $refundResult->getData()['description'] . ')'];
 
-        } catch (\Exception $e) {
+        } catch (PaynlPaymentException $e) {
             $messages[] = ['type' => 'danger', 'content' => $e->getMessage()];
         }
 
@@ -124,6 +125,6 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
 
     public function getWhitelistedCSRFActions()
     {
-        return ['index', 'refund','disabled'];
+        return ['index', 'refund', 'disabled'];
     }
 }
