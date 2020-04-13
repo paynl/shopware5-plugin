@@ -1,11 +1,12 @@
-function updateRefundAmount(){
+function updateRefundAmount() {
     var total = 0;
-    var selects = document.getElementsByClassName("select-refund-qty");
-    for (var index = 0; index < selects.length; index++) {
-        var price = selects[index].dataset.price;
-        var qty = selects[index].value;
+    var selectsArray = document.getElementsByClassName("select-refund-qty");
 
-        total += price * qty;
+    for (var i = 0; i < selectsArray.length; i++) {
+        var priceAmount = selectsArray[i].dataset.price;
+        var qtyAmount = selectsArray[i].value;
+
+        total += priceAmount * qtyAmount;
     }
 
     var isShipingAmountRefunded = document.getElementById("checkRefundShipping").checked;
@@ -25,4 +26,3 @@ for (var index = 0; index < selects.length; index++) {
 document.getElementById('checkRefundShipping').onchange = updateRefundAmount;
 
 updateRefundAmount();
-
