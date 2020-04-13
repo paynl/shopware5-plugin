@@ -9,18 +9,11 @@
 </head>
 <body role="document" style="padding-top: 20px">
 
-<!-- Fixed navbar -->
-{*<nav class="navbar navbar-inverse navbar-fixed-top">*}
-{*{block name="content/navigation"}{/block}*}
-{*</nav>*}
-
 <div class="container-fluid" role="main">
     {block name="content/main"}{/block}
 </div> <!-- /container -->
 
 <script type="text/javascript" src="{link file="backend/_resources/lib/jquery/dist/jquery.min.js"}"></script>
-<script type="text/javascript" src="{link file="backend/_resources/lib/popper.js/dist/popper.min.js"}"></script>
-<script type="text/javascript" src="{link file="backend/_resources/lib/bootstrap/dist/js/bootstrap.min.js"}"></script>
 {block name="content/javascript"}{/block}
 </body>
 </html>
