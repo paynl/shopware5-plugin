@@ -140,7 +140,7 @@ class Api
             $transaction->addException($objException);
             $this->transactionRepository->save($transaction);
 
-            throw $objException;
+            throw new PaynlPaymentException($objException);
         }
     }
 

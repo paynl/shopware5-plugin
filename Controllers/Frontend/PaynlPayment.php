@@ -62,7 +62,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             if ($result->getRedirectUrl()) {
                 $this->redirect($result->getRedirectUrl());
             }
-        } catch (Exception $e) {
+        } catch (PaynlPaymentException $e) {
             $this->log(sprintf('PAY.: Could not start payment. Error: %s', $e->getMessage()));
             $this->View()->assign('message', $e->getMessage());
         }
@@ -83,7 +83,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $result = $this->processPayment($transactionId, true);
 
             return sprintf('TRUE|%s', $result);
-        } catch (Exception $e) {
+        } catch (PaynlPaymentException $e) {
             $logMessage = sprintf('PAY.: Could not process payment. Error: %s', $e->getMessage());
             $this->log($logMessage);
 
@@ -125,10 +125,10 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $shouldCreate = false;
 
         try {
-
             if (empty($transaction)) {
                 throw new PaynlPaymentException('Could not find transaction', 999);
             }
+
             // status en amount ophalen.
             $config->loginSDK();
             $apiTransaction = \Paynl\Transaction::get($transactionId);
@@ -176,7 +176,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             );
         } else {
             if ($shouldCreate) {
-                throw new \Exception('Order should have been created, but an error has occurred');
+                throw new PaynlPaymentException('Order should have been created, but an error has occurred');
             }
 
             return "No action, order was not created";
@@ -251,7 +251,6 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $this->get('session')->sComment = $transaction->getSComment();
             $this->get('session')->sDispatch = $transaction->getSDispatch();
         }
-
 
         $transaction->getSDispatch();
         $basket = $this->loadBasketFromSignature($transaction->getSignature());
