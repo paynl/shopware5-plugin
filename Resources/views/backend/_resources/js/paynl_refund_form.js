@@ -4,9 +4,9 @@ function updateRefundAmount() {
 
     for (let i = 0; i < selectsArray.length; i++) {
         let priceAmount = selectsArray[i].dataset.price;
-        let qtyAmount = selectsArray[i].value;
+        let quantityAmount = selectsArray[i].value;
 
-        total += priceAmount * qtyAmount;
+        total += priceAmount * quantityAmount;
     }
 
     let isShipingAmountRefunded = document.getElementById("checkRefundShipping").checked;
