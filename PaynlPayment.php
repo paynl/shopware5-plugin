@@ -153,7 +153,7 @@ class PaynlPayment extends Plugin
         /** @var Shopware\Components\Plugin\PaymentInstaller $installer */
         $installer = $this->container->get('shopware.plugin_payment_installer');
 
-        foreach ($methods as $key => $method) {
+        foreach ($methods as $method) {
             $options = [
                 'name' => 'paynl_' . $method['id'],
                 'description' => $method['name'],

@@ -57,7 +57,10 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $paynlApi = $this->get('paynl_payment.api');
         try {
             $result = $paynlApi->startPayment($this, $signature);
-            if ($result->getRedirectUrl()) $this->redirect($result->getRedirectUrl());
+
+            if ($result->getRedirectUrl()) {
+                $this->redirect($result->getRedirectUrl());
+            }
         } catch (Exception $e) {
             $this->log(sprintf('PAY.: Could not start payment. Error: %s', $e->getMessage()));
             $this->View()->assign('message', $e->getMessage());
@@ -73,7 +76,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         if ($action == 'pending') {
             return 'TRUE| Ignoring pending';
-        };
+        }
 
         try {
             $result = $this->processPayment($transactionId, true);

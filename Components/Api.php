@@ -195,7 +195,10 @@ class Api
                     // Restock it
                     /** @var Article\Detail $articleDetail */
                     $articleDetail = $articleDetailRepository->findOneBy(['articleId' => $id]);
-                    if (is_null($articleDetail)) continue;
+                    if (is_null($articleDetail)) {
+                        continue;
+                    }
+
                     $newStock = $articleDetail->getInStock() + $product['qty'];
                     $articleDetail->setInStock($newStock);
                     $this->modelManager->persist($articleDetail);
@@ -203,6 +206,7 @@ class Api
             }
         }
         $this->modelManager->flush();
+
         return $refundResult;
     }
 
@@ -250,9 +254,8 @@ class Api
         }
 
         $addresses = $this->formatAddresses($arrUser);
-        $arrStartData = array_merge($arrStartData, $addresses);
 
-        return $arrStartData;
+        return array_merge($arrStartData, $addresses);
     }
 
     /**
@@ -308,9 +311,7 @@ class Api
     private function formatAddresses($arrUser)
     {
         $femaleSalutations = $this->config->femaleSalutations();
-        $gender = 'M';
-
-        if (in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $gender = 'F';
+        $gender = in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations) ? 'F' : 'M';
 
         $arrResult = [
             'enduser' => [
@@ -344,21 +345,28 @@ class Api
 
         if(!$this->config->useAdditionalAddressFields()){
             $arrShippingAddress = \Paynl\Helper::splitAddress($arrUser['shippingaddress']['street']);
-            if(isset($arrShippingAddress[0])) $street = $arrShippingAddress[0];
-            if(isset($arrShippingAddress[1])) $houseNumber = $arrShippingAddress[1];
+
+            if(isset($arrShippingAddress[0])) {
+                $street = $arrShippingAddress[0];
+            }
+
+            if(isset($arrShippingAddress[1])) {
+                $houseNumber = $arrShippingAddress[1];
+            }
         } else {
             $street = $arrUser['shippingaddress']['street'];
             $houseNumber = $arrUser['shippingaddress']['additionalAddressLine1'];
             $houseNumberExtension = $arrUser['shippingaddress']['additionalAddressLine2'];
         }
 
-        return ['streetName' => $street,
-                'houseNumber' => $houseNumber,
-                'houseNumberExtension' => $houseNumberExtension,
-                'zipCode' => $arrUser['shippingaddress']['zipcode'],
-                'city' => $arrUser['shippingaddress']['city'],
-                'country' => $arrUser['additional']['countryShipping']['countryiso']
-            ];
+        return [
+            'streetName' => $street,
+            'houseNumber' => $houseNumber,
+            'houseNumberExtension' => $houseNumberExtension,
+            'zipCode' => $arrUser['shippingaddress']['zipcode'],
+            'city' => $arrUser['shippingaddress']['city'],
+            'country' => $arrUser['additional']['countryShipping']['countryiso']
+        ];
     }
 
   /**
@@ -373,17 +381,22 @@ class Api
 
         if(!$this->config->useAdditionalAddressFields()){
             $arrAddress = \Paynl\Helper::splitAddress($arrUser['billingaddress']['street']);
-            if(isset($arrAddress[0])) $street = $arrAddress[0];
-            if(isset($arrAddress[1])) $houseNumber = $arrAddress[1];
+
+            if(isset($arrAddress[0])) {
+                $street = $arrAddress[0];
+            }
+
+            if(isset($arrAddress[1])) {
+                $houseNumber = $arrAddress[1];
+            }
         } else {
             $street = $arrUser['billingaddress']['street'];
             $houseNumber = $arrUser['billingaddress']['additionalAddressLine1'];
             $houseNumberExtension = $arrUser['billingaddress']['additionalAddressLine2'];
         }
 
-        $gender = 'M';
         $femaleSalutations = $this->config->femaleSalutations();
-        if (in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $gender = 'F';
+        $gender = in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations) ? 'F' : 'M';
 
         return  [
             'initials' => $arrUser['billingaddress']['firstname'],

@@ -32,7 +32,9 @@ class Config
 
     protected function getShop()
     {
-        if($this->shop) return $this->shop;
+        if($this->shop) {
+            return $this->shop;
+        }
 
         try {
             $shop = Shopware()->Shop();

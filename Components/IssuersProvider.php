@@ -12,7 +12,7 @@ class IssuersProvider
         // TODO: return issuers only for payment method
 
         // iDEAL banks
-        $issuers = [
+        return [
             (object)[
                 'id' => '1',
                 'name' => 'ABN Amro',
@@ -108,7 +108,5 @@ class IssuersProvider
                 'available' => '1'
             ]
         ];
-
-        return $issuers;
     }
 }
