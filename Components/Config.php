@@ -2,7 +2,6 @@
 
 namespace PaynlPayment\Components;
 
-
 use Shopware\Components\Plugin\ConfigReader;
 use Shopware\Models\Shop\Shop;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -32,20 +31,22 @@ class Config
 
     protected function getShop()
     {
-        if($this->shop) return $this->shop;
-
-        try {
-            $shop = Shopware()->Shop();
-        } catch (ServiceNotFoundException $e) {
-            $shop = null;
+        if ($this->shop) {
+            return $this->shop;
         }
 
-        return $shop;
+        try {
+            $newShop = Shopware()->Shop();
+        } catch (ServiceNotFoundException $e) {
+            $newShop = null;
+        }
+
+        return $newShop;
     }
 
-  /**
-   * @param Shop $shop
-   */
+    /**
+     * @param Shop $shop
+     */
     public function setShop(Shop $shop)
     {
         $this->shop = $shop;
@@ -73,6 +74,7 @@ class Config
         if (!is_null($key)) {
             return isset($this->data[$key]) ? $this->data[$key] : $default;
         }
+
         return $this->data;
     }
 

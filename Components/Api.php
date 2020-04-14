@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andy
- * Date: 29-6-18
- * Time: 10:30
- */
 
 namespace PaynlPayment\Components;
-
 
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
@@ -18,6 +11,7 @@ use Shopware\Models\Order\Status;
 use Shopware\Models\Payment;
 use Shopware\Models\Article;
 use Shopware\Models\Shop\Shop;
+use Exception;
 
 class Api
 {
@@ -78,12 +72,12 @@ class Api
         $this->config->setShop($shop);
     }
 
-   /**
-    * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
-    * @param $signature
-    * @return \Paynl\Result\Transaction\Start
-    * @throws \Exception
-    */
+    /**
+     * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
+     * @param $signature
+     * @return \Paynl\Result\Transaction\Start
+     * @throws Exception
+     */
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
         /** @var \Enlight_Components_Session_Namespace $session */
@@ -91,7 +85,7 @@ class Api
 
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new \Exception('Payment is not a PAY. Payment method. Name: '. $payment_name);
+            throw new Exception(sprintf('Payment is not a PAY. Payment method. Name: %s', $payment_name));
         }
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
@@ -110,7 +104,14 @@ class Api
         /** @var Payment\Payment $payment */
         $payment = $this->paymentRepository->findOneBy(['name' => $payment_name]);
 
-        $transaction = $this->transactionRepository->createNew($customer, $paymentId, $payment, $signature, $amount, $currency);
+        $transaction = $this->transactionRepository->createNew(
+            $customer,
+            $paymentId,
+            $payment,
+            $signature,
+            $amount,
+            $currency
+        );
 
         $sComment = Shopware()->Session()->sComment;
         $sDispatch = Shopware()->Session()->sDispatch;
@@ -139,40 +140,38 @@ class Api
             $this->transactionRepository->save($transaction);
 
             return $result;
-        } catch (\Exception $objException) {
+        } catch (\Throwable $objException) {
             $transaction->addException($objException);
             $this->transactionRepository->save($transaction);
+
             throw $objException;
         }
     }
 
-  /**
-   * @param $transactionId
-   * @return \Paynl\Result\Transaction\Status
-   * @throws \Paynl\Error\Api
-   * @throws \Paynl\Error\Error
-   */
+    /**
+     * @param $transactionId
+     * @return \Paynl\Result\Transaction\Status
+     * @throws \Paynl\Error\Api
+     * @throws \Paynl\Error\Error
+     */
     public function getTransaction($transactionId)
     {
         $this->config->loginSDK();
+
         return \Paynl\Transaction::status($transactionId);
     }
 
-  /**
-   * @param Transaction\Transaction $transaction
-   * @param $amount
-   * @param string $description
-   * @param array $products
-   * @return \Paynl\Result\Transaction\Refund
-   * @throws \Doctrine\ORM\ORMException
-   * @throws \Doctrine\ORM\OptimisticLockException
-   * @throws \Doctrine\ORM\TransactionRequiredException
-   * @throws \Paynl\Error\Api
-   * @throws \Paynl\Error\Error
-   */
+    /**
+     * @param Transaction\Transaction $transaction
+     * @param $amount
+     * @param string $description
+     * @param array $products
+     * @return \Paynl\Result\Transaction\Refund
+     * @throws Exception
+     */
     public function refund(Transaction\Transaction $transaction, $amount, $description = '', $products = [])
     {
-        if(!$this->config->isRefundAllowed()){
+        if (!$this->config->isRefundAllowed()) {
             throw new \Exception('Cannot refund, because refund is disabled');
         }
         $this->config->loginSDK();
@@ -195,7 +194,10 @@ class Api
                     // Restock it
                     /** @var Article\Detail $articleDetail */
                     $articleDetail = $articleDetailRepository->findOneBy(['articleId' => $id]);
-                    if (is_null($articleDetail)) continue;
+                    if (is_null($articleDetail)) {
+                        continue;
+                    }
+
                     $newStock = $articleDetail->getInStock() + $product['qty'];
                     $articleDetail->setInStock($newStock);
                     $this->modelManager->persist($articleDetail);
@@ -203,20 +205,21 @@ class Api
             }
         }
         $this->modelManager->flush();
+
         return $refundResult;
     }
 
-  /**
-   * @param $amount
-   * @param $paymentOptionId
-   * @param $currency
-   * @param $paymentId
-   * @param $signature
-   * @param $arrUser
-   * @param $basket
-   * @param $bank
-   * @return array
-   */
+    /**
+     * @param $amount
+     * @param $paymentOptionId
+     * @param $currency
+     * @param $paymentId
+     * @param $signature
+     * @param $arrUser
+     * @param $basket
+     * @param $bank
+     * @return array
+     */
     private function getStartData(
         $amount,
         $paymentOptionId,
@@ -226,7 +229,8 @@ class Api
         $arrUser,
         $basket,
         $bank = null
-    ) {
+    )
+    {
         $arrStartData = [
             // Basic data
             'amount' => $amount,
@@ -238,8 +242,16 @@ class Api
             'testmode' => $this->config->testMode(),
 
             // Urls
-            'returnUrl' => $this->router->assemble(['controller' => 'PaynlPayment', 'action' => 'return', 'forceSecure' => true]),
-            'exchangeUrl' => $this->router->assemble(['controller' => 'PaynlPayment', 'action' => 'notify', 'forceSecure' => true]),
+            'returnUrl' => $this->router->assemble([
+                'controller' => 'PaynlPayment',
+                'action' => 'return',
+                'forceSecure' => true
+            ]),
+            'exchangeUrl' => $this->router->assemble([
+                'controller' => 'PaynlPayment',
+                'action' => 'notify',
+                'forceSecure' => true
+            ]),
 
             // Products
             'products' => $this->getProducts($basket),
@@ -250,9 +262,8 @@ class Api
         }
 
         $addresses = $this->formatAddresses($arrUser);
-        $arrStartData = array_merge($arrStartData, $addresses);
 
-        return $arrStartData;
+        return array_merge($arrStartData, $addresses);
     }
 
     /**
@@ -308,9 +319,7 @@ class Api
     private function formatAddresses($arrUser)
     {
         $femaleSalutations = $this->config->femaleSalutations();
-        $gender = 'M';
-
-        if (in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations)) $gender = 'F';
+        $gender = in_array(trim($arrUser['shippingaddress']['salutation']), $femaleSalutations) ? 'F' : 'M';
 
         $arrResult = [
             'enduser' => [
@@ -326,66 +335,78 @@ class Api
         ];
 
         if (isset($arrUser['additional']['user']['birthday']) && !empty($arrUser['additional']['user']['birthday'])) {
-          $arrResult['enduser']['birthDate'] = $arrUser['additional']['user']['birthday'];
+            $arrResult['enduser']['birthDate'] = $arrUser['additional']['user']['birthday'];
         }
 
         return $arrResult;
     }
 
-  /**
-   * @param $arrUser
-   * @return array
-   */
+    /**
+     * @param $arrUser
+     * @return array
+     */
     private function getShippingAddress($arrUser)
     {
         $street = '';
         $houseNumber = '';
         $houseNumberExtension = '';
 
-        if(!$this->config->useAdditionalAddressFields()){
+        if (!$this->config->useAdditionalAddressFields()) {
             $arrShippingAddress = \Paynl\Helper::splitAddress($arrUser['shippingaddress']['street']);
-            if(isset($arrShippingAddress[0])) $street = $arrShippingAddress[0];
-            if(isset($arrShippingAddress[1])) $houseNumber = $arrShippingAddress[1];
+
+            if (isset($arrShippingAddress[0])) {
+                $street = $arrShippingAddress[0];
+            }
+
+            if (isset($arrShippingAddress[1])) {
+                $houseNumber = $arrShippingAddress[1];
+            }
         } else {
             $street = $arrUser['shippingaddress']['street'];
             $houseNumber = $arrUser['shippingaddress']['additionalAddressLine1'];
             $houseNumberExtension = $arrUser['shippingaddress']['additionalAddressLine2'];
         }
 
-        return ['streetName' => $street,
-                'houseNumber' => $houseNumber,
-                'houseNumberExtension' => $houseNumberExtension,
-                'zipCode' => $arrUser['shippingaddress']['zipcode'],
-                'city' => $arrUser['shippingaddress']['city'],
-                'country' => $arrUser['additional']['countryShipping']['countryiso']
-            ];
+        return [
+            'streetName' => $street,
+            'houseNumber' => $houseNumber,
+            'houseNumberExtension' => $houseNumberExtension,
+            'zipCode' => $arrUser['shippingaddress']['zipcode'],
+            'city' => $arrUser['shippingaddress']['city'],
+            'country' => $arrUser['additional']['countryShipping']['countryiso']
+        ];
     }
 
-  /**
-   * @param $arrUser
-   * @return array
-   */
+    /**
+     * @param $arrUser
+     * @return array
+     */
     private function getInvoiceAddress($arrUser)
     {
         $street = '';
         $houseNumber = '';
         $houseNumberExtension = '';
 
-        if(!$this->config->useAdditionalAddressFields()){
+        if (!$this->config->useAdditionalAddressFields()) {
             $arrAddress = \Paynl\Helper::splitAddress($arrUser['billingaddress']['street']);
-            if(isset($arrAddress[0])) $street = $arrAddress[0];
-            if(isset($arrAddress[1])) $houseNumber = $arrAddress[1];
+
+            if (isset($arrAddress[0])) {
+                $street = $arrAddress[0];
+            }
+
+            if (isset($arrAddress[1])) {
+                $houseNumber = $arrAddress[1];
+            }
         } else {
             $street = $arrUser['billingaddress']['street'];
             $houseNumber = $arrUser['billingaddress']['additionalAddressLine1'];
             $houseNumberExtension = $arrUser['billingaddress']['additionalAddressLine2'];
         }
 
-        $gender = 'M';
         $femaleSalutations = $this->config->femaleSalutations();
-        if (in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations)) $gender = 'F';
+        $gender = in_array(trim($arrUser['billingaddress']['salutation']), $femaleSalutations) ? 'F' : 'M';
 
-        return  [
+        return [
             'initials' => $arrUser['billingaddress']['firstname'],
             'lastName' => $arrUser['billingaddress']['lastname'],
             'streetName' => $street,
