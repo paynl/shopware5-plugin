@@ -3,7 +3,6 @@
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order\Detail;
 use \Shopware\Models\Shop\Currency;
-use PaynlPayment\Exceptions\PaynlPaymentException;
 
 /**
  * Example:
@@ -116,7 +115,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
 
             $messages[] = ['type' => 'success', 'content' => 'Refund successful (' . $refundResult->getData()['description'] . ')'];
 
-        } catch (PaynlPaymentException $e) {
+        } catch (Throwable $e) {
             $messages[] = ['type' => 'danger', 'content' => $e->getMessage()];
         }
 

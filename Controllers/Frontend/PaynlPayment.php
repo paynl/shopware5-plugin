@@ -3,7 +3,6 @@
 use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order;
-use PaynlPayment\Exceptions\PaynlPaymentException;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -24,7 +23,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
     public function indexAction()
     {
         if (substr($this->getPaymentShortName(), 0, 6) !== 'paynl_') {
-            throw new PaynlPaymentException('Payment is not a PAY. Payment method');
+            throw new \Exception('Payment is not a PAY. Payment method');
         }
 
         $this->forward('redirect');
@@ -62,7 +61,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             if ($result->getRedirectUrl()) {
                 $this->redirect($result->getRedirectUrl());
             }
-        } catch (PaynlPaymentException $e) {
+        } catch (Throwable $e) {
             $this->log(sprintf('PAY.: Could not start payment. Error: %s', $e->getMessage()));
             $this->View()->assign('message', $e->getMessage());
         }
@@ -83,7 +82,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $result = $this->processPayment($transactionId, true);
 
             return sprintf('TRUE|%s', $result);
-        } catch (PaynlPaymentException $e) {
+        } catch (Throwable $e) {
             $logMessage = sprintf('PAY.: Could not process payment. Error: %s', $e->getMessage());
             $this->log($logMessage);
 
@@ -126,7 +125,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
 
         try {
             if (empty($transaction)) {
-                throw new PaynlPaymentException('Could not find transaction', 999);
+                throw new Exception('Could not find transaction', 999);
             }
 
             // status en amount ophalen.
@@ -152,7 +151,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $canceled = true;
                 $this->updateStatus($transaction, Transaction\Transaction::STATUS_CANCEL, $shouldCreate);
             }
-        } catch (PaynlPaymentException $e) {
+        } catch (Throwable $e) {
             if ($isExchange && $e->getCode() == 999) {
                 return $e->getMessage();
             }
@@ -176,7 +175,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             );
         } else {
             if ($shouldCreate) {
-                throw new PaynlPaymentException('Order should have been created, but an error has occurred');
+                throw new Exception('Order should have been created, but an error has occurred');
             }
 
             return "No action, order was not created";
@@ -225,7 +224,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $config = $this->container->get('paynl_payment.config');
 
         if (!is_null($transaction->getStatus()) && $transaction->getStatus()->getId() == $status) {
-            throw new PaynlPaymentException('Already processed', 999);
+            throw new Exception('Already processed', 999);
         }
         // order exists
         if ($transaction->getOrder()) {

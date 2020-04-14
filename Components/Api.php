@@ -2,7 +2,6 @@
 
 namespace PaynlPayment\Components;
 
-use PaynlPayment\Exceptions\PaynlPaymentException;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\NumberRangeIncrementerInterface;
@@ -77,7 +76,6 @@ class Api
      * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
      * @param $signature
      * @return \Paynl\Result\Transaction\Start
-     * @throws PaynlPaymentException
      * @throws Exception
      */
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
@@ -87,7 +85,7 @@ class Api
 
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new PaynlPaymentException('Payment is not a PAY. Payment method. Name: ' . $payment_name);
+            throw new Exception('Payment is not a PAY. Payment method. Name: ' . $payment_name);
         }
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
@@ -106,8 +104,14 @@ class Api
         /** @var Payment\Payment $payment */
         $payment = $this->paymentRepository->findOneBy(['name' => $payment_name]);
 
-        $transaction =
-            $this->transactionRepository->createNew($customer, $paymentId, $payment, $signature, $amount, $currency);
+        $transaction = $this->transactionRepository->createNew(
+            $customer,
+            $paymentId,
+            $payment,
+            $signature,
+            $amount,
+            $currency
+        );
 
         $sComment = Shopware()->Session()->sComment;
         $sDispatch = Shopware()->Session()->sDispatch;
@@ -140,7 +144,7 @@ class Api
             $transaction->addException($objException);
             $this->transactionRepository->save($transaction);
 
-            throw new PaynlPaymentException($objException->getMessage(), $objException->getCode());
+            throw $objException;
         }
     }
 
@@ -163,12 +167,12 @@ class Api
      * @param string $description
      * @param array $products
      * @return \Paynl\Result\Transaction\Refund
-     * @throws PaynlPaymentException
+     * @throws Exception
      */
     public function refund(Transaction\Transaction $transaction, $amount, $description = '', $products = [])
     {
         if (!$this->config->isRefundAllowed()) {
-            throw new PaynlPaymentException('Cannot refund, because refund is disabled');
+            throw new \Exception('Cannot refund, because refund is disabled');
         }
         $this->config->loginSDK();
         $transactionId = $transaction->getTransactionId();
