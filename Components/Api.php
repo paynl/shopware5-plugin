@@ -85,7 +85,7 @@ class Api
 
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new Exception('Payment is not a PAY. Payment method. Name: ' . $payment_name);
+            throw new Exception(sprintf('Payment is not a PAY. Payment method. Name: %s', $payment_name));
         }
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
