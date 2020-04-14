@@ -1,23 +1,28 @@
-function updateRefundAmount(){
-    var total = 0;
+function updateRefundAmount() {
+    let total = 0;
+    let selectsArray = document.getElementsByClassName("select-refund-qty");
 
-    $('.select-refund-qty').each(function (i,selectBox) {
-        var price = $(selectBox).attr('data-price');
-        var qty = $(selectBox).val();
-        total += price*qty;
-        console.log(selectBox);
-        console.log(price+' x '+qty+' = '+price*qty);
-    });
+    for (let i = 0; i < selectsArray.length; i++) {
+        let priceAmount = selectsArray[i].dataset.price;
+        let quantityAmount = selectsArray[i].value;
 
-    total += $('#checkRefundShipping').is(':checked')?$('#checkRefundShipping:checked').attr('data-price')*1:0;
+        total += priceAmount * quantityAmount;
+    }
 
-    $('#refundAmount').val(total.toFixed(2));
+    let isShipingAmountRefunded = document.getElementById("checkRefundShipping").checked;
+    if (isShipingAmountRefunded) {
+        let refundShippingEl = document.getElementById('checkRefundShipping');
+        total += refundShippingEl.dataset.price * 1;
+    }
+
+    document.getElementById('refundAmount').value = total.toFixed(2);
 }
 
+let selects = document.getElementsByClassName("select-refund-qty");
+for (let index = 0; index < selects.length; index++) {
+    selects[index].onchange = updateRefundAmount;
+}
 
-
-$('.select-refund-qty').change(updateRefundAmount);
-$('#checkRefundShipping').change(updateRefundAmount);
+document.getElementById('checkRefundShipping').onchange = updateRefundAmount;
 
 updateRefundAmount();
-
