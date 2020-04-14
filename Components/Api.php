@@ -136,11 +136,11 @@ class Api
             $this->transactionRepository->save($transaction);
 
             return $result;
-        } catch (Exception $objException) {
+        } catch (\Throwable $objException) {
             $transaction->addException($objException);
             $this->transactionRepository->save($transaction);
 
-            throw new PaynlPaymentException($objException);
+            throw new PaynlPaymentException($objException->getMessage(), $objException->getCode());
         }
     }
 
