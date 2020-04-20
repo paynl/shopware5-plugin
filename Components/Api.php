@@ -131,7 +131,7 @@ class Api
             $basket,
             $bank
         );
-        $arrStartData['object'] = 'shopware 3.2';
+        $arrStartData['object'] = 'shopware 3.2.0';
 
         try {
             $this->config->loginSDK();
