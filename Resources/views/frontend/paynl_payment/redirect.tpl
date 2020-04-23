@@ -12,6 +12,6 @@
             </div>
         </div>
         <br><br>
-        Change payment method / Zahlungsmethode ändern <a class="btn" href="/checkout/shippingPayment/sTarget/checkout">Okay</a>
+        Change payment method / Zahlungsmethode ändern <a class="btn" href="{url controller='Checkout'}" title="To Checkout">Okay</a>
     </div>
 {/block}
