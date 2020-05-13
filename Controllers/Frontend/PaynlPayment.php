@@ -75,18 +75,18 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $this->request->isPost() ? $this->request->getPost('order_id') : $this->request->get('order_id');
 
         if ($action == 'pending') {
-            return 'TRUE| Ignoring pending';
+            die('TRUE| Ignoring pending');
         }
 
         try {
             $result = $this->processPayment($transactionId, true);
 
-            return sprintf('TRUE|%s', $result);
+            die(sprintf('TRUE|%s', $result));
         } catch (Throwable $e) {
             $logMessage = sprintf('PAY.: Could not process payment. Error: %s', $e->getMessage());
             $this->log($logMessage);
 
-            return sprintf('FALSE|%s', $e->getMessage());
+            die(sprintf('FALSE|%s', $e->getMessage()));
         }
     }
 
