@@ -29,18 +29,6 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $this->forward('redirect');
     }
 
-    public function preDispatch()
-    {
-        parent::preDispatch();
-
-        if ($this->Request()->get('action')) {
-            $actionName = sprintf('%s%s', $this->Request()->get('action'), 'Action');
-            if (!method_exists($this, $actionName)) {
-                $this->notifyAction();
-            }
-        }
-    }
-
     public function getWhitelistedCSRFActions()
     {
         return ['notify'];
@@ -67,7 +55,19 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         }
     }
 
-    public function notifyAction()
+    // Pay. uses `action` GET parameter for its notifications request
+    // Shopware5 interprets `action` parameter as controller method name and template name
+    // To handle this case we use PHP magic __call() method
+    public function __call($name, $value = null)
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender(true);
+        $message = $this->notify();
+        $this->Response()
+            ->setBody($message)
+            ->setHttpResponseCode(200);
+    }
+
+    private function notify()
     {
         $action =
             $this->request->isPost() ? $this->request->getPost('action') : $this->request->get('action');
@@ -75,18 +75,18 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             $this->request->isPost() ? $this->request->getPost('order_id') : $this->request->get('order_id');
 
         if ($action == 'pending') {
-            die('TRUE| Ignoring pending');
+            return 'TRUE| Ignoring pending';
         }
 
         try {
             $result = $this->processPayment($transactionId, true);
 
-            die(sprintf('TRUE|%s', $result));
+            return sprintf('TRUE|%s', $result);
         } catch (Throwable $e) {
             $logMessage = sprintf('PAY.: Could not process payment. Error: %s', $e->getMessage());
             $this->log($logMessage);
 
-            die(sprintf('FALSE|%s', $e->getMessage()));
+            return sprintf('FALSE|%s', $e->getMessage());
         }
     }
 
