@@ -4,7 +4,7 @@
     <label lang="en">PAY. Payment Methods</label>
     <label lang="de">PAY. Zahlungsmethoden</label>
     <label lang="nl">PAY. Betaalmethoden</label>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <copyright>(c) by PAY.</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
@@ -28,6 +28,11 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.2.1">
+        <changes lang="nl">Probleem met exchange opgelost.</changes>
+        <changes lang="en">Fixed exchange error.</changes>
+        <changes lang="de">Problem mit dem Exchange behoben.</changes>
+    </changelog>
     <changelog version="3.2.0">
         <changes lang="nl">Testbutton toegevoegd. Logging toegevoegd.</changes>
         <changes lang="en">Added testbutton. Added logging.</changes>
