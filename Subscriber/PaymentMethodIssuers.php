@@ -49,6 +49,7 @@ class PaymentMethodIssuers implements SubscriberInterface
         if (empty($selectedIssuer)) {
             $selectedIssuer = $session->paynlIssuer;
         }
+
         if ($action == 'confirm' || $action == 'saveShippingPayment') {
             if (!empty($selectedIssuer)) {
                 $session->paynlIssuer = $selectedIssuer;
@@ -58,6 +59,13 @@ class PaymentMethodIssuers implements SubscriberInterface
                 $session->paynlIssuer = null;
             }
         }
+
+        $isCancelled = false;
+        if ($action === 'confirm') {
+            $isCancelled = (bool)Shopware()->Front()->Request()->get('isCancelled', 0);
+        }
+
+        $view->assign('isCancelled', $isCancelled);
 
         if ($action == 'shippingPayment') {
             $issuers = $this->issuersProvider->getIssuers();
