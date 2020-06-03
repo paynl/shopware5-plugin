@@ -44,26 +44,25 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         /** @var \Enlight_Components_Session_Namespace $session */
         $session = Shopware()->Session();
-        if ($action == 'saveShippingPayment') {
-            $session->paynlIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer');
-        }
 
-        if ($action == 'confirm' && !empty($session->paynlIssuer)) {
-            $bankData = [];
-            foreach ($this->issuersProvider->getIssuers() as $bank) {
-                if ($bank->id == $session->paynlIssuer) {
-                    $bankData = $bank;
-                    break;
-                }
+        $selectedIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer');
+        if (empty($selectedIssuer)) {
+            $selectedIssuer = $session->paynlIssuer;
+        }
+        if ($action == 'confirm' || $action == 'saveShippingPayment') {
+            if (!empty($selectedIssuer)) {
+                $session->paynlIssuer = $selectedIssuer;
             }
-            $view->assign('bankData', $bankData);
+
+            if (empty($selectedIssuer)) {
+                $session->paynlIssuer = null;
+            }
         }
 
         if ($action == 'shippingPayment') {
             $issuers = $this->issuersProvider->getIssuers();
-            $view->assign('paynlSelectedIssuer', $session->paynlIssuer);
+            $view->assign('paynlSelectedIssuer', $selectedIssuer);
             $view->assign('paynlIssuers', $issuers);
-            $session->paynlIssuer = null;
         }
     }
 }
