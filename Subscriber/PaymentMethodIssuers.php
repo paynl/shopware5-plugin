@@ -50,7 +50,8 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         if ($action == 'confirm' && !empty($session->paynlIssuer)) {
             $bankData = [];
-            foreach ($this->issuersProvider->getIssuers() as $bank) {
+
+        foreach ($this->issuersProvider->getIssuers() as $bank) {
                 if ($bank->id == $session->paynlIssuer) {
                     $bankData = $bank;
                     break;
@@ -58,6 +59,13 @@ class PaymentMethodIssuers implements SubscriberInterface
             }
             $view->assign('bankData', $bankData);
         }
+
+        $isCancelled = false;
+        if ($action === 'confirm') {
+            $isCancelled = (bool)Shopware()->Front()->Request()->get('isCancelled', 0);
+        }
+
+        $view->assign('isCancelled', $isCancelled);
 
         if ($action == 'shippingPayment') {
             $issuers = $this->issuersProvider->getIssuers();

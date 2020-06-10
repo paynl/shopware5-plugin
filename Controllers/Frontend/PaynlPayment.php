@@ -110,7 +110,11 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
             'sUniqueID' => $transactionId
         ]), '?utm_nooverride=1');
 
-        $cancelUrl = $this->Front()->Router()->assemble(['controller' => 'checkout', 'action' => 'confirm']);
+        $cancelUrl = $this->Front()->Router()->assemble([
+            'controller' => 'checkout',
+            'action' => 'confirm',
+            'isCancelled' => 1
+        ]);
 
         /** @var \PaynlPayment\Components\Config $config */
         $config = $this->container->get('paynl_payment.config');
