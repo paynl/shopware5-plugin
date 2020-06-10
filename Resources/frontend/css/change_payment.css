@@ -7,6 +7,28 @@
     height: 42px;
 }
 
+.paynl-payment-method img {
+    width: 40px;
+}
+
+.paynl-payment-method .paynl-payment-method-name {
+    padding-left: 0.5em;
+}
+
+.paynl-payment-method .method--input {
+    padding: 7px 0;
+}
+
+@media (min-width: 768px) {
+    .paynl-payment-method .method--description {
+        width: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        text-align: right;
+        float: right;
+    }
+}
+
 @media (max-width: 767px) {
     .paynl-payment-method .mb-xs-5 {
         margin-bottom: 5px;
