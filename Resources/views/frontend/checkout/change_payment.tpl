@@ -21,7 +21,7 @@
                                 <label class="method--name is--strong"
                                        for="payment_mean{$payment_mean.id}">
                                     <div class="display-inline-middle">
-                                        <img src="https://static.pay.nl/payment_profiles/50x32/{$payment_mean.name|substr:6}.png" />
+                                        <img src="{link file='frontend/_resources/logos/%s.png'|sprintf:{$payment_mean.name|substr:6}}" />
                                     </div>
                                     <div class="display-inline-middle">
                                         {$payment_mean.description}
