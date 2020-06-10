@@ -48,6 +48,16 @@
             <description lang="de">AAktivieren Sie diese Option, damit Rückerstattungen von der Bestellliste verarbeitet werden können</description>
         </element>
         <element scope="shop" type="boolean">
+            <name>show_banks</name>
+            <label lang="en">Show banks</label>
+            <label lang="nl">Banken tonen</label>
+            <label lang="de">Banken anzeigen</label>
+            <description lang="en">After a payment method is selected, a drop-down with the list of available banks (which belong to this payment method) will appear.</description>
+            <description lang="nl">After a payment method is selected, a drop-down with the list of available banks (which belong to this payment method) will appear.
+            </description>
+            <description lang="de">Nachdem eine Zahlungsmethode ausgewählt wurde, erscheint eine Dropdown-Liste mit der verfügbaren Banken (die zu dieser Zahlungsmethode gehören).</description>
+        </element>
+        <element scope="shop" type="boolean">
             <name>status_mail</name>
             <label lang="en">Send status mails</label>
             <label lang="nl">Status mails versturen</label>
