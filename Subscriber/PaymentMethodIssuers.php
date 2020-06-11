@@ -5,15 +5,21 @@ namespace PaynlPayment\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Action;
 use Enlight_View;
+use PaynlPayment\Components\Config;
 use PaynlPayment\Components\IssuersProvider;
 
 class PaymentMethodIssuers implements SubscriberInterface
 {
     private $issuersProvider;
+    /**
+     * @var Config
+     */
+    private $config;
 
-    public function __construct(IssuersProvider $issuersProvider)
+    public function __construct(IssuersProvider $issuersProvider, Config $config)
     {
         $this->issuersProvider = $issuersProvider;
+        $this->config = $config;
     }
 
     /**
@@ -59,7 +65,7 @@ class PaymentMethodIssuers implements SubscriberInterface
             }
         }
 
-        if ($action == 'shippingPayment') {
+        if ($action == 'shippingPayment' && $this->config->banksIsAllowed()) {
             $issuers = $this->issuersProvider->getIssuers();
             $view->assign('paynlSelectedIssuer', $selectedIssuer);
             $view->assign('paynlIssuers', $issuers);
