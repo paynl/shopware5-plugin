@@ -10,20 +10,21 @@
                         {* Radio Button *}
                         {block name='frontend_checkout_payment_fieldset_input_radio'}
                             <div class="method--input">
-                                <input type="radio" name="payment" class="radio auto_submit" value="{$payment_mean.id}"
+                                <input type="radio" name="payment" class="radio auto_submit display-inline-middle" value="{$payment_mean.id}"
                                        id="payment_mean{$payment_mean.id}"{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} checked="checked"{/if} />
                             </div>
                         {/block}
-
                         {* Method Name *}
                         {block name='frontend_checkout_payment_fieldset_input_label'}
                             <div class="method--label is--first mb-xs-5">
                                 <label class="method--name is--strong"
                                        for="payment_mean{$payment_mean.id}">
-                                    <div class="display-inline-middle">
-                                        <img src="{link file='frontend/_resources/logos/%s.png'|sprintf:{$payment_mean.name|substr:6}}" />
-                                    </div>
-                                    <div class="display-inline-middle">
+                                    {if $payment_mean.class}
+                                        <div class="display-inline-middle">
+                                            <img src="{link file='frontend/_resources/logos/%s.png'|sprintf:{$payment_mean.class}}" />
+                                        </div>
+                                    {/if}
+                                    <div class="display-inline-middle paynl-payment-method-name">
                                         {$payment_mean.description}
                                     </div>
                                 </label>
