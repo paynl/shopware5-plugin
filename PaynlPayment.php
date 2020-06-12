@@ -27,6 +27,10 @@ class PaynlPayment extends Plugin
 {
     const PAYMENT_METHODS_TEMPLATES_DIRECTORY = __DIR__ . '/Resources/views/frontend/plugins/payment/';
 
+    protected $javascript = [
+        'src/js/jquery.register.js'
+    ];
+
   /**
    * @param InstallContext $context
    */

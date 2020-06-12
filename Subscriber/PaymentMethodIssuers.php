@@ -23,7 +23,39 @@ class PaymentMethodIssuers implements SubscriberInterface
     {
         return [
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onPostDispatchCheckout',
+            'Enlight_Controller_Action_PostDispatch_Frontend_Account' => 'onPostDispatchAccount',
         ];
+    }
+
+    public function onPostDispatchAccount(\Enlight_Event_EventArgs $args) {
+        $request = $args->getRequest();
+        $controller = $args->getSubject();
+        /** @var Enlight_View $view */
+        $view = $controller->View();
+        /** @var \Enlight_Components_Session_Namespace $session */
+        $session = Shopware()->Session();
+        $action = $request->getActionName();
+
+        if ($action == 'savePayment') {
+            $session->paynlIssuer = Shopware()->Front()->Request()->getPost('paynlIssuer');
+        }
+
+        if ($action == 'payment') {
+            $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
+            $view->assign('paynlSelectedIssuer', $session->paynlIssuer);
+        }
+
+        if ($action == 'index') {
+            $bankData = [];
+            foreach ($this->issuersProvider->getIssuers() as $bank) {
+                if ($bank->id == $session->paynlIssuer) {
+                    $bankData = $bank;
+                    break;
+                }
+            }
+
+            $view->assign('bankData', $bankData);
+        }
     }
 
     public function onPostDispatchCheckout(\Enlight_Event_EventArgs $args)
@@ -51,7 +83,7 @@ class PaymentMethodIssuers implements SubscriberInterface
         if ($action == 'confirm' && !empty($session->paynlIssuer)) {
             $bankData = [];
 
-        foreach ($this->issuersProvider->getIssuers() as $bank) {
+            foreach ($this->issuersProvider->getIssuers() as $bank) {
                 if ($bank->id == $session->paynlIssuer) {
                     $bankData = $bank;
                     break;

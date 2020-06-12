@@ -15,12 +15,24 @@
     padding-left: 0.5em;
 }
 
-.paynl-payment-method .method--input {
+.paynl-payment-method .paynl-method--input {
     padding: 7px 0;
 }
 
+.paynl-payment-method .payment--selection-label {
+    padding: 0;
+}
+
+.paynl-payment-method .select-field {
+    margin-bottom: 0;
+}
+
+.paynl-payment-method .payment--content {
+    height: 42px;
+}
+
 @media (min-width: 768px) {
-    .paynl-payment-method .method--description {
+    .paynl-payment-method .paynl-method--description {
         width: 50%;
         display: inline-block;
         vertical-align: middle;
