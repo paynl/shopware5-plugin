@@ -121,6 +121,14 @@ class Config
     /**
      * @return boolean
      */
+    public function banksIsAllowed()
+    {
+        return $this->get('show_banks', false);
+    }
+
+    /**
+     * @return boolean
+     */
     public function isRefundAllowed()
     {
         return $this->get('allow_refunds', false);
