@@ -28,7 +28,7 @@
                                     {/block}
                                 </div>
                             </div>
-                            <div class="display-inline-middle">
+                            <div class="min-md-display-inline-middle">
                                 {if "frontend/plugins/payment/`$payment_mean.template`"|template_exists}
                                     <div class="payment--content{if $payment_mean.id != $form_data.payment} is--hidden{/if}">
                                         {include file="frontend/plugins/payment/`$payment_mean.template`" checked = ($payment_mean.id == $form_data.payment)}

@@ -39,10 +39,25 @@
         text-align: right;
         float: right;
     }
+
+    .paynl-payment-method .min-md-display-inline-middle {
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
 
 @media (max-width: 767px) {
     .paynl-payment-method .mb-xs-5 {
         margin-bottom: 5px;
+    }
+
+    .paynl-method--description {
+        display: none;
+    }
+
+    .paynl-payment-method .payment--content {
+        height: 52px;
+        padding: 5px 0;
+        width: 100%;
     }
 }
