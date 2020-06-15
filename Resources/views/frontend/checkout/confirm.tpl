@@ -18,7 +18,7 @@
         <strong class="payment--title">{s name="ConfirmInfoPaymentMethod" namespace="frontend/checkout/confirm"}{/s}</strong>
         <span class="payment--description">{$sUserData.additional.payment.description}</span>
         {if $bankData}
-            <span class="payment--description">( {$bankData->name} )</span>
+            <span class="payment--description">({$bankData->name})</span>
         {/if}
     </p>
 
