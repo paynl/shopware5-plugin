@@ -1,4 +1,5 @@
 {namespace name='frontend/plugins/payment/ideal'}
+
 {if $paynlIssuers}
     <div class="select-field">
         <select id="issuer-select" name="paynlIssuer">
@@ -9,4 +10,3 @@
         </select>
     </div>
 {/if}
-
