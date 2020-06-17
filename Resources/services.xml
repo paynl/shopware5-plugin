@@ -10,6 +10,7 @@
         </service>
         <service id="paynl_payment.subscriber.payment_method_issuers" class="PaynlPayment\Subscriber\PaymentMethodIssuers">
             <argument type="service" id="paynl_payment.issuers_provider"/>
+            <argument type="service" id="paynl_payment.config"/>
             <tag name="shopware.event_subscriber" />
         </service>
 
