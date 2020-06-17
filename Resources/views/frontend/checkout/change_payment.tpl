@@ -9,7 +9,7 @@
 
                         {* Radio Button *}
                         {block name='frontend_checkout_payment_fieldset_input_radio'}
-                            <div class="method--input">
+                            <div class="method--input paynl-method--input">
                                 <input type="radio" name="payment" class="radio auto_submit display-inline-middle" value="{$payment_mean.id}"
                                        id="payment_mean{$payment_mean.id}"{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} checked="checked"{/if} />
                             </div>
@@ -41,7 +41,7 @@
 
                     {* Method Description *}
                     {block name='frontend_checkout_payment_fieldset_description'}
-                        <div class="method--description is--last">
+                        <div class="method--description paynl-method--description is--last">
                             {include file="string:{$payment_mean.additionaldescription}"}
                         </div>
                     {/block}

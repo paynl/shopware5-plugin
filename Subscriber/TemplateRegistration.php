@@ -2,6 +2,7 @@
 
 namespace PaynlPayment\Subscriber;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Enlight\Event\SubscriberInterface;
 
 class TemplateRegistration implements SubscriberInterface
@@ -35,7 +36,8 @@ class TemplateRegistration implements SubscriberInterface
             'Enlight_Controller_Action_PreDispatch' => 'onPreDispatch',
             'Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout' => 'onLoadFrontendCheckout',
             'Enlight_Controller_Action_PostDispatchSecure_Backend_Index' => 'onLoadBackendIndex',
-            'Enlight_Controller_Action_PostDispatchSecure_Backend_Order' => 'onPostDispatchOrder'
+            'Enlight_Controller_Action_PostDispatchSecure_Backend_Order' => 'onPostDispatchOrder',
+            'Theme_Compiler_Collect_Plugin_Javascript' => 'addJsFiles'
         ];
     }
 
@@ -80,5 +82,11 @@ class TemplateRegistration implements SubscriberInterface
         $view = $args->getSubject()->View();
         $view->addTemplateDir($this->pluginDirectory . '/Resources/');
         $view->extendsTemplate('frontend/css/change_payment.css');
+    }
+
+    public function addJsFiles(\Enlight_Event_EventArgs $args){
+        $jsFiles = [sprintf('%s/../%s', rtrim(__DIR__, '/'), 'Resources/views/frontend/_public/src/js/jquery.register.js')];
+
+        return new ArrayCollection($jsFiles);
     }
 }
