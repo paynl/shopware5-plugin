@@ -1,4 +1,4 @@
-{namespace name='frontend/plugins/payment/ideal'}
+{namespace name='frontend/plugins/payment'}
 
 <div class="select-field">
     <select id="issuer-select" name="paynlIssuer">

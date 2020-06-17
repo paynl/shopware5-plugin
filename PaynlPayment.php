@@ -163,7 +163,7 @@ class PaynlPayment extends Plugin
                 'additionalDescription' => $method['brand']['public_description'] ?? ''
             ];
 
-            $pluginTemplateName = strtolower(preg_replace('/[\W]/', '_', $method['name'])) . '.tpl';
+            $pluginTemplateName = sprintf('%d.%s', (int)$method['id'], 'tpl');
             if(is_file(self:: PAYMENT_METHODS_TEMPLATES_DIRECTORY . $pluginTemplateName)) {
                 $options['template'] = $pluginTemplateName;
             }

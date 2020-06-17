@@ -6,14 +6,29 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Action;
 use Enlight_View;
 use PaynlPayment\Components\IssuersProvider;
+use PaynlPayment\Helpers\CustomerHelper;
+use Zend_Session_Abstract;
 
 class PaymentMethodIssuers implements SubscriberInterface
 {
+    /**
+     * @var Zend_Session_Abstract
+     */
+    private $session;
     private $issuersProvider;
+    /**
+     * @var CustomerHelper
+     */
+    private $customerHelper;
 
-    public function __construct(IssuersProvider $issuersProvider)
-    {
+    public function __construct(
+        Zend_Session_Abstract $session,
+        IssuersProvider $issuersProvider,
+        CustomerHelper $customerHelper
+    ) {
+        $this->session = $session;
         $this->issuersProvider = $issuersProvider;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -51,7 +66,7 @@ class PaymentMethodIssuers implements SubscriberInterface
         if ($action == 'confirm' && !empty($session->paynlIssuer)) {
             $bankData = [];
 
-        foreach ($this->issuersProvider->getIssuers() as $bank) {
+            foreach ($this->issuersProvider->getIssuers() as $bank) {
                 if ($bank->id == $session->paynlIssuer) {
                     $bankData = $bank;
                     break;
@@ -68,6 +83,14 @@ class PaymentMethodIssuers implements SubscriberInterface
         $view->assign('isCancelled', $isCancelled);
 
         if ($action == 'shippingPayment') {
+            $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($this->session->sUserId);
+            if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
+                $view->assign('showDobField', true);
+            }
+            if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
+                $view->assign('showPhoneField', true);
+            }
+
             $issuers = $this->issuersProvider->getIssuers();
             $view->assign('paynlSelectedIssuer', $session->paynlIssuer);
             $view->assign('paynlIssuers', $issuers);
