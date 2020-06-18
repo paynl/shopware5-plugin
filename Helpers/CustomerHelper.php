@@ -7,6 +7,12 @@ use Shopware\Models\Customer\Customer;
 
 class CustomerHelper
 {
+    const USER_TABLE = 's_user';
+    const UT_FIELD_BIRTHDAY = 'birthday';
+
+    const USER_ADDRESSES_TABLE = 's_user_addresses';
+    const UAT_FIELD_PHONE = 'phone';
+
     /**
      * @var ModelManager
      */
@@ -19,29 +25,53 @@ class CustomerHelper
     }
 
     /**
-     * @param int $customerId
-     * @return mixed[]
+     * @param int $userId
+     * @return Customer|object
      */
-    public function getCurrentCustomerById(int $customerId)
+    public function getCurrentUserById(int $userId): Customer
     {
-        $customer = $this->modelManager
+        return $this->modelManager
             ->getRepository(Customer::class)
-            ->findOneBy(['id' => $customerId]);
-
-        return $customer;
+            ->find($userId);
     }
 
     /**
-     * @param int $customerId
+     * @param int $userId
      * @return mixed[]
      */
-    public function getDobAndPhoneByCustomerId(int $customerId): array
+    public function getDobAndPhoneByCustomerId(int $userId): array
     {
-        $customer = $this->getCurrentCustomerById($customerId);
+        $customer = $this->getCurrentUserById($userId);
 
         return [
             'dob' => $customer->getBirthday(),
             'phone' => $customer->getDefaultBillingAddress()->getPhone()
         ];
+    }
+
+    public function storePhone(int $userId, string $phone)
+    {
+        $this->modelManager->getConnection()->executeQuery(
+            join(' ', [
+                sprintf('UPDATE %s', self::USER_ADDRESSES_TABLE),
+                'SET',
+                sprintf('%s = :%s', self::UAT_FIELD_PHONE, self::UAT_FIELD_PHONE),
+                'WHERE user_id = :user_id',
+            ]),
+            ['user_id' => $userId, self::UAT_FIELD_PHONE => $phone]
+        );
+    }
+
+    public function storeUserBirthday(int $userId, string $birthday)
+    {
+        $this->modelManager->getConnection()->executeQuery(
+            join(' ', [
+                sprintf('UPDATE %s', self::USER_TABLE),
+                'SET',
+                sprintf('%s = :%s', self::UT_FIELD_BIRTHDAY, self::UT_FIELD_BIRTHDAY),
+                'WHERE id = :id',
+            ]),
+            ['id' => $userId, self::UT_FIELD_BIRTHDAY => $birthday]
+        );
     }
 }
