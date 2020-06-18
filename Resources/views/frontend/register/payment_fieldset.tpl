@@ -42,10 +42,6 @@
                                 {include file="string:{$payment_mean.additionaldescription}"}
                             </div>
                         {/block}
-
-                        {block name='frontend_register_payment_fieldset_template'}
-                            <div class="payment_logo_{$payment_mean.name}"></div>
-                        {/block}
                     </div>
                 {else}
                     <div class="payment--method panel--tr">
