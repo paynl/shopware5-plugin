@@ -62,13 +62,12 @@ class PaymentMethodIssuers implements SubscriberInterface
 
     public function onUpdatePaymentForUser(\Enlight_Event_EventArgs $args)
     {
-        $request = Shopware()->Front()->Request();
         $defaultReturn = $args->getReturn();
-        $extraFieldsData = [
-            'idealIssuer' => (int)$request->getPost('paynlIssuer')
-        ];
+        /** @var \Enlight_Controller_Request_Request $request */
+        $request = Shopware()->Front()->Request();
 
-        $this->extraFieldsHelper->saveExtraFields($extraFieldsData, $this->session->sUserId);
+        $this->storeExtraFields($request);
+        $this->storeDobAndPhone($request);
 
         return $defaultReturn;
     }
@@ -145,7 +144,8 @@ class PaymentMethodIssuers implements SubscriberInterface
         $view->assign('isCancelled', $isCancelled);
 
         if ($action == 'shippingPayment') {
-            $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($this->session->sUserId);
+            $userId = $this->session->sUserId;
+            $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
             if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
                 $view->assign('showDobField', true);
             }
@@ -158,6 +158,38 @@ class PaymentMethodIssuers implements SubscriberInterface
                 $issuers = $this->issuersProvider->getIssuers();
                 $view->assign('paynlIssuers', $issuers);
             }
+        }
+    }
+
+    /**
+     * @param \Enlight_Controller_Request_Request $request
+     * @throws \Exception
+     */
+    private function storeExtraFields(\Enlight_Controller_Request_Request $request): void
+    {
+        $extraFieldsData = [
+            'idealIssuer' => (int)$request->getPost('paynlIssuer')
+        ];
+
+        $this->extraFieldsHelper->saveExtraFields($extraFieldsData, $this->session->sUserId);
+    }
+
+    /**
+     * @param \Enlight_Controller_Request_Request $request
+     */
+    private function storeDobAndPhone(\Enlight_Controller_Request_Request $request): void
+    {
+        $phone = $request->getPost('phone');
+        $dob = $request->getPost('dob');
+        $payment = $request->getPost('payment');
+        $userId = $this->session->sUserId;
+
+        if (isset($phone[$payment]) && !empty($phone[$payment])) {
+            $this->customerHelper->storePhone($userId, $phone[$payment]);
+        }
+
+        if (isset($dob[$payment]) && !empty($dob[$payment])) {
+            $this->customerHelper->storeUserBirthday($userId, $dob[$payment]);
         }
     }
 }
