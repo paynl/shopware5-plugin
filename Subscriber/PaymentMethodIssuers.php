@@ -94,7 +94,7 @@ class PaymentMethodIssuers implements SubscriberInterface
             $view->assign('showPhoneField', true);
         }
 
-        if ($action == 'payment') {
+        if ($action == 'payment' && $this->config->banksIsAllowed()) {
             $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
             $view->assign('paynlSelectedIssuer', $issuerId);
         }
