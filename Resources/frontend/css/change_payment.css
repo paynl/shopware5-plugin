@@ -31,6 +31,10 @@
     height: 42px;
 }
 
+.paynl-payment-method.panel--tr .payment--content input {
+    width: 150px;
+}
+
 @media (min-width: 768px) {
     .paynl-payment-method .paynl-method--description {
         width: 50%;
