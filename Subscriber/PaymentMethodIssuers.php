@@ -7,36 +7,43 @@ use Enlight_Controller_Action;
 use Enlight_View;
 use PaynlPayment\Components\Config;
 use PaynlPayment\Components\IssuersProvider;
+use PaynlPayment\Helpers\CustomerHelper;
+use Zend_Session_Abstract;
 use PaynlPayment\Helpers\ExtraFieldsHelper;
 
 class PaymentMethodIssuers implements SubscriberInterface
 {
-    private $issuersProvider;
-
+    /**
+     * @var Zend_Session_Abstract
+     */
+    private $session;
     /**
      * @var Config
      */
     private $config;
 
+    private $issuersProvider;
     /**
-     * @var \Zend_Session_Abstract
+     * @var CustomerHelper
      */
-    private $session;
-
+    private $customerHelper;
     /**
      * @var ExtraFieldsHelper
      */
     private $extraFieldsHelper;
 
     public function __construct(
-        IssuersProvider $issuersProvider,
+        Zend_Session_Abstract $session,
         Config $config,
-        \Zend_Session_Abstract $session,
+        IssuersProvider $issuersProvider,
+        CustomerHelper $customerHelper,
         ExtraFieldsHelper $extraFieldsHelper
-    ) {
-        $this->issuersProvider = $issuersProvider;
-        $this->config = $config;
+    )
+    {
         $this->session = $session;
+        $this->config = $config;
+        $this->issuersProvider = $issuersProvider;
+        $this->customerHelper = $customerHelper;
         $this->extraFieldsHelper = $extraFieldsHelper;
     }
 
@@ -53,25 +60,39 @@ class PaymentMethodIssuers implements SubscriberInterface
         ];
     }
 
-    public function onUpdatePaymentForUser(\Enlight_Event_EventArgs $args) {
-        $request = Shopware()->Front()->Request();
+    public function onUpdatePaymentForUser(\Enlight_Event_EventArgs $args)
+    {
         $defaultReturn = $args->getReturn();
-        $extraFieldsData = [
-            'idealIssuer' => (int)$request->getPost('paynlIssuer')
-        ];
+        /** @var \Enlight_Controller_Request_Request $request */
+        $request = Shopware()->Front()->Request();
 
-        $this->extraFieldsHelper->saveExtraFields($extraFieldsData, $this->session->sUserId);
+        $this->storeExtraFields($request);
+        $this->storeDobAndPhone($request);
 
         return $defaultReturn;
     }
 
-    public function onPostDispatchAccount(\Enlight_Event_EventArgs $args) {
+    public function onPostDispatchAccount(\Enlight_Event_EventArgs $args)
+    {
+        $userId = $this->session->sUserId;
+        if (empty($userId)) {
+            return;
+        }
+
         $request = $args->getRequest();
         $controller = $args->getSubject();
         /** @var Enlight_View $view */
         $view = $controller->View();
         $action = $request->getActionName();
         $issuerId = $this->extraFieldsHelper->getSelectedIssuer();
+
+        $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
+        if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
+            $view->assign('showDobField', true);
+        }
+        if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
+            $view->assign('showPhoneField', true);
+        }
 
         if ($action == 'payment') {
             $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
@@ -98,7 +119,8 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         $request = $args->getRequest();
         $controllerName = $request->getControllerName();
-        if ($controllerName != 'checkout') {
+        $userId = $this->session->sUserId;
+        if ($controllerName != 'checkout' || empty($userId)) {
             return;
         }
 
@@ -134,10 +156,57 @@ class PaymentMethodIssuers implements SubscriberInterface
         }
 
         $view->assign('isCancelled', $isCancelled);
-        if ($action == 'shippingPayment' && $this->config->banksIsAllowed()) {
-            $view->assign('paynlSelectedIssuer', $issuerId);
-            $issuers = $this->issuersProvider->getIssuers();
-            $view->assign('paynlIssuers', $issuers);
+
+        if ($action == 'shippingPayment') {
+            $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
+            if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
+                $view->assign('showDobField', true);
+            }
+            if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
+                $view->assign('showPhoneField', true);
+            }
+
+            if ($action == 'shippingPayment' && $this->config->banksIsAllowed()) {
+                $view->assign('paynlSelectedIssuer', $issuerId);
+                $issuers = $this->issuersProvider->getIssuers();
+                $view->assign('paynlIssuers', $issuers);
+            }
+        }
+    }
+
+    /**
+     * @param \Enlight_Controller_Request_Request $request
+     * @throws \Exception
+     */
+    private function storeExtraFields(\Enlight_Controller_Request_Request $request): void
+    {
+        $extraFieldsData = [
+            'idealIssuer' => (int)$request->getPost('paynlIssuer')
+        ];
+
+        $this->extraFieldsHelper->saveExtraFields($extraFieldsData, $this->session->sUserId);
+    }
+
+    /**
+     * @param \Enlight_Controller_Request_Request $request
+     */
+    private function storeDobAndPhone(\Enlight_Controller_Request_Request $request): void
+    {
+        $payment = $request->getPost('payment');
+        if (!empty($request->getPost('register')) && isset($request->getPost('register')['payment'])) {
+            $payment = $request->getPost('register')['payment'];
+        }
+        $phone = $request->getPost('phone');
+        $dob = $request->getPost('dob');
+
+        $userId = $this->session->sUserId;
+
+        if (isset($phone[$payment]) && !empty($phone[$payment])) {
+            $this->customerHelper->storePhone($userId, $phone[$payment]);
+        }
+
+        if (isset($dob[$payment]) && !empty($dob[$payment])) {
+            $this->customerHelper->storeUserBirthday($userId, $dob[$payment]);
         }
     }
 }

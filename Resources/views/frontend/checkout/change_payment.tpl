@@ -5,7 +5,7 @@
         {foreach $sPayments as $payment_mean}
             {if $payment_mean.action == 'PaynlPayment'}
                 <div class="payment--method paynl-payment-method block{if $payment_mean@last} method_last{else} method{/if}">
-                    <div class="display-inline-middle">
+                    <div class="paynl-radio-block display-inline-middle">
 
                         {* Radio Button *}
                         {block name='frontend_checkout_payment_fieldset_input_radio'}
@@ -31,7 +31,7 @@
                             </div>
                         {/block}
                     </div>
-                    <div class="display-inline-middle">
+                    <div class="min-md-display-inline-middle paynl-payment-template">
                         {if "frontend/plugins/payment/`$payment_mean.template`"|template_exists}
                             <div class="method--bankdata{if $payment_mean.id != $form_data.payment} is--hidden{/if}">
                                 {include file="frontend/plugins/payment/`$payment_mean.template`" form_data=$sFormData error_flags=$sErrorFlag payment_means=$sPayments}
