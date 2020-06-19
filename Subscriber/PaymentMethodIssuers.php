@@ -74,6 +74,11 @@ class PaymentMethodIssuers implements SubscriberInterface
 
     public function onPostDispatchAccount(\Enlight_Event_EventArgs $args)
     {
+        $userId = $this->session->sUserId;
+        if (empty($userId)) {
+            return;
+        }
+
         $request = $args->getRequest();
         $controller = $args->getSubject();
         /** @var Enlight_View $view */
@@ -81,7 +86,6 @@ class PaymentMethodIssuers implements SubscriberInterface
         $action = $request->getActionName();
         $issuerId = $this->extraFieldsHelper->getSelectedIssuer();
 
-        $userId = $this->session->sUserId;
         $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
         if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
             $view->assign('showDobField', true);
@@ -115,7 +119,8 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         $request = $args->getRequest();
         $controllerName = $request->getControllerName();
-        if ($controllerName != 'checkout') {
+        $userId = $this->session->sUserId;
+        if ($controllerName != 'checkout' || empty($userId)) {
             return;
         }
 
@@ -153,7 +158,6 @@ class PaymentMethodIssuers implements SubscriberInterface
         $view->assign('isCancelled', $isCancelled);
 
         if ($action == 'shippingPayment') {
-            $userId = $this->session->sUserId;
             $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
             if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
                 $view->assign('showDobField', true);
