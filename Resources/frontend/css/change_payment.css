@@ -115,5 +115,10 @@
     .paynl-payment-method .payment--content {
         padding: 5px 10px;
         width: 100%;
+        padding-left: 5.9rem;
+    }
+
+    .paynl-payment-template .method--bankdata {
+        padding-left: 5.5rem;
     }
 }
