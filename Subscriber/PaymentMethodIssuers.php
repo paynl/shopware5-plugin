@@ -81,6 +81,15 @@ class PaymentMethodIssuers implements SubscriberInterface
         $action = $request->getActionName();
         $issuerId = $this->extraFieldsHelper->getSelectedIssuer();
 
+        $userId = $this->session->sUserId;
+        $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
+        if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
+            $view->assign('showDobField', true);
+        }
+        if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
+            $view->assign('showPhoneField', true);
+        }
+
         if ($action == 'payment') {
             $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
             $view->assign('paynlSelectedIssuer', $issuerId);
@@ -179,9 +188,13 @@ class PaymentMethodIssuers implements SubscriberInterface
      */
     private function storeDobAndPhone(\Enlight_Controller_Request_Request $request): void
     {
+        $payment = $request->getPost('payment');
+        if (!empty($request->getPost('register')) && isset($request->getPost('register')['payment'])) {
+            $payment = $request->getPost('register')['payment'];
+        }
         $phone = $request->getPost('phone');
         $dob = $request->getPost('dob');
-        $payment = $request->getPost('payment');
+
         $userId = $this->session->sUserId;
 
         if (isset($phone[$payment]) && !empty($phone[$payment])) {
