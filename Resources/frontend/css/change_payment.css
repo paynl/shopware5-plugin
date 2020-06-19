@@ -3,8 +3,8 @@
     vertical-align: middle;
 }
 
-.paynl-payment-method .display-inline-middle .method--bankdata {
-    height: 42px;
+.paynl-payment-method .select-field {
+    vertical-align: middle;
 }
 
 .paynl-payment-method img {
@@ -28,16 +28,32 @@
 }
 
 .paynl-payment-method .payment--content {
-    height: 42px;
+    padding: 0;
 }
 
-@media (min-width: 768px) {
+.paynl-custom-radion {
+    width: 2.5rem;
+    float: left;
+    text-align: center;
+}
+
+.paynl-payment-template input {
+    width: 150px;
+    margin-bottom: 5px;
+}
+
+.paynl-payment-method .payment--selection-input {
+    float: unset;
+    margin-bottom: 5px;
+}
+
+@media (min-width: 769px) {
     .paynl-payment-method .paynl-method--description {
-        width: 50%;
+        width: 45%;
         display: inline-block;
         vertical-align: middle;
         text-align: right;
-        float: right;
+        float: unset;
     }
 
     .paynl-payment-method .min-md-display-inline-middle {
@@ -46,18 +62,63 @@
     }
 }
 
-@media (max-width: 767px) {
+@media (min-width: 1201px) {
+    .paynl-payment-method .paynl-radio-block {
+        width: 33%;
+    }
+
+    .paynl-payment-method .paynl-payment-template {
+        width: 20%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .paynl-payment-method .paynl-method--description {
+        width: auto;
+        display: none;
+    }
+
+    .paynl-payment-method .paynl-payment-template {
+        width: auto;
+    }
+
+    .paynl-radio-block, .paynl-payment-template {
+        width: 45%;
+    }
+}
+
+@media (max-width: 1000px) {
+    .paynl-radio-block, .paynl-payment-template {
+        width: 50%;
+    }
+}
+
+@media (max-width: 900px) {
+    .paynl-radio-block, .paynl-payment-template {
+        width: 60%;
+    }
+}
+
+@media (max-width: 768px) {
     .paynl-payment-method .mb-xs-5 {
         margin-bottom: 5px;
     }
 
-    .paynl-method--description {
-        display: none;
+    .paynl-radio-block, .paynl-payment-template {
+        width: auto;
+    }
+
+    .paynl-payment-template input {
+        width: 100%;
     }
 
     .paynl-payment-method .payment--content {
-        height: 52px;
-        padding: 5px 0;
+        padding: 5px 10px;
         width: 100%;
+        padding-left: 5.9rem;
+    }
+
+    .paynl-payment-template .method--bankdata {
+        padding-left: 5.5rem;
     }
 }

@@ -44,8 +44,8 @@ class ExtraFieldsHelper
      */
     public function saveExtraFields(array $extraFields, int $userId): void
     {
-        $this->dataPersister->persist([
-            self::EXTRA_FIELD_COLUMN => json_encode($extraFields)],
+        $this->dataPersister->persist(
+            [self::EXTRA_FIELD_COLUMN => json_encode($extraFields)],
             self::USER_ATTRIBUTES_TABLE,
             $userId
         );

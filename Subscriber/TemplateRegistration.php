@@ -86,7 +86,8 @@ class TemplateRegistration implements SubscriberInterface
 
     public function addJsFiles(\Enlight_Event_EventArgs $args) {
         $jsFiles = [
-            sprintf('%s/../%s', rtrim(__DIR__, '/'), 'Resources/views/frontend/_public/src/js/jquery.register.js')
+            sprintf('%s/../%s', rtrim(__DIR__, '/'), 'Resources/views/frontend/_public/src/js/jquery.register.js'),
+            sprintf('%s/../%s', rtrim(__DIR__, '/'), 'Resources/views/frontend/_public/src/js/jquery.shipping-payment.js'),
         ];
 
         return new ArrayCollection($jsFiles);

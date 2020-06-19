@@ -1,4 +1,4 @@
-{namespace name='frontend/plugins/payment/ideal'}
+{namespace name='frontend/plugins/payment'}
 
 {if $paynlIssuers}
     <div class="select-field">

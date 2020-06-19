@@ -10,11 +10,16 @@
         </service>
 
         <service id="paynl_payment.subscriber.payment_method_issuers" class="PaynlPayment\Subscriber\PaymentMethodIssuers">
-            <argument type="service" id="paynl_payment.issuers_provider"/>
-            <argument type="service" id="paynl_payment.config"/>
             <argument type="service" id="session"/>
+            <argument type="service" id="paynl_payment.config"/>
+            <argument type="service" id="paynl_payment.issuers_provider"/>
+            <argument type="service" id="paynl_payment.helpers.customer_helper"/>
             <argument type="service" id="paynl_payment.helpers.extra_fields_helper"/>
             <tag name="shopware.event_subscriber" />
+        </service>
+
+        <service id="paynl_payment.helpers.customer_helper" class="PaynlPayment\Helpers\CustomerHelper">
+            <argument type="service" id="models"/>
         </service>
 
         <service id="paynl_payment.helpers.extra_fields_helper" class="PaynlPayment\Helpers\ExtraFieldsHelper">
