@@ -93,7 +93,7 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         if ($action == 'index') {
             $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
-            $view->assign('bankData', $this->getSelectedBanksData($selectedBank));
+            $view->assign('bankData', $this->getSelectedBankData($selectedBank));
         }
     }
 
@@ -145,7 +145,7 @@ class PaymentMethodIssuers implements SubscriberInterface
                 $this->session->sOrderVariables['sUserData']['additional']['payment']['description'];
 
             if ($selectedPaymentMethodName == 'iDEAL') {
-                $view->assign('bankData', $this->getSelectedBanksData($selectedBank));
+                $view->assign('bankData', $this->getSelectedBankData($selectedBank));
             } else {
                 $this->extraFieldsHelper->clearSelectedIssuer($this->session->sUserId);
                 $view->assign('bankData', []);
@@ -229,7 +229,7 @@ class PaymentMethodIssuers implements SubscriberInterface
      * @param int $selectedBanks
      * @return mixed[]|null
      */
-    private function getSelectedBanksData(int $selectedBanks): ?object
+    private function getSelectedBankData(int $selectedBanks): ?object
     {
         $bankData = null;
 
