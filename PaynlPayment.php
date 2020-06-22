@@ -27,6 +27,7 @@ use Shopware\Components\Plugin\Context\UpdateContext;
 class PaynlPayment extends Plugin
 {
     const PAYMENT_METHODS_TEMPLATES_DIRECTORY = __DIR__ . '/Resources/views/frontend/plugins/payment/';
+    const PLUGIN_NAME = 'PaynlPayment';
 
     /**
      * @param InstallContext $context

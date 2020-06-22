@@ -4,7 +4,7 @@
     <div class="panel--body is--wide">
         {foreach $payment_means as $payment_mean}
             {block name="frontend_register_payment_method"}
-                {if $payment_mean.action == 'PaynlPayment'}
+                {if $payment_mean.action == constant("PaynlPayment\PaynlPayment::PLUGIN_NAME")}
                     <div class="payment--method paynl-payment-method panel--tr">
                         {block name="frontend_register_payment_fieldset_input"}
                             <div class="paynl-radio-block display-inline-middle">

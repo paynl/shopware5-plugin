@@ -3,17 +3,17 @@
 {block name='frontend_checkout_payment_content'}
     <div class="panel--body is--wide block-group">
         {foreach $sPayments as $payment_mean}
-            {if $payment_mean.action == 'PaynlPayment'}
+            {if $payment_mean.action == constant("PaynlPayment\PaynlPayment::PLUGIN_NAME")}
                 <div class="payment--method paynl-payment-method block{if $payment_mean@last} method_last{else} method{/if}">
                     <div class="paynl-radio-block display-inline-middle">
 
                         {* Radio Button *}
                         {block name='frontend_checkout_payment_fieldset_input_radio'}
                             <div class="method--input paynl-method--input">
-                                <input type="radio" name="payment" class="radio auto_submit display-inline-middle" value="{$payment_mean.id}"
-                                       id="payment_mean{$payment_mean.id}"{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} checked="checked"{/if} />
+                                <input type="radio" name="payment" class="radio auto_submit display-inline-middle" value="{$payment_mean.id}" id="payment_mean{$payment_mean.id}"{if $payment_mean.id eq $sFormData.payment or (!$sFormData && !$smarty.foreach.register_payment_mean.index)} checked="checked"{/if} />
                             </div>
                         {/block}
+
                         {* Method Name *}
                         {block name='frontend_checkout_payment_fieldset_input_label'}
                             <div class="method--label is--first mb-xs-5">
