@@ -84,7 +84,7 @@ class TemplateRegistration implements SubscriberInterface
         $view->extendsTemplate('frontend/css/change_payment.css');
     }
 
-    public function addJsFiles(\Enlight_Event_EventArgs $args){
+    public function addJsFiles(\Enlight_Event_EventArgs $args) {
         $jsFiles = [
             sprintf('%s/../%s', rtrim(__DIR__, '/'), 'Resources/views/frontend/_public/src/js/jquery.register.js'),
             sprintf('%s/../%s', rtrim(__DIR__, '/'), 'Resources/views/frontend/_public/src/js/jquery.shipping-payment.js'),

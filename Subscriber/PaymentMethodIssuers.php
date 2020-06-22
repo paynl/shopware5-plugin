@@ -66,7 +66,10 @@ class PaymentMethodIssuers implements SubscriberInterface
         /** @var \Enlight_Controller_Request_Request $request */
         $request = Shopware()->Front()->Request();
 
+        // We are assign the extra fields as chosen iDeal bank to the customer by storing it to database as attribute
         $this->storeExtraFields($request);
+
+        // Store date of birth and phone number to DB
         $this->storeDobAndPhone($request);
 
         return $defaultReturn;
@@ -74,41 +77,29 @@ class PaymentMethodIssuers implements SubscriberInterface
 
     public function onPostDispatchAccount(\Enlight_Event_EventArgs $args)
     {
-        $userId = $this->session->sUserId;
-        if (empty($userId)) {
+        if (empty($this->session->sUserId)) {
             return;
         }
 
         $request = $args->getRequest();
         $controller = $args->getSubject();
+
         /** @var Enlight_View $view */
         $view = $controller->View();
         $action = $request->getActionName();
-        $issuerId = $this->extraFieldsHelper->getSelectedIssuer();
 
-        $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
-        if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
-            $view->assign('showDobField', true);
-        }
-        if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
-            $view->assign('showPhoneField', true);
-        }
+        // Check if we can show date of birth and phone number fields for some payment methods
+        $this->renderDobAndPhoneFields($view);
 
-        if ($action == 'payment') {
-            $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
-            $view->assign('paynlSelectedIssuer', $issuerId);
+        if ($action == 'payment' && $this->config->banksIsAllowed()) {
+            // If `Show banks` attribute in plugin manager is allowed we show the list of banks for iDeal
+            $this->renderBanks($view);
         }
 
         if ($action == 'index') {
-            $bankData = [];
-            foreach ($this->issuersProvider->getIssuers() as $bank) {
-                if ($bank->id == $issuerId) {
-                    $bankData = $bank;
-                    break;
-                }
-            }
-
-            $view->assign('bankData', $bankData);
+            $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
+            // Pass the data of chosen bank
+            $view->assign('bankData', $this->getSelectedBankData($selectedBank));
         }
     }
 
@@ -119,8 +110,7 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         $request = $args->getRequest();
         $controllerName = $request->getControllerName();
-        $userId = $this->session->sUserId;
-        if ($controllerName != 'checkout' || empty($userId)) {
+        if ($controllerName != 'checkout' || empty($this->session->sUserId)) {
             return;
         }
 
@@ -128,49 +118,60 @@ class PaymentMethodIssuers implements SubscriberInterface
 
         /** @var Enlight_View $view */
         $view = $controller->View();
-        $issuerId = $this->extraFieldsHelper->getSelectedIssuer();
 
-        if ($action == 'confirm' && !empty($issuerId)) {
-            $bankData = [];
-
-            $selectedPaymentMethodName =
-                $this->session->sOrderVariables['sUserData']['additional']['payment']['description'];
-            if ($selectedPaymentMethodName == 'iDEAL') {
-                foreach ($this->issuersProvider->getIssuers() as $bank) {
-                    if ($bank->id == $issuerId) {
-                        $bankData = $bank;
-                        break;
-                    }
-                }
-
-                $view->assign('bankData', $bankData);
-            } else {
-                $this->extraFieldsHelper->clearSelectedIssuer($this->session->sUserId);
-                $view->assign('bankData', $bankData);
-            }
+        if ($action == 'confirm') {
+            // Pass the selected bank data to frontend
+            $this->renderSelectedBank($view);
+            // Show message if payment was cancelled or denied
+            $this->isPaymentCancelledShowMessage($view);
         }
-
-        $isCancelled = false;
-        if ($action === 'confirm') {
-            $isCancelled = (bool)Shopware()->Front()->Request()->get('isCancelled', 0);
-        }
-
-        $view->assign('isCancelled', $isCancelled);
 
         if ($action == 'shippingPayment') {
-            $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($userId);
-            if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
-                $view->assign('showDobField', true);
-            }
-            if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
-                $view->assign('showPhoneField', true);
-            }
+            $this->onChangePaymentMethodActionCheckout($view);
+        }
+    }
 
-            if ($action == 'shippingPayment' && $this->config->banksIsAllowed()) {
-                $view->assign('paynlSelectedIssuer', $issuerId);
-                $issuers = $this->issuersProvider->getIssuers();
-                $view->assign('paynlIssuers', $issuers);
+    /**
+     * @param Enlight_View $view
+     */
+    private function renderBanks(Enlight_View $view): void
+    {
+        $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
+        $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
+        $view->assign('paynlSelectedIssuer', $selectedBank);
+    }
+
+    /**
+     * @param Enlight_View $view
+     * @throws \Exception
+     */
+    private function renderSelectedBank(Enlight_View $view): void
+    {
+        $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
+        if (!empty($selectedBank)) {
+            $selectedPaymentMethodName =
+                $this->session->sOrderVariables['sUserData']['additional']['payment']['description'];
+
+            if ($selectedPaymentMethodName == 'iDEAL') {
+                $view->assign('bankData', $this->getSelectedBankData($selectedBank));
+            } else {
+                $this->extraFieldsHelper->clearSelectedIssuer($this->session->sUserId);
+                $view->assign('bankData', []);
             }
+        }
+    }
+
+    /**
+     * @param Enlight_View $view
+     * @throws \Exception
+     */
+    private function onChangePaymentMethodActionCheckout(Enlight_View $view): void
+    {
+        // Check if we can show date of birth and phone number fields for some payment methods
+        $this->renderDobAndPhoneFields($view);
+        if ($this->config->banksIsAllowed()) {
+            // If `Show banks` attribute in plugin manager is allowed we show the list of banks for iDeal
+            $this->renderBanks($view);
         }
     }
 
@@ -208,5 +209,47 @@ class PaymentMethodIssuers implements SubscriberInterface
         if (isset($dob[$payment]) && !empty($dob[$payment])) {
             $this->customerHelper->storeUserBirthday($userId, $dob[$payment]);
         }
+    }
+
+    /**
+     * @param Enlight_View $view
+     */
+    private function isPaymentCancelledShowMessage(Enlight_View $view): void
+    {
+        $isCancelled = (bool)Shopware()->Front()->Request()->get('isCancelled', 0);
+
+        $view->assign('isCancelled', $isCancelled);
+    }
+
+    /**
+     * @param Enlight_View $view
+     */
+    private function renderDobAndPhoneFields(Enlight_View $view): void
+    {
+        $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($this->session->sUserId);
+        if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
+            $view->assign('showDobField', true);
+        }
+        if (!isset($customerDobAndPhone['phone']) || empty($customerDobAndPhone['phone'])) {
+            $view->assign('showPhoneField', true);
+        }
+    }
+
+    /**
+     * @param int $selectedBanks
+     * @return mixed[]|null
+     */
+    private function getSelectedBankData(int $selectedBanks): ?object
+    {
+        $bankData = null;
+
+        foreach ($this->issuersProvider->getIssuers() as $bank) {
+            if ($bank->id == $selectedBanks) {
+                $bankData = $bank;
+                break;
+            }
+        }
+
+        return $bankData;
     }
 }

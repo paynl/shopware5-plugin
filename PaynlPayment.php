@@ -27,10 +27,7 @@ use Shopware\Components\Plugin\Context\UpdateContext;
 class PaynlPayment extends Plugin
 {
     const PAYMENT_METHODS_TEMPLATES_DIRECTORY = __DIR__ . '/Resources/views/frontend/plugins/payment/';
-
-    protected $javascript = [
-        'src/js/jquery.register.js'
-    ];
+    const PLUGIN_NAME = 'PaynlPayment';
 
     /**
      * @param InstallContext $context
@@ -259,32 +256,20 @@ class PaynlPayment extends Plugin
         $this->container->get('pluginlogger')->addNotice($message);
     }
 
-    /**
-     * @return mixed[]
-     */
-    private function getUserAttributeData(): object
-    {
-        return (object)[
-            'table' => ExtraFieldsHelper::USER_ATTRIBUTES_TABLE,
-            'column' => ExtraFieldsHelper::EXTRA_FIELD_COLUMN,
-            'type' => 'json',
-            'data' => []
-        ];
-    }
-
     private function addUserAttributeColumn()
     {
         $crudService = $this->container->get('shopware_attribute.crud_service');
-        $tables = [];
 
-        $attrColumn = $this->getUserAttributeData();
+        if (!$this->columnExists(ExtraFieldsHelper::USER_ATTRIBUTES_TABLE, ExtraFieldsHelper::EXTRA_FIELD_COLUMN)) {
+            $crudService->update(
+                ExtraFieldsHelper::USER_ATTRIBUTES_TABLE,
+                ExtraFieldsHelper::EXTRA_FIELD_COLUMN,
+                'json',
+                []
+            );
 
-        if (!$this->columnExists($attrColumn->table, $attrColumn->column)) {
-            $crudService->update($attrColumn->table, $attrColumn->column, $attrColumn->type, $attrColumn->data);
-            $tables[] = $attrColumn->table;
+            $this->rebuildAttributeModels([ExtraFieldsHelper::USER_ATTRIBUTES_TABLE]);
         }
-
-        $this->rebuildAttributeModels($tables);
     }
 
     /**
@@ -294,16 +279,11 @@ class PaynlPayment extends Plugin
     {
         $crudService = $this->container->get('shopware_attribute.crud_service');
 
-        $tables = [];
-        $attrColumn = $this->getUserAttributeData();
+        if ($this->columnExists(ExtraFieldsHelper::USER_ATTRIBUTES_TABLE, ExtraFieldsHelper::EXTRA_FIELD_COLUMN)) {
+            $crudService->delete(ExtraFieldsHelper::USER_ATTRIBUTES_TABLE, ExtraFieldsHelper::EXTRA_FIELD_COLUMN);
 
-        if( $this->columnExists($attrColumn->table, $attrColumn->column) )
-        {
-            $crudService->delete($attrColumn->table, $attrColumn->column);
-            $tables[] = $attrColumn->table;
+            $this->rebuildAttributeModels([ExtraFieldsHelper::USER_ATTRIBUTES_TABLE]);
         }
-
-        $this->rebuildAttributeModels($tables);
     }
 
     /**
