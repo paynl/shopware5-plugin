@@ -9,7 +9,7 @@
     <license>MIT</license>
     <link>https://www.pay.nl</link>
     <author>PAY.</author>
-    <compatibility minVersion="7.0"/>
+    <compatibility minVersion="5.6.0"/>
     <description lang="en">
         <![CDATA[
             <b>PAY. Payment methods</b>
