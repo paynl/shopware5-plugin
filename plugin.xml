@@ -4,12 +4,12 @@
     <label lang="en">PAY. Payment Methods</label>
     <label lang="de">PAY. Zahlungsmethoden</label>
     <label lang="nl">PAY. Betaalmethoden</label>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
     <copyright>(c) by PAY.</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
     <author>PAY.</author>
-    <compatibility minVersion="5.4.0"/>
+    <compatibility minVersion="7.0"/>
     <description lang="en">
         <![CDATA[
             <b>PAY. Payment methods</b>
