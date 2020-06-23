@@ -2,6 +2,7 @@
 
 namespace PaynlPayment\Components;
 
+use PaynlPayment\Helpers\ComposerHelper;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\NumberRangeIncrementerInterface;
@@ -49,18 +50,24 @@ class Api
      * @var Router
      */
     private $router;
+    /**
+     * @var ComposerHelper
+     */
+    private $composerHelper;
 
     public function __construct(
         Config $config,
         ModelManager $modelManager,
         Router $router,
-        NumberRangeIncrementerInterface $numberIncrementer
+        NumberRangeIncrementerInterface $numberIncrementer,
+        ComposerHelper $composerHelper
     )
     {
         $this->config = $config;
         $this->modelManager = $modelManager;
         $this->router = $router;
         $this->numberIncrementer = $numberIncrementer;
+        $this->composerHelper = $composerHelper;
 
         $this->transactionRepository = $modelManager->getRepository(Transaction\Transaction::class);
         $this->customerRepository = $modelManager->getRepository(Customer\Customer::class);
@@ -131,7 +138,7 @@ class Api
             $basket,
             $bank
         );
-        $arrStartData['object'] = 'shopware 3.2.1';
+        $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
 
         try {
             $this->config->loginSDK();

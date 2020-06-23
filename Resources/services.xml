@@ -28,6 +28,8 @@
             <argument type="service" id="shopware_attribute.data_loader"/>
         </service>
 
+        <service id="paynl_payment.helpers.composer_helper" class="PaynlPayment\Helpers\ComposerHelper" />
+
         <service id="paynl_payment.config" class="PaynlPayment\Components\Config">
             <argument type="service" id="shopware.plugin.cached_config_reader"/>
         </service>
@@ -36,6 +38,7 @@
             <argument type="service" id="models"/>
             <argument type="service" id="router"/>
             <argument type="service" id="shopware.number_range_incrementer"/>
+            <argument type="service" id="paynl_payment.helpers.composer_helper"/>
         </service>
         <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
         </service>
