@@ -28,11 +28,6 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
-    <changelog version="3.2.1">
-        <changes lang="nl">Probleem met exchange opgelost.</changes>
-        <changes lang="en">Fixed exchange error.</changes>
-        <changes lang="de">Problem mit dem Exchange behoben.</changes>
-    </changelog>
     <changelog version="3.3.0">
         <changes lang="nl">
             - Toont de geselecteerde bank op de checkoutpagina
@@ -61,6 +56,11 @@
             - Logos hinzugefügt
             - Die minimale Shopware-Version ist 5.6.0
         </changes>
+    </changelog>
+    <changelog version="3.2.1">
+        <changes lang="nl">Probleem met exchange opgelost.</changes>
+        <changes lang="en">Fixed exchange error.</changes>
+        <changes lang="de">Problem mit dem Exchange behoben.</changes>
     </changelog>
     <changelog version="3.2.0">
         <changes lang="nl">Testbutton toegevoegd. Logging toegevoegd.</changes>
