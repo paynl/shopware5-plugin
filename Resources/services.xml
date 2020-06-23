@@ -39,6 +39,7 @@
             <argument type="service" id="router"/>
             <argument type="service" id="shopware.number_range_incrementer"/>
             <argument type="service" id="paynl_payment.helpers.composer_helper"/>
+            <argument type="service" id="paynl_payment.helpers.extra_fields_helper"/>
         </service>
         <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
         </service>
