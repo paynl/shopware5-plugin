@@ -3,10 +3,6 @@
     vertical-align: middle;
 }
 
-.paynl-payment-method .select-field {
-    vertical-align: middle;
-}
-
 .paynl-payment-method img {
     width: 40px;
 }
@@ -25,6 +21,7 @@
 
 .paynl-payment-method .select-field {
     margin-bottom: 0;
+    vertical-align: middle;
 }
 
 .paynl-payment-method .payment--content {
