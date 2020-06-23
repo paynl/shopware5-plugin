@@ -33,6 +33,35 @@
         <changes lang="en">Fixed exchange error.</changes>
         <changes lang="de">Problem mit dem Exchange behoben.</changes>
     </changelog>
+    <changelog version="3.3.0">
+        <changes lang="nl">
+            - Toont de geselecteerde bank op de checkoutpagina
+            - Melding toegevoegd voor geannuleerde of afgewezen betalingen
+            - Lijst met banken toegevoegd bij iDeal
+            - Veld geboortdatum toegevoegd voor achteraf betaalmethodes.
+            - Logos toegevoegd
+            - Minimiale Shopware versie bijgesteld naar 5.6.0
+        </changes>
+        <changes lang="en">
+            - Show the selected bank issuer on the confirm checkout page;
+            - When activating plugin, the admin will choose whether to show the banks assigned for the iDeal payment method;
+            - When a transaction is canceled or denied, a user will see a message;
+            - When iDeal is chosen as the payment method, the drop-down with the list of banks appears (in the PM settings of the customer's account);
+            - When changing a payment method, the description of the newly selected one is provided;
+            - When choosing a certain payment method (SprayPay, Credit Click, Billink, AfterPay, Klarna, IN3), a customer will be asked to fill in the fields with DOB and phone number (in case this info was not provided during the registration);
+            - New logos of payment methods are added;
+            - The plugin will only be compatible with the Shopware versions 5.6.0 or higher;
+            - Fixed the notify endpoint (so that a correct response was sent).
+        </changes>
+        <changes lang="de">
+            - Zeigt die ausgewählte Bank auf der Checkout-Seite an
+            - Benachrichtigung für stornierte oder abgelehnte Zahlungen hinzugefügt
+            - Banken werden bei iDeal angezeigt
+            - Feld Geburtsdatum für Nachzahlungsmethoden hinzugefügt.
+            - Logos hinzugefügt
+            - Die minimale Shopware-Version ist 5.6.0
+        </changes>
+    </changelog>
     <changelog version="3.2.0">
         <changes lang="nl">Testbutton toegevoegd. Logging toegevoegd.</changes>
         <changes lang="en">Added testbutton. Added logging.</changes>
