@@ -129,7 +129,6 @@ class Api
 
         $transaction->setSComment($sComment);
         $transaction->setSDispatch($sDispatch);
-
         $arrStartData = $this->getStartData(
             $amount,
             $paymentOptionId,
@@ -138,7 +137,7 @@ class Api
             $signature,
             $arrUser,
             $basket,
-            $this->extraFieldsHelper->getSelectedIssuer()
+            $this->extraFieldsHelper->getSelectedIssuer($arrUser['additional']['user']['id'])
         );
         $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
 
