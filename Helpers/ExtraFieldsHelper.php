@@ -13,11 +13,6 @@ class ExtraFieldsHelper
     const FIELD_IDEAL_ISSUER = 'idealIssuer';
 
     /**
-     * @var \Zend_Session_Abstract
-     */
-    private $session;
-
-    /**
      * @var DataPersister
      */
     private $dataPersister;
@@ -28,11 +23,9 @@ class ExtraFieldsHelper
     private $dataLoader;
 
     public function __construct(
-        \Zend_Session_Abstract $session,
         DataPersister $dataPersister,
         DataLoader $dataLoader
     ) {
-        $this->session = $session;
         $this->dataPersister = $dataPersister;
         $this->dataLoader = $dataLoader;
     }
@@ -52,12 +45,11 @@ class ExtraFieldsHelper
     }
 
     /**
+     * @param int $userId
      * @return mixed[]
      * @throws \Exception
      */
-    public function getExtraFields() {
-        $userId = $this->session->sUserId;
-
+    public function getExtraFields(int $userId) {
         if ($userId) {
             $userAttributes = $this->dataLoader->load(self::USER_ATTRIBUTES_TABLE, $userId);
 
@@ -70,12 +62,13 @@ class ExtraFieldsHelper
     }
 
     /**
+     * @param int $userId
      * @return int|null
      * @throws \Exception
      */
-    public function getSelectedIssuer(): ?int
+    public function getSelectedIssuer(int $userId): ?int
     {
-        return $this->getExtraFields()[self::FIELD_IDEAL_ISSUER] ?? null;
+        return $this->getExtraFields($userId)[self::FIELD_IDEAL_ISSUER] ?? null;
     }
 
     /**
@@ -85,7 +78,7 @@ class ExtraFieldsHelper
     public function clearSelectedIssuer(int $userId): void
     {
         $extraFieldsData[self::FIELD_IDEAL_ISSUER] = 0;
-        $newExtraFieldsData = array_merge($this->getExtraFields(), $extraFieldsData);
+        $newExtraFieldsData = array_merge($this->getExtraFields($userId), $extraFieldsData);
 
         $this->saveExtraFields($newExtraFieldsData, $userId);
     }

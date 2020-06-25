@@ -97,7 +97,7 @@ class PaymentMethodIssuers implements SubscriberInterface
         }
 
         if ($action == 'index') {
-            $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
+            $selectedBank = $this->extraFieldsHelper->getSelectedIssuer($this->session->sUserId);
             // Pass the data of chosen bank
             $view->assign('bankData', $this->getSelectedBankData($selectedBank));
         }
@@ -136,7 +136,7 @@ class PaymentMethodIssuers implements SubscriberInterface
      */
     private function renderBanks(Enlight_View $view): void
     {
-        $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
+        $selectedBank = $this->extraFieldsHelper->getSelectedIssuer($this->session->sUserId);
         $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
         $view->assign('paynlSelectedIssuer', $selectedBank);
     }
@@ -147,7 +147,8 @@ class PaymentMethodIssuers implements SubscriberInterface
      */
     private function renderSelectedBank(Enlight_View $view): void
     {
-        $selectedBank = $this->extraFieldsHelper->getSelectedIssuer();
+        $userId = $this->session->sUserId;
+        $selectedBank = $this->extraFieldsHelper->getSelectedIssuer($userId);
         if (!empty($selectedBank)) {
             $selectedPaymentMethodName =
                 $this->session->sOrderVariables['sUserData']['additional']['payment']['description'];
@@ -155,7 +156,7 @@ class PaymentMethodIssuers implements SubscriberInterface
             if ($selectedPaymentMethodName == 'iDEAL') {
                 $view->assign('bankData', $this->getSelectedBankData($selectedBank));
             } else {
-                $this->extraFieldsHelper->clearSelectedIssuer($this->session->sUserId);
+                $this->extraFieldsHelper->clearSelectedIssuer($userId);
                 $view->assign('bankData', []);
             }
         }
