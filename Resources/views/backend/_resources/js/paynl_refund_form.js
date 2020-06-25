@@ -9,10 +9,12 @@ function updateRefundAmount() {
         total += priceAmount * quantityAmount;
     }
 
-    let isShipingAmountRefunded = document.getElementById("checkRefundShipping").checked;
-    if (isShipingAmountRefunded) {
-        let refundShippingEl = document.getElementById('checkRefundShipping');
-        total += refundShippingEl.dataset.price * 1;
+    let refundShippingEl = document.getElementById("checkRefundShipping");
+    if (refundShippingEl) {
+        let isShipingAmountRefunded = refundShippingEl.checked;
+        if (isShipingAmountRefunded) {
+            total += refundShippingEl.dataset.price * 1;
+        }
     }
 
     document.getElementById('refundAmount').value = total.toFixed(2);
@@ -23,6 +25,9 @@ for (let index = 0; index < selects.length; index++) {
     selects[index].onchange = updateRefundAmount;
 }
 
-document.getElementById('checkRefundShipping').onchange = updateRefundAmount;
+let checkRefundShipping = document.getElementById('checkRefundShipping');
+if (checkRefundShipping) {
+    checkRefundShipping.onchange = updateRefundAmount;
+}
 
 updateRefundAmount();

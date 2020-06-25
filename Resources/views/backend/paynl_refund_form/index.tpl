@@ -124,7 +124,7 @@
                     <td>{$detail['quantity']}</td>
                     <td>
                         <select data-price="{$detail['price']}" class="form-control select-refund-qty"
-                                name="product[{$detail['id']}][qty]" id="">
+                                name="product[{$detail['id']}][qty]">
                             {for $i=0;$i<=$detail['quantity'];$i++}
                                 <option value="{$i}">{$i}</option>
                             {/for}
