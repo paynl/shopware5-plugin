@@ -11,7 +11,7 @@
         "installer-name": "PaynlPayment"
     },
     "require": {
-        "paynl/sdk": "^1.5"
+        "paynl/sdk": "1.5.15"
     },
     "license": "MIT",
     "authors": [
