@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e1181eab38c45af04c3a6e300b27f0b",
+    "content-hash": "6272dc66d0796cce19c11c389533115d",
     "packages": [
         {
             "name": "paynl/sdk",
-            "version": "1.5.13",
+            "version": "v1.5.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paynl/sdk.git",
-                "reference": "e21a81fc5c052d02b70af1f20fdee67b2e2b057d"
+                "reference": "c801462646b8182677c00d6c0a39a505266067b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paynl/sdk/zipball/e21a81fc5c052d02b70af1f20fdee67b2e2b057d",
-                "reference": "e21a81fc5c052d02b70af1f20fdee67b2e2b057d",
+                "url": "https://api.github.com/repos/paynl/sdk/zipball/c801462646b8182677c00d6c0a39a505266067b4",
+                "reference": "c801462646b8182677c00d6c0a39a505266067b4",
                 "shasum": ""
             },
             "require": {
@@ -48,20 +48,20 @@
                     "email": "andy@pay.nl"
                 }
             ],
-            "time": "2020-03-13T08:53:25+00:00"
+            "time": "2020-06-18T14:33:40+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
-            "version": "8.7.0",
+            "version": "8.8.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:php-curl-class/php-curl-class.git",
-                "reference": "73ec46ed20cdd445b57f15d9da6fcb5a42f74bb4"
+                "url": "https://github.com/php-curl-class/php-curl-class.git",
+                "reference": "180273b577148090a62bb7333201d17e0b6efb75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/73ec46ed20cdd445b57f15d9da6fcb5a42f74bb4",
-                "reference": "73ec46ed20cdd445b57f15d9da6fcb5a42f74bb4",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/180273b577148090a62bb7333201d17e0b6efb75",
+                "reference": "180273b577148090a62bb7333201d17e0b6efb75",
                 "shasum": ""
             },
             "require": {
@@ -115,7 +115,7 @@
                 "web-service",
                 "xml"
             ],
-            "time": "2020-02-29T05:02:55+00:00"
+            "time": "2020-04-20T03:39:57+00:00"
         }
     ],
     "packages-dev": [],
