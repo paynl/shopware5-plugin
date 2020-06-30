@@ -8,10 +8,26 @@
             <argument type="service" id="template"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
         <service id="paynl_payment.subscriber.payment_method_issuers" class="PaynlPayment\Subscriber\PaymentMethodIssuers">
+            <argument type="service" id="session"/>
+            <argument type="service" id="paynl_payment.config"/>
             <argument type="service" id="paynl_payment.issuers_provider"/>
+            <argument type="service" id="paynl_payment.helpers.customer_helper"/>
+            <argument type="service" id="paynl_payment.helpers.extra_fields_helper"/>
             <tag name="shopware.event_subscriber" />
         </service>
+
+        <service id="paynl_payment.helpers.customer_helper" class="PaynlPayment\Helpers\CustomerHelper">
+            <argument type="service" id="models"/>
+        </service>
+
+        <service id="paynl_payment.helpers.extra_fields_helper" class="PaynlPayment\Helpers\ExtraFieldsHelper">
+            <argument type="service" id="shopware_attribute.data_persister"/>
+            <argument type="service" id="shopware_attribute.data_loader"/>
+        </service>
+
+        <service id="paynl_payment.helpers.composer_helper" class="PaynlPayment\Helpers\ComposerHelper" />
 
         <service id="paynl_payment.config" class="PaynlPayment\Components\Config">
             <argument type="service" id="shopware.plugin.cached_config_reader"/>
@@ -21,6 +37,8 @@
             <argument type="service" id="models"/>
             <argument type="service" id="router"/>
             <argument type="service" id="shopware.number_range_incrementer"/>
+            <argument type="service" id="paynl_payment.helpers.composer_helper"/>
+            <argument type="service" id="paynl_payment.helpers.extra_fields_helper"/>
         </service>
         <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
         </service>

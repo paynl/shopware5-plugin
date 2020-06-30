@@ -7,13 +7,14 @@ namespace PaynlPayment;
  * When installed via composer, the sdk is automaticly loaded in the vendor directory.
  * In the package file this is included, but need to be loaded
  */
-if(!class_exists('\Paynl\Config') && file_exists(__DIR__.'/vendor/autoload.php')){
-    require_once (__DIR__.'/vendor/autoload.php');
+if (!class_exists('\Paynl\Config') && file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once(__DIR__ . '/vendor/autoload.php');
 }
 
 use Doctrine\ORM\Tools\SchemaTool;
 use Paynl\Paymentmethods;
 use PaynlPayment\Components\Config;
+use PaynlPayment\Helpers\ExtraFieldsHelper;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin;
@@ -26,22 +27,24 @@ use Shopware\Components\Plugin\Context\UpdateContext;
 class PaynlPayment extends Plugin
 {
     const PAYMENT_METHODS_TEMPLATES_DIRECTORY = __DIR__ . '/Resources/views/frontend/plugins/payment/';
+    const PLUGIN_NAME = 'PaynlPayment';
 
-  /**
-   * @param InstallContext $context
-   */
+    /**
+     * @param InstallContext $context
+     */
     public function install(InstallContext $context)
     {
         $this->createTables();
+        $this->addUserAttributeColumn();
         $this->initPaymentIdIncrementer();
         $this->migrate();
 
         parent::install($context);
     }
 
-  /**
-   * @param UpdateContext $context
-   */
+    /**
+     * @param UpdateContext $context
+     */
     public function update(UpdateContext $context)
     {
         $this->createTables();
@@ -51,35 +54,37 @@ class PaynlPayment extends Plugin
         parent::update($context);
     }
 
-  /**
-   * @param UninstallContext $context
-   */
+    /**
+     * @param UninstallContext $context
+     */
     public function uninstall(UninstallContext $context)
     {
-      $this->disablePaymentMethods($context->getPlugin());
+        $this->disablePaymentMethods($context->getPlugin());
 
-      if (!$context->keepUserData()) {
-        $this->removeAllTables();
-      }
+        if (!$context->keepUserData()) {
+            $this->removeAllTables();
+        }
 
-      parent::uninstall($context);
+        $this->removeAttributeColumns();
+
+        parent::uninstall($context);
     }
 
     private function removeAllTables()
     {
-      try {
-        $db = $this->container->get('db');
-        $db->executeQuery('DROP TABLE IF EXISTS `paynl_transactions`');
-        $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_transactions`');
-      } catch (\Exception $e) {
-        $this->container->get('pluginlogger')->addError('PAY. Uninstall: ' . $e->getMessage());
-      }
+        try {
+            $db = $this->container->get('db');
+            $db->executeQuery('DROP TABLE IF EXISTS `paynl_transactions`');
+            $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_transactions`');
+        } catch (\Exception $e) {
+            $this->container->get('pluginlogger')->addError('PAY. Uninstall: ' . $e->getMessage());
+        }
     }
 
-   /**
-    * @param ActivateContext $context
-    * @throws \Exception
-    */
+    /**
+     * @param ActivateContext $context
+     * @throws \Exception
+     */
     public function activate(ActivateContext $context)
     {
         $plugin = $context->getPlugin();
@@ -89,9 +94,9 @@ class PaynlPayment extends Plugin
         parent::activate($context);
     }
 
-   /**
-    * @param DeactivateContext $context
-    */
+    /**
+     * @param DeactivateContext $context
+     */
     public function deactivate(DeactivateContext $context)
     {
         $this->disablePaymentMethods($context->getPlugin());
@@ -118,8 +123,8 @@ class PaynlPayment extends Plugin
     }
 
     /**
-    * @param \Shopware\Models\Plugin\Plugin $plugin
-    */
+     * @param \Shopware\Models\Plugin\Plugin $plugin
+     */
     private function disablePaymentMethods(\Shopware\Models\Plugin\Plugin $plugin)
     {
         $em = $this->container->get('models');
@@ -133,21 +138,21 @@ class PaynlPayment extends Plugin
         $em->flush();
     }
 
-   /**
-    * @param \Shopware\Models\Plugin\Plugin $plugin
-    * @throws \Exception
-    */
+    /**
+     * @param \Shopware\Models\Plugin\Plugin $plugin
+     * @throws \Exception
+     */
     private function installPaymentMethods(\Shopware\Models\Plugin\Plugin $plugin)
     {
         /** @var Config $config */
         $config = new Config($this->container->get('shopware.plugin.cached_config_reader'));
 
         try {
-          $config->loginSDK();
-          $methods = Paymentmethods::getList();
+            $config->loginSDK();
+            $methods = Paymentmethods::getList();
         } catch (\Exception $e) {
-          $this->log('PAY.: Activation error: ' . $e->getMessage());
-          throw new \Exception('Activation error. Please enter valid: Token-Code, API-token and Service-ID');
+            $this->log('PAY.: Activation error: ' . $e->getMessage());
+            throw new \Exception('Activation error. Please enter valid: Token-Code, API-token and Service-ID');
         }
 
         /** @var Shopware\Components\Plugin\PaymentInstaller $installer */
@@ -155,15 +160,16 @@ class PaynlPayment extends Plugin
 
         foreach ($methods as $method) {
             $options = [
-                'name' => 'paynl_' . $method['id'],
+                'name' => sprintf('paynl_%s', $method['id']),
+                'class' => $method['brand']['id'] ?? '',
                 'description' => $method['name'],
                 'action' => 'PaynlPayment',
                 'active' => true,
-                'additionalDescription' => ''
+                'additionalDescription' => $method['brand']['public_description'] ?? ''
             ];
 
-            $pluginTemplateName = strtolower(preg_replace('/[\W]/', '_', $method['name'])) . '.tpl';
-            if(is_file(self:: PAYMENT_METHODS_TEMPLATES_DIRECTORY . $pluginTemplateName)) {
+            $pluginTemplateName = sprintf('%d.%s', (int)$method['id'], 'tpl');
+            if (is_file(self:: PAYMENT_METHODS_TEMPLATES_DIRECTORY . $pluginTemplateName)) {
                 $options['template'] = $pluginTemplateName;
             }
 
@@ -214,40 +220,94 @@ class PaynlPayment extends Plugin
         }
     }
 
-   private function migrate()
+    private function migrate()
     {
-      $db = $this->container->get('db');
-
-      try {
-        $bRenamed = false;
-        $db->executeQuery('SELECT 1 FROM `paynl_transactions` LIMIT 1');
+        $db = $this->container->get('db');
 
         try {
-          $db->executeQuery('SELECT 1 FROM `s_plugin_paynlpayment_transactions` LIMIT 1');
-        } catch (\Exception $e) {
-          $db->executeQuery('RENAME TABLE `paynl_transactions` TO `s_plugin_paynlpayment_transactions`');
-          $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_comment` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `exceptions`');
-          $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_dispatch` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `s_comment`');
-          $bRenamed = true;
-        }
+            $bRenamed = false;
+            $db->executeQuery('SELECT 1 FROM `paynl_transactions` LIMIT 1');
 
-        # If `paynl_transacions` didnt exist, it would've generated an exception by now and next two queries will not be executed .
-        if ($bRenamed === false) {
-          $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynlpayment_transactions` (paynl_payment_id, transaction_id, signature, amount, currency, created_at, updated_at, customer_id, order_id, payment_id, status_id)
+            try {
+                $db->executeQuery('SELECT 1 FROM `s_plugin_paynlpayment_transactions` LIMIT 1');
+            } catch (\Exception $e) {
+                $db->executeQuery('RENAME TABLE `paynl_transactions` TO `s_plugin_paynlpayment_transactions`');
+                $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_comment` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `exceptions`');
+                $db->executeQuery('ALTER TABLE `s_plugin_paynlpayment_transactions` ADD `s_dispatch` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `s_comment`');
+                $bRenamed = true;
+            }
+
+            # If `paynl_transacions` didnt exist, it would've generated an exception by now and next two queries will not be executed .
+            if ($bRenamed === false) {
+                $db->executeQuery('INSERT IGNORE INTO `s_plugin_paynlpayment_transactions` (paynl_payment_id, transaction_id, signature, amount, currency, created_at, updated_at, customer_id, order_id, payment_id, status_id)
           SELECT `paynl_payment_id`, `transaction_id`, `signature`, `amount`, `currency`, `created_at`, `updated_at`, `customer_id`, `order_id`, `payment_id`, `status_id` FROM `paynl_transactions`');
-          $db->executeQuery('DROP TABLE `paynl_transactions` ');
+                $db->executeQuery('DROP TABLE `paynl_transactions` ');
+            }
+        } catch (\Exception $exception) {
+            $this->log('PAY.: Migration: ' . $exception->getMessage());
         }
-      } catch (\Exception $exception) {
-        $this->log('PAY.: Migration: ' . $exception->getMessage());
-      }
     }
 
-  /**
-   * @param $message
-   */
+    /**
+     * @param $message
+     */
     private function log($message)
     {
-      $this->container->get('pluginlogger')->addNotice($message);
+        $this->container->get('pluginlogger')->addNotice($message);
     }
 
+    private function addUserAttributeColumn()
+    {
+        $crudService = $this->container->get('shopware_attribute.crud_service');
+
+        if (!$this->columnExists(ExtraFieldsHelper::USER_ATTRIBUTES_TABLE, ExtraFieldsHelper::EXTRA_FIELD_COLUMN)) {
+            $crudService->update(
+                ExtraFieldsHelper::USER_ATTRIBUTES_TABLE,
+                ExtraFieldsHelper::EXTRA_FIELD_COLUMN,
+                'json',
+                []
+            );
+
+            $this->rebuildAttributeModels([ExtraFieldsHelper::USER_ATTRIBUTES_TABLE]);
+        }
+    }
+
+    /**
+     * Remove extra attribute columns
+     */
+    private function removeAttributeColumns()
+    {
+        $crudService = $this->container->get('shopware_attribute.crud_service');
+
+        if ($this->columnExists(ExtraFieldsHelper::USER_ATTRIBUTES_TABLE, ExtraFieldsHelper::EXTRA_FIELD_COLUMN)) {
+            $crudService->delete(ExtraFieldsHelper::USER_ATTRIBUTES_TABLE, ExtraFieldsHelper::EXTRA_FIELD_COLUMN);
+
+            $this->rebuildAttributeModels([ExtraFieldsHelper::USER_ATTRIBUTES_TABLE]);
+        }
+    }
+
+    /**
+     * @param string $table
+     * @param string $columnName
+     * @return bool
+     */
+    private function columnExists(string $table, string $columnName): bool
+    {
+        $crudService = $this->container->get('shopware_attribute.crud_service');
+        $column = $crudService->get($table, $columnName);
+
+        return !empty($column);
+    }
+
+    /**
+     * @param array $tables
+     */
+    private function rebuildAttributeModels(array $tables): void
+    {
+        $em = $this->container->get('models');
+        $metaDataCache = $em->getConfiguration()->getMetadataCacheImpl();
+        $metaDataCache->deleteAll();
+
+        $em->generateAttributeModels($tables);
+    }
 }

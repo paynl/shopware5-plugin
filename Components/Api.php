@@ -2,6 +2,8 @@
 
 namespace PaynlPayment\Components;
 
+use PaynlPayment\Helpers\ComposerHelper;
+use PaynlPayment\Helpers\ExtraFieldsHelper;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\NumberRangeIncrementerInterface;
@@ -49,18 +51,30 @@ class Api
      * @var Router
      */
     private $router;
+    /**
+     * @var ComposerHelper
+     */
+    private $composerHelper;
+    /**
+     * @var ExtraFieldsHelper
+     */
+    private $extraFieldsHelper;
 
     public function __construct(
         Config $config,
         ModelManager $modelManager,
         Router $router,
-        NumberRangeIncrementerInterface $numberIncrementer
+        NumberRangeIncrementerInterface $numberIncrementer,
+        ComposerHelper $composerHelper,
+        ExtraFieldsHelper $extraFieldsHelper
     )
     {
         $this->config = $config;
         $this->modelManager = $modelManager;
         $this->router = $router;
         $this->numberIncrementer = $numberIncrementer;
+        $this->composerHelper = $composerHelper;
+        $this->extraFieldsHelper = $extraFieldsHelper;
 
         $this->transactionRepository = $modelManager->getRepository(Transaction\Transaction::class);
         $this->customerRepository = $modelManager->getRepository(Customer\Customer::class);
@@ -80,9 +94,6 @@ class Api
      */
     public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
-        /** @var \Enlight_Components_Session_Namespace $session */
-        $session = Shopware()->Session();
-
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
             throw new Exception(sprintf('Payment is not a PAY. Payment method. Name: %s', $payment_name));
@@ -118,9 +129,6 @@ class Api
 
         $transaction->setSComment($sComment);
         $transaction->setSDispatch($sDispatch);
-
-        $bank = $session->paynlIssuer;
-        $session->paynlIssuer = null;
         $arrStartData = $this->getStartData(
             $amount,
             $paymentOptionId,
@@ -129,9 +137,9 @@ class Api
             $signature,
             $arrUser,
             $basket,
-            $bank
+            $this->extraFieldsHelper->getSelectedIssuer($arrUser['additional']['user']['id'])
         );
-        $arrStartData['object'] = 'shopware 3.2.1';
+        $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
 
         try {
             $this->config->loginSDK();

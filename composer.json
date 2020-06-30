@@ -1,22 +1,23 @@
 {
-  "name": "paynl/shopware-plugin",
-  "keywords": [
-    "shopware",
-    "plugin"
-  ],
-  "description": "Pay.nl Shopware Plugin",
-  "type": "shopware-plugin",
-  "extra": {
-    "installer-name": "PaynlPayment"
-  },
-  "require": {
-    "paynl/sdk": "^1.5"
-  },
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Andy Pieters",
-      "email": "andy@pay.nl"
-    }
-  ]
+    "name": "paynl/shopware-plugin",
+    "version": "v3.3.0",
+    "keywords": [
+        "shopware",
+        "plugin"
+    ],
+    "description": "Pay.nl Shopware Plugin",
+    "type": "shopware-plugin",
+    "extra": {
+        "installer-name": "PaynlPayment"
+    },
+    "require": {
+        "paynl/sdk": "1.5.15"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pay.nl dev team",
+            "email": "support@pay.nl"
+        }
+    ]
 }
