@@ -68,7 +68,7 @@ class ExtraFieldsHelper
      */
     public function getSelectedIssuer(int $userId): ?int
     {
-        return $this->getExtraFields($userId)[self::FIELD_IDEAL_ISSUER] ?? null;
+        return $this->getExtraFields($userId)[self::FIELD_IDEAL_ISSUER] ?: 0;
     }
 
     /**

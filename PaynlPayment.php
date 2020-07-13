@@ -15,6 +15,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Paynl\Paymentmethods;
 use PaynlPayment\Components\Config;
 use PaynlPayment\Helpers\ExtraFieldsHelper;
+use PaynlPayment\Models\Banks\Banks;
 use PaynlPayment\Models\Transaction;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin;
@@ -76,6 +77,7 @@ class PaynlPayment extends Plugin
             $db = $this->container->get('db');
             $db->executeQuery('DROP TABLE IF EXISTS `paynl_transactions`');
             $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_transactions`');
+            $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_payment_method_banks`');
         } catch (\Exception $e) {
             $this->container->get('pluginlogger')->addError('PAY. Uninstall: ' . $e->getMessage());
         }
@@ -157,6 +159,9 @@ class PaynlPayment extends Plugin
 
         /** @var Shopware\Components\Plugin\PaymentInstaller $installer */
         $installer = $this->container->get('shopware.plugin_payment_installer');
+        /** @var ModelManager $modelManager */
+        $modelManager = $this->container->get('models');
+        $paymentMethodBanks = $modelManager->getRepository(Banks::class);
 
         foreach ($methods as $method) {
             $options = [
@@ -174,6 +179,9 @@ class PaynlPayment extends Plugin
             }
 
             $installer->createOrUpdate($plugin->getName(), $options);
+            if ($method['id'] == 10 && !empty($method['banks'])) {
+                $paymentMethodBanks->upsert($method['id'], $method['banks']);
+            }
         }
     }
 
@@ -199,7 +207,8 @@ class PaynlPayment extends Plugin
     private function getClasses(ModelManager $modelManager)
     {
         return [
-            $modelManager->getClassMetadata(Transaction\Transaction::class)
+            $modelManager->getClassMetadata(Transaction\Transaction::class),
+            $modelManager->getClassMetadata(Banks::class)
         ];
     }
 

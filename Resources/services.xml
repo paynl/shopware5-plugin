@@ -41,6 +41,7 @@
             <argument type="service" id="paynl_payment.helpers.extra_fields_helper"/>
         </service>
         <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
+            <argument type="service" id="models"/>
         </service>
     </services>
 </container>
