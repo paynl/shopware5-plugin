@@ -179,7 +179,7 @@ class PaynlPayment extends Plugin
             }
 
             $installer->createOrUpdate($plugin->getName(), $options);
-            if ($method['id'] == 10 && !empty($method['banks'])) {
+            if ((int)$method['id'] === 10 && !empty($method['banks'])) {
                 $paymentMethodBanks->upsert($method['id'], $method['banks']);
             }
         }
