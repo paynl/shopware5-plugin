@@ -29,6 +29,7 @@ class PaynlPayment extends Plugin
 {
     const PAYMENT_METHODS_TEMPLATES_DIRECTORY = __DIR__ . '/Resources/views/frontend/plugins/payment/';
     const PLUGIN_NAME = 'PaynlPayment';
+    const IDEAL_ID = 10;
 
     /**
      * @param InstallContext $context
@@ -179,7 +180,7 @@ class PaynlPayment extends Plugin
             }
 
             $installer->createOrUpdate($plugin->getName(), $options);
-            if ((int)$method['id'] === 10 && !empty($method['banks'])) {
+            if ((int)$method['id'] === self::IDEAL_ID && !empty($method['banks'])) {
                 $paymentMethodBanks->upsert($method['id'], $method['banks']);
             }
         }

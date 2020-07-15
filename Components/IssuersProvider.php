@@ -3,6 +3,7 @@
 namespace PaynlPayment\Components;
 
 use PaynlPayment\Models\Banks\Banks;
+use PaynlPayment\PaynlPayment;
 use Shopware\Components\Model\ModelManager;
 
 class IssuersProvider
@@ -21,7 +22,7 @@ class IssuersProvider
      * @param int $paymentMethodId
      * @return mixed[]
      */
-    public function getIssuers($paymentMethodId = 10)
+    public function getIssuers($paymentMethodId = PaynlPayment::IDEAL_ID)
     {
         return $this->paymentMethodBanks->getBanksDataByPaymentMethodId($paymentMethodId);
     }
