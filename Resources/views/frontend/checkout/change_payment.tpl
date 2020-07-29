@@ -33,7 +33,7 @@
                     </div>
                     <div class="min-md-display-inline-middle paynl-payment-template">
                         {if "frontend/plugins/payment/`$payment_mean.template`"|template_exists}
-                            <div class="method--bankdata{if $payment_mean.id != $form_data.payment} is--hidden{/if}">
+                            <div class="method--bankdata{if $payment_mean.id != $form_data.payment} is--hidden{/if} paynl-method--bankdata">
                                 {include file="frontend/plugins/payment/`$payment_mean.template`" form_data=$sFormData error_flags=$sErrorFlag payment_means=$sPayments}
                             </div>
                         {/if}
