@@ -46,16 +46,26 @@
 
 @media (min-width: 769px) {
     .paynl-payment-method .paynl-method--description {
-        width: 45%;
+        width: 35%;
         display: inline-block;
         vertical-align: middle;
         text-align: right;
         float: unset;
+        padding: 0;
+    }
+
+    .paynl-payment-method .paynl-method--bankdata {
+        padding-left: 0 !important;
+        text-align: right;
     }
 
     .paynl-payment-method .min-md-display-inline-middle {
         display: inline-block;
         vertical-align: middle;
+    }
+
+    .paynl-payment-method .paynl-payment-template {
+        text-align: right;
     }
 }
 
@@ -65,7 +75,7 @@
     }
 
     .paynl-payment-method .paynl-payment-template {
-        width: 20%;
+        width: 30%;
     }
 }
 
