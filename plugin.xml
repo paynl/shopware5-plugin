@@ -28,6 +28,20 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.3.1">
+        <changes lang="nl">
+            - Functionaliteit toegevoegd om banken op te slaan in de database
+            - Labels toegevoegd voor de geboorte-datum en telefoonnummer velden
+        </changes>
+        <changes lang="en">
+            - Added functionality of saving banks into DB
+            - Added labels for the DoB and Phone-number fields
+        </changes>
+        <changes lang="de">
+            - Hinzugefügte Funktionalität zum Banken in Datenbank zu speichern
+            - Beschriftungen für die Geburtsdatum- und Telefonnummernfelder hinzugefügt
+        </changes>
+    </changelog>
     <changelog version="3.3.0">
         <changes lang="nl">
             - Toont de geselecteerde bank op de checkoutpagina
