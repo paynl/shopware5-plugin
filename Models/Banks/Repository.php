@@ -50,6 +50,11 @@ class Repository extends ModelRepository
      */
     public function getBanksDataByPaymentMethodId(int $paymentMethodId)
     {
+        $paymentMethodBanks = $this->findOneBy(['paymentMethodId' => $paymentMethodId]);
+        if (empty($paymentMethodBanks)) {
+            return [];
+        }
+
         return $this->findOneBy(['paymentMethodId' => $paymentMethodId])->getBanks();
     }
 }
