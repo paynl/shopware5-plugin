@@ -134,7 +134,7 @@ class PaymentMethodIssuers implements SubscriberInterface
     /**
      * @param Enlight_View $view
      */
-    private function renderBanks(Enlight_View $view): void
+    private function renderBanks(Enlight_View $view)
     {
         $selectedBank = $this->extraFieldsHelper->getSelectedIssuer($this->session->sUserId);
         $view->assign('paynlIssuers', $this->issuersProvider->getIssuers());
@@ -145,7 +145,7 @@ class PaymentMethodIssuers implements SubscriberInterface
      * @param Enlight_View $view
      * @throws \Exception
      */
-    private function renderSelectedBank(Enlight_View $view): void
+    private function renderSelectedBank(Enlight_View $view)
     {
         $userId = $this->session->sUserId;
         $selectedBank = $this->extraFieldsHelper->getSelectedIssuer($userId);
@@ -166,7 +166,7 @@ class PaymentMethodIssuers implements SubscriberInterface
      * @param Enlight_View $view
      * @throws \Exception
      */
-    private function onChangePaymentMethodActionCheckout(Enlight_View $view): void
+    private function onChangePaymentMethodActionCheckout(Enlight_View $view)
     {
         // Check if we can show date of birth and phone number fields for some payment methods
         $this->renderDobAndPhoneFields($view);
@@ -180,7 +180,7 @@ class PaymentMethodIssuers implements SubscriberInterface
      * @param \Enlight_Controller_Request_Request $request
      * @throws \Exception
      */
-    private function storeExtraFields(\Enlight_Controller_Request_Request $request): void
+    private function storeExtraFields(\Enlight_Controller_Request_Request $request)
     {
         $extraFieldsData = [
             'idealIssuer' => (int)$request->getPost('paynlIssuer')
@@ -192,7 +192,7 @@ class PaymentMethodIssuers implements SubscriberInterface
     /**
      * @param \Enlight_Controller_Request_Request $request
      */
-    private function storeDobAndPhone(\Enlight_Controller_Request_Request $request): void
+    private function storeDobAndPhone(\Enlight_Controller_Request_Request $request)
     {
         $payment = $request->getPost('payment');
         if (!empty($request->getPost('register')) && isset($request->getPost('register')['payment'])) {
@@ -215,7 +215,7 @@ class PaymentMethodIssuers implements SubscriberInterface
     /**
      * @param Enlight_View $view
      */
-    private function isPaymentCancelledShowMessage(Enlight_View $view): void
+    private function isPaymentCancelledShowMessage(Enlight_View $view)
     {
         $isCancelled = (bool)Shopware()->Front()->Request()->get('isCancelled', 0);
 
@@ -225,7 +225,7 @@ class PaymentMethodIssuers implements SubscriberInterface
     /**
      * @param Enlight_View $view
      */
-    private function renderDobAndPhoneFields(Enlight_View $view): void
+    private function renderDobAndPhoneFields(Enlight_View $view)
     {
         $customerDobAndPhone = $this->customerHelper->getDobAndPhoneByCustomerId($this->session->sUserId);
         if (!isset($customerDobAndPhone['dob']) || empty($customerDobAndPhone['dob'])) {
