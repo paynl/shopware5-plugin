@@ -63,10 +63,10 @@ class ExtraFieldsHelper
 
     /**
      * @param int $userId
-     * @return int|null
+     * @return int
      * @throws \Exception
      */
-    public function getSelectedIssuer(int $userId): ?int
+    public function getSelectedIssuer(int $userId): int
     {
         return $this->getExtraFields($userId)[self::FIELD_IDEAL_ISSUER] ?: 0;
     }
