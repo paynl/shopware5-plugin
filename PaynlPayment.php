@@ -312,7 +312,7 @@ class PaynlPayment extends Plugin
     /**
      * @param array $tables
      */
-    private function rebuildAttributeModels(array $tables): void
+    private function rebuildAttributeModels(array $tables)
     {
         $em = $this->container->get('models');
         $metaDataCache = $em->getConfiguration()->getMetadataCacheImpl();
