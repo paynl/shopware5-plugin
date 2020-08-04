@@ -32,14 +32,17 @@
         <changes lang="nl">
             - Functionaliteit toegevoegd om banken op te slaan in de database
             - Labels toegevoegd voor de geboorte-datum en telefoonnummer velden
+            - Om de bankselectie toe te voegen aan de database moet je een van deze twee dingen doen: 1) de plugin opnieuw installeren 2) op deactiveren/activeren klikken bij de plugin instellingen
         </changes>
         <changes lang="en">
             - Added functionality of saving banks into DB
             - Added labels for the DoB and Phone-number fields
+            - To load banks to DB you need to do one of these: 1) reinstall the plugin 2) click on deactivate/activate the plugin
         </changes>
         <changes lang="de">
             - Hinzugefügte Funktionalität zum Banken in Datenbank zu speichern
             - Beschriftungen für die Geburtsdatum- und Telefonnummernfelder hinzugefügt
+            - Um Bänke in die DB zu laden, müssen Sie eine dieser Aktionen durchführen: 1) Installieren Sie das Plugin neu 2) Klicken Sie auf die Schaltfläche Deaktivieren/Aktivieren des Plugins
         </changes>
     </changelog>
     <changelog version="3.3.0">
