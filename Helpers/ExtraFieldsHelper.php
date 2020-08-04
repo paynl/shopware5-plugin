@@ -35,7 +35,7 @@ class ExtraFieldsHelper
      * @param int $userId
      * @throws \Exception
      */
-    public function saveExtraFields(array $extraFields, int $userId): void
+    public function saveExtraFields(array $extraFields, int $userId)
     {
         $this->dataPersister->persist(
             [self::EXTRA_FIELD_COLUMN => json_encode($extraFields)],
@@ -49,7 +49,8 @@ class ExtraFieldsHelper
      * @return mixed[]
      * @throws \Exception
      */
-    public function getExtraFields(int $userId) {
+    public function getExtraFields(int $userId)
+    {
         if ($userId) {
             $userAttributes = $this->dataLoader->load(self::USER_ATTRIBUTES_TABLE, $userId);
 
@@ -63,19 +64,19 @@ class ExtraFieldsHelper
 
     /**
      * @param int $userId
-     * @return int|null
+     * @return int
      * @throws \Exception
      */
-    public function getSelectedIssuer(int $userId): ?int
+    public function getSelectedIssuer(int $userId): int
     {
-        return $this->getExtraFields($userId)[self::FIELD_IDEAL_ISSUER] ?? null;
+        return $this->getExtraFields($userId)[self::FIELD_IDEAL_ISSUER] ?: 0;
     }
 
     /**
      * @param int $userId
      * @throws \Exception
      */
-    public function clearSelectedIssuer(int $userId): void
+    public function clearSelectedIssuer(int $userId)
     {
         $extraFieldsData[self::FIELD_IDEAL_ISSUER] = 0;
         $newExtraFieldsData = array_merge($this->getExtraFields($userId), $extraFieldsData);
