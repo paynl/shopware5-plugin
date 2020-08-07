@@ -35,7 +35,7 @@ Bank Transfer | Cartasi | GivaCard | SprayPay | Przelewy24 |
 
 # Installation
 #### Installing
-Download the latest .zip release and upload into *Configuration* > *Plugin Manager* > *Installed* > *Upload plugin*. It is also possible to download the plugin via the shopware store for free.
+Download the latest .zip release and upload into *Configuration* > *Plugin Manager* > *Installed* > *Upload plugin*. <br/>It is also possible to download the plugin via the shopware store for free.
 
 After the installation is done, follow the next steps:
 1. Go to *Configuration* > *Cache/performance* > *Cache/performance*
@@ -58,8 +58,7 @@ Go to the *Manage* > *Services* tab in the Pay.nl Admin Panel to enable extra pa
 
 #### Update instructions
 
-If you downloaded the plugin via the store you can click the update button next to the plugin to update it it with one click. 
-Otherwise you can update the plugin the same way as you installed it. Download the latest .zip release and upload into *Configuration* > *Plugin Manager* > *Installed* > *Upload plugin*. You will se a small update logo appear next to the plugin that says *update from local*, click that to update the plugin.
+If you downloaded the plugin via the store you can click the update button next to the plugin to update it it with one click. <br/>Otherwise you can update the plugin the same way as you installed it. <br/><br/>Download the latest .zip release and upload into *Configuration* > *Plugin Manager* > *Installed* > *Upload plugin*. You will se a small update logo appear next to the plugin that says *update from local*, click that to update the plugin.
 
 When the update is done, follow the next steps:
 1. Go to *Configuration* > *Cache/performance* > *Cache/performance*
