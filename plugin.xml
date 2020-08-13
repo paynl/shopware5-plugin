@@ -4,7 +4,7 @@
     <label lang="en">PAY. Payment Methods</label>
     <label lang="de">PAY. Zahlungsmethoden</label>
     <label lang="nl">PAY. Betaalmethoden</label>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
     <copyright>(c) by PAY.</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
@@ -28,6 +28,17 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.3.2">
+        <changes lang="nl">
+            - Verwijderen van oude geannuleerde orders op verzoek opgelost
+        </changes>
+        <changes lang="en">
+            - Fixed removing old cancelled orders on notify call
+        </changes>
+        <changes lang="de">
+            - Korrigierte Entfernung alter stornierter Aufträge bei Benachrichtigungsanruf
+        </changes>
+    </changelog>
     <changelog version="3.3.1">
         <changes lang="nl">
             - Functionaliteit toegevoegd om banken op te slaan in de database

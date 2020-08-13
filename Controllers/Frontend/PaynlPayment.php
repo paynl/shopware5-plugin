@@ -155,6 +155,13 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $canceled = true;
                 $this->updateStatus($transaction, Transaction\Transaction::STATUS_CANCEL, $shouldCreate);
             }
+
+            if ($isExchange) {
+                // We are removing old cancelled orders of a user based on his session id.
+                // We need to do that manually because Notify creates a new session
+                // and we cannot find old orders based on that session.
+                $this->sDeleteTemporaryOrder($transaction->getCustomer()->getSessionId());
+            }
         } catch (Throwable $e) {
             if ($isExchange && $e->getCode() == 999) {
                 return $e->getMessage();
@@ -267,6 +274,28 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $this->getTransactionRepository()->save($transaction);
 
         return true;
+    }
+
+    private function sDeleteTemporaryOrder($sessionId)
+    {
+        if (empty($sessionId)) {
+            return;
+        }
+        $db = Shopware()->Db();
+        $deleteWholeOrder = $db->fetchAll('
+            SELECT * FROM s_order WHERE temporaryID = ? LIMIT 2
+        ', [$sessionId]);
+
+        foreach ($deleteWholeOrder as $orderDelete) {
+            $db->executeUpdate('
+                DELETE FROM s_order WHERE id = ?
+            ', [$orderDelete['id']]);
+
+            $db->executeUpdate('
+                DELETE FROM s_order_details
+                WHERE orderID=?
+            ', [$orderDelete['id']]);
+        }
     }
 
     /**
