@@ -95,6 +95,8 @@ class PaynlPayment extends Plugin
         $this->installPaymentMethods($plugin);
 
         parent::activate($context);
+
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
     }
 
     /**
