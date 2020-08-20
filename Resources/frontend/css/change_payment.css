@@ -54,6 +54,14 @@
         padding: 0;
     }
 
+    .account--payment-form .paynl-ideal-payment-template .select-field {
+        width: 65%;
+    }
+
+    .paynl-payment-method .paynl-ideal-method--description {
+        width: 35%;
+    }
+
     .paynl-payment-method .paynl-method--bankdata {
         padding-left: 0 !important;
         text-align: right;
@@ -77,6 +85,14 @@
     .paynl-payment-method .paynl-payment-template {
         width: 30%;
     }
+
+    .paynl-payment-method .paynl-ideal-radio-block {
+        width: 20%;
+    }
+
+    .paynl-payment-method .paynl-ideal-payment-template {
+        width: 42%;
+    }
 }
 
 @media (max-width: 1200px) {
@@ -92,6 +108,14 @@
     .paynl-radio-block, .paynl-payment-template {
         width: 45%;
     }
+
+    .paynl-payment-method .paynl-ideal-radio-block {
+        width: 30%;
+    }
+
+    .paynl-payment-method .paynl-ideal-payment-template {
+        width: 69%;
+    }
 }
 
 @media (max-width: 1000px) {
@@ -103,6 +127,18 @@
 @media (max-width: 900px) {
     .paynl-radio-block, .paynl-payment-template {
         width: 60%;
+    }
+
+    .account--payment-form .paynl-ideal-payment-template .select-field {
+        width: auto;
+    }
+
+    .account--payment-form .paynl-ideal-payment-template {
+        width: 63%;
+    }
+
+    .account--payment-form .paynl-payment-method .paynl-ideal-radio-block {
+        width: 35%;
     }
 }
 
@@ -127,5 +163,12 @@
 
     .paynl-payment-template .method--bankdata {
         padding-left: 5.5rem;
+    }
+
+    .paynl-payment-method .paynl-ideal-radio-block,
+    .paynl-payment-method .paynl-ideal-payment-template,
+    .account--payment-form .paynl-ideal-payment-template,
+    .account--payment-form .paynl-payment-method .paynl-ideal-radio-block {
+        width: auto;
     }
 }
