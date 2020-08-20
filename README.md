@@ -29,8 +29,8 @@ Bank Transfer | Cartasi | GivaCard | SprayPay | Przelewy24 |
 | | | Paysafecard |
 
 ### Requirements
-- PHP 5.6 or higher
-- Shopware version 5.4.0 or higher
+- PHP 7.0 or higher
+- Shopware version 5.5.10 or higher
 - Tested up to Shopware version 5.6.7
 
 # Installation
