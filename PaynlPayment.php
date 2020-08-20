@@ -169,11 +169,12 @@ class PaynlPayment extends Plugin
         foreach ($methods as $method) {
             $options = [
                 'name' => sprintf('paynl_%s', $method['id']),
-                'class' => $method['brand']['id'] ?? '',
+                'class' => isset($method['brand']['id']) ? $method['brand']['id'] : '',
                 'description' => $method['name'],
                 'action' => 'PaynlPayment',
                 'active' => true,
-                'additionalDescription' => $method['brand']['public_description'] ?? ''
+                'additionalDescription' =>
+                    isset($method['brand']['public_description']) ? $method['brand']['public_description'] : ''
             ];
 
             $pluginTemplateName = sprintf('%d.%s', (int)$method['id'], 'tpl');
