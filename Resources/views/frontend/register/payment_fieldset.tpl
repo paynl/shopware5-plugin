@@ -7,7 +7,7 @@
                 {if $payment_mean.action == constant("PaynlPayment\PaynlPayment::PLUGIN_NAME")}
                     <div class="payment--method paynl-payment-method panel--tr">
                         {block name="frontend_register_payment_fieldset_input"}
-                            <div class="paynl-radio-block display-inline-middle">
+                            <div class="paynl-radio-block {if $payment_mean['name'] == 'paynl_10'}paynl-ideal-radio-block {/if} display-inline-middle">
                                 <div class="payment--selection-input display-inline-middle paynl-method--input">
                                     {block name="frontend_register_payment_fieldset_input_radio"}
                                         <input type="radio" class="paynl-custom-radion" name="register[payment]" value="{$payment_mean.id}" id="payment_mean{$payment_mean.id}"{if $payment_mean.id eq $form_data.payment or (!$form_data && !$payment_mean@index)} class="display-inline-middle" checked="checked"{/if} />
@@ -30,7 +30,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="min-md-display-inline-middle paynl-payment-template">
+                            <div class="min-md-display-inline-middle {if $payment_mean['name'] == 'paynl_10'}paynl-ideal-payment-template {/if}paynl-payment-template">
                                 {if "frontend/plugins/payment/`$payment_mean.template`"|template_exists}
                                     <div class="payment--content{if $payment_mean.id != $form_data.payment} is--hidden{/if}">
                                         {include file="frontend/plugins/payment/`$payment_mean.template`" checked = ($payment_mean.id == $form_data.payment)}
@@ -40,7 +40,7 @@
                         {/block}
 
                         {block name="frontend_register_payment_fieldset_description"}
-                            <div class="payment--description paynl-method--description panel--td">
+                            <div class="payment--description {if $payment_mean['name'] == 'paynl_10'}paynl-ideal-method--description {/if}paynl-method--description panel--td">
                                 {include file="string:{$payment_mean.additionaldescription}"}
                             </div>
                         {/block}
