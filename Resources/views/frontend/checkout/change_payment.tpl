@@ -5,8 +5,7 @@
         {foreach $sPayments as $payment_mean}
             {if $payment_mean.action == constant("PaynlPayment\PaynlPayment::PLUGIN_NAME")}
                 <div class="payment--method paynl-payment-method block{if $payment_mean@last} method_last{else} method{/if}">
-                    <div class="paynl-radio-block display-inline-middle">
-
+                    <div class="paynl-radio-block {if $payment_mean['name'] == 'paynl_10'}paynl-ideal-radio-block {/if}display-inline-middle">
                         {* Radio Button *}
                         {block name='frontend_checkout_payment_fieldset_input_radio'}
                             <div class="method--input paynl-method--input">
@@ -31,7 +30,7 @@
                             </div>
                         {/block}
                     </div>
-                    <div class="min-md-display-inline-middle paynl-payment-template">
+                    <div class="min-md-display-inline-middle {if $payment_mean['name'] == 'paynl_10'}paynl-ideal-payment-template {/if}paynl-payment-template">
                         {if "frontend/plugins/payment/`$payment_mean.template`"|template_exists}
                             <div class="method--bankdata{if $payment_mean.id != $form_data.payment} is--hidden{/if} paynl-method--bankdata">
                                 {include file="frontend/plugins/payment/`$payment_mean.template`" form_data=$sFormData error_flags=$sErrorFlag payment_means=$sPayments}
@@ -41,7 +40,7 @@
 
                     {* Method Description *}
                     {block name='frontend_checkout_payment_fieldset_description'}
-                        <div class="method--description paynl-method--description is--last">
+                        <div class="method--description paynl-method--description {if $payment_mean['name'] == 'paynl_10'}paynl-ideal-method--description {/if}is--last">
                             {include file="string:{$payment_mean.additionaldescription}"}
                         </div>
                     {/block}
