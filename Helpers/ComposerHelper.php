@@ -14,7 +14,9 @@ class ComposerHelper
         if (file_exists($composerFilePath)) {
             $composer = json_decode(file_get_contents($composerFilePath), true);
 
-            return $composer['version'] ?? $defaultValue;
+            if (isset($composer['version'])) {
+                return $composer['version'];
+            }
         }
 
         return $defaultValue;

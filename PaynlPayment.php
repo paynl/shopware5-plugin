@@ -304,7 +304,7 @@ class PaynlPayment extends Plugin
      * @param string $columnName
      * @return bool
      */
-    private function columnExists(string $table, string $columnName): bool
+    private function columnExists(string $table, string $columnName)
     {
         $crudService = $this->container->get('shopware_attribute.crud_service');
         $column = $crudService->get($table, $columnName);

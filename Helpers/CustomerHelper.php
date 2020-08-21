@@ -39,7 +39,7 @@ class CustomerHelper
      * @param int $userId
      * @return mixed[]
      */
-    public function getDobAndPhoneByCustomerId(int $userId): array
+    public function getDobAndPhoneByCustomerId(int $userId)
     {
         $customer = $this->getCurrentUserById($userId);
 
