@@ -240,7 +240,7 @@ class PaymentMethodIssuers implements SubscriberInterface
      * @param int $selectedBank
      * @return mixed[]
      */
-    private function getSelectedBankData(int $selectedBank): array
+    private function getSelectedBankData(int $selectedBank)
     {
         $bankData = [];
         $banks = $this->issuersProvider->getIssuers();

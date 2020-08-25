@@ -28,7 +28,7 @@ class CustomerHelper
      * @param int $userId
      * @return Customer|object
      */
-    public function getCurrentUserById(int $userId): Customer
+    public function getCurrentUserById(int $userId)
     {
         return $this->modelManager
             ->getRepository(Customer::class)
@@ -39,7 +39,7 @@ class CustomerHelper
      * @param int $userId
      * @return mixed[]
      */
-    public function getDobAndPhoneByCustomerId(int $userId): array
+    public function getDobAndPhoneByCustomerId(int $userId)
     {
         $customer = $this->getCurrentUserById($userId);
 

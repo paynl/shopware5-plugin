@@ -169,11 +169,12 @@ class PaynlPayment extends Plugin
         foreach ($methods as $method) {
             $options = [
                 'name' => sprintf('paynl_%s', $method['id']),
-                'class' => $method['brand']['id'] ?? '',
+                'class' => isset($method['brand']['id']) ? $method['brand']['id'] : '',
                 'description' => $method['name'],
                 'action' => 'PaynlPayment',
                 'active' => true,
-                'additionalDescription' => $method['brand']['public_description'] ?? ''
+                'additionalDescription' =>
+                    isset($method['brand']['public_description']) ? $method['brand']['public_description'] : ''
             ];
 
             $pluginTemplateName = sprintf('%d.%s', (int)$method['id'], 'tpl');
@@ -303,7 +304,7 @@ class PaynlPayment extends Plugin
      * @param string $columnName
      * @return bool
      */
-    private function columnExists(string $table, string $columnName): bool
+    private function columnExists(string $table, string $columnName)
     {
         $crudService = $this->container->get('shopware_attribute.crud_service');
         $column = $crudService->get($table, $columnName);
