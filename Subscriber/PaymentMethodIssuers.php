@@ -96,6 +96,8 @@ class PaymentMethodIssuers implements SubscriberInterface
             $this->renderBanks($view);
         }
 
+        $view->assign('showDescription', $this->config->showDescription());
+
         if ($action == 'index') {
             $selectedBank = $this->extraFieldsHelper->getSelectedIssuer($this->session->sUserId);
             // Pass the data of chosen bank
@@ -170,6 +172,9 @@ class PaymentMethodIssuers implements SubscriberInterface
     {
         // Check if we can show date of birth and phone number fields for some payment methods
         $this->renderDobAndPhoneFields($view);
+        $view->assign('showDescription', $this->config->showDescription());
+
+
         if ($this->config->banksIsAllowed()) {
             // If `Show banks` attribute in plugin manager is allowed we show the list of banks for iDeal
             $this->renderBanks($view);

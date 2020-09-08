@@ -44,13 +44,54 @@
     margin-bottom: 5px;
 }
 
+.paynl-paynl-payment-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.paynl-paynl-payment-tooltip .tooltiptext {
+    visibility: hidden;
+    position: absolute;
+    width: 200px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .3s;
+    margin-left: -5px;
+    right: 130%;
+    top: -6px;
+}
+
+.paynl-paynl-payment-tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 13px;
+    left: 100%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #555;
+}
+
+.paynl-paynl-payment-tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.do_not_show {
+    display: none !important;
+}
+
 @media (min-width: 769px) {
     .paynl-payment-method .paynl-method--description {
         width: 35%;
         display: inline-block;
         vertical-align: middle;
         text-align: right;
-        float: unset;
+        float: right;
         padding: 0;
     }
 
@@ -75,6 +116,14 @@
     .paynl-payment-method .paynl-payment-template {
         text-align: right;
     }
+
+    .paynl-paynl-payment-tooltip-logo {
+        display: none;
+    }
+
+    .show_payment_information.paynl-method--description {
+        display: unset;
+    }
 }
 
 @media (min-width: 1201px) {
@@ -87,7 +136,7 @@
     }
 
     .paynl-payment-method .paynl-ideal-radio-block {
-        width: 20%;
+        width: 21%;
     }
 
     .paynl-payment-method .paynl-ideal-payment-template {
@@ -98,6 +147,10 @@
 @media (max-width: 1200px) {
     .paynl-payment-method .paynl-method--description {
         width: auto;
+        margin-top: 6px;
+    }
+
+    .show_only_desktop {
         display: none;
     }
 
@@ -114,7 +167,7 @@
     }
 
     .paynl-payment-method .paynl-ideal-payment-template {
-        width: 69%;
+        width: 65%;
     }
 }
 
@@ -134,7 +187,7 @@
     }
 
     .account--payment-form .paynl-ideal-payment-template {
-        width: 63%;
+        width: 55%;
     }
 
     .account--payment-form .paynl-payment-method .paynl-ideal-radio-block {
@@ -147,8 +200,18 @@
         margin-bottom: 5px;
     }
 
+    .show_payment_information.paynl-paynl-payment-tooltip-logo {
+        display: unset;
+        float: right;
+    }
+
+    .show_payment_information.paynl-method--description {
+        display: none;
+        float: right;
+    }
+
     .paynl-radio-block, .paynl-payment-template {
-        width: auto;
+        width: 100%;
     }
 
     .paynl-payment-template input {
@@ -169,6 +232,6 @@
     .paynl-payment-method .paynl-ideal-payment-template,
     .account--payment-form .paynl-ideal-payment-template,
     .account--payment-form .paynl-payment-method .paynl-ideal-radio-block {
-        width: auto;
+        width: 100%;
     }
 }
