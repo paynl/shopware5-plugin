@@ -276,4 +276,22 @@
         justify-content: space-between;
         margin-bottom: 0;
     }
+
+    .paynl-payment-method .flatpickr-mobile {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 3px;
+        background-clip: padding-box;
+        box-sizing: border-box;
+        line-height: 1.1875rem;
+        font-size: .875rem;
+        padding: .625rem .625rem .5625rem .625rem;
+        box-shadow: inset 0 1px 1px #dadae5;
+        background: #f8f8fa;
+        border: 1px solid #dadae5;
+        border-top-color: #cbcbdb;
+        color: #8798a9;
+        text-align: left;
+    }
 }
