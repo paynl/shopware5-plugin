@@ -127,6 +127,14 @@ class Config
     }
 
     /**
+     * @return string
+     */
+    public function showDescription()
+    {
+        return $this->get('show_description', 'show_payment_information');
+    }
+
+    /**
      * @return boolean
      */
     public function isRefundAllowed()
