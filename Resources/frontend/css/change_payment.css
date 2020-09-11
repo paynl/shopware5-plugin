@@ -58,7 +58,7 @@
     width: 200px;
     background-color: rgba(255, 255, 255, 0.8);
     color: #555;
-    text-align: center;
+    text-align: right;
     padding: 10px;
     border-radius: 6px;
     z-index: 1;
@@ -213,6 +213,10 @@
 @media (max-width: 768px) {
     .paynl-payment-method .mb-xs-5 {
         margin-bottom: 5px;
+    }
+
+    .paynl-paynl-payment-tooltip .tooltiptext {
+        background-color: rgba(255, 255, 255, 0.9);
     }
 
     .paynl-pm-logo-label {
