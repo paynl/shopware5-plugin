@@ -28,6 +28,23 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.3.3">
+        <changes lang="nl">
+            - Infoknop toegevoegd voor beschrijving van de betaalmethode
+            - Functionaliteit toegevoegd voor het beheren van de weergave van de infoknop voor betaalmethoden
+            - Geboortedatum weergave verbeterd voor mobiele versie
+        </changes>
+        <changes lang="en">
+            - Added info icon for payment method description
+            - Added functionality to manage displaying payment method info
+            - Fix DOB view on mobile version
+        </changes>
+        <changes lang="de">
+            - Info-Symbol für die Beschreibung der Zahlungsmethode hinzugefügt
+            - Funktionalität zur Verwaltung der Anzeige von Zahlungsmethoden-Informationen hinzugefügt
+            - DOB-Ansicht in der mobilen Version korrigiert
+        </changes>
+    </changelog>
     <changelog version="3.3.2">
         <changes lang="nl">
             - Verwijderen van oude geannuleerde orders op verzoek opgelost
