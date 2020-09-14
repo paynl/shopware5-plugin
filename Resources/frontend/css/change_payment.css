@@ -285,7 +285,6 @@
         -moz-appearance: none;
         appearance: none;
         border-radius: 3px;
-        background-clip: padding-box;
         box-sizing: border-box;
         line-height: 1.1875rem;
         font-size: .875rem;
