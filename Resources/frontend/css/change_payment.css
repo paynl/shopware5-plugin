@@ -5,6 +5,7 @@
 
 .paynl-payment-method img {
     width: 40px;
+    height: 40px;
 }
 
 .paynl-payment-method .paynl-payment-method-name {
@@ -26,6 +27,8 @@
 
 .paynl-payment-method .payment--content {
     padding: 0;
+    justify-content: center;
+    display: inline-flex;
 }
 
 .paynl-custom-radion {
@@ -44,22 +47,83 @@
     margin-bottom: 5px;
 }
 
+.paynl-paynl-payment-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.paynl-paynl-payment-tooltip .tooltiptext {
+    visibility: hidden;
+    position: absolute;
+    width: 200px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #555;
+    text-align: right;
+    padding: 10px;
+    border-radius: 6px;
+    z-index: 1;
+    transition: opacity .3s;
+    margin-left: -5px;
+    right: 130%;
+    top: -6px;
+    border: 1px solid #bcc1c7;
+}
+
+.paynl-paynl-payment-tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 13px;
+    left: 100%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #bcc1c7;
+}
+
+.paynl-paynl-payment-tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.do_not_show {
+    display: none !important;
+}
+
+.paynl-pm-logo-label {
+    align-items: center;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+.paynl-pm-logo-label .display-inline-middle {
+    align-items: center;
+    justify-content: center;
+    display: inline-flex;
+}
+
+.paynl-pm-logo-label .display-inline-middle .pm-right {
+    align-items: center;
+    justify-content: center;
+    display: inline-flex;
+}
+
+.paynl-ideal-payment-template .paynl-ideal-payment-description {
+    width: 100%;
+    text-align: center;
+}
+
+.page-wrap {
+    min-width: 360px;
+}
+
 @media (min-width: 769px) {
     .paynl-payment-method .paynl-method--description {
-        width: 35%;
         display: inline-block;
         vertical-align: middle;
         text-align: right;
-        float: unset;
         padding: 0;
     }
 
-    .account--payment-form .paynl-ideal-payment-template .select-field {
-        width: 65%;
-    }
-
-    .paynl-payment-method .paynl-ideal-method--description {
-        width: 35%;
+    .paynl-payment-method .paynl-method--description svg {
+        vertical-align: middle;
     }
 
     .paynl-payment-method .paynl-method--bankdata {
@@ -75,66 +139,70 @@
     .paynl-payment-method .paynl-payment-template {
         text-align: right;
     }
-}
 
-@media (min-width: 1201px) {
+    .paynl-paynl-payment-tooltip-logo {
+        display: none;
+    }
+
+    .paynl-payment-method {
+        display: flex;
+        justify-items: center;
+        align-items: center;
+        justify-content: space-between;
+    }
+
     .paynl-payment-method .paynl-radio-block {
-        width: 33%;
+        flex-grow: 1;
     }
 
     .paynl-payment-method .paynl-payment-template {
-        width: 30%;
+        flex-grow: 2;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        justify-items: center;
     }
 
-    .paynl-payment-method .paynl-ideal-radio-block {
-        width: 20%;
+    .paynl-payment-method .paynl-method--description {
+        flex-grow: 1;
     }
 
-    .paynl-payment-method .paynl-ideal-payment-template {
-        width: 42%;
+    .paynl-ideal-payment-method .paynl-method--bankdata {
+        width: 100%;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        justify-items: center;
+    }
+
+    .paynl-ideal-payment-method .paynl-method--bankdata label {
+        width: auto;
+        display: inline-flex;
+        margin-right: 5px;
+    }
+
+    .paynl-ideal-payment-method .paynl-method--bankdata .select-field {
+        display: inline-flex;
     }
 }
 
 @media (max-width: 1200px) {
     .paynl-payment-method .paynl-method--description {
         width: auto;
+    }
+
+    .show_only_desktop {
         display: none;
-    }
-
-    .paynl-payment-method .paynl-payment-template {
-        width: auto;
-    }
-
-    .paynl-radio-block, .paynl-payment-template {
-        width: 45%;
-    }
-
-    .paynl-payment-method .paynl-ideal-radio-block {
-        width: 30%;
-    }
-
-    .paynl-payment-method .paynl-ideal-payment-template {
-        width: 69%;
-    }
-}
-
-@media (max-width: 1000px) {
-    .paynl-radio-block, .paynl-payment-template {
-        width: 50%;
     }
 }
 
 @media (max-width: 900px) {
-    .paynl-radio-block, .paynl-payment-template {
-        width: 60%;
-    }
-
     .account--payment-form .paynl-ideal-payment-template .select-field {
         width: auto;
     }
 
     .account--payment-form .paynl-ideal-payment-template {
-        width: 63%;
+        width: 55%;
     }
 
     .account--payment-form .paynl-payment-method .paynl-ideal-radio-block {
@@ -147,8 +215,26 @@
         margin-bottom: 5px;
     }
 
+    .paynl-paynl-payment-tooltip .tooltiptext {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .paynl-pm-logo-label {
+        width: 100%;
+    }
+
+    .show_payment_information.paynl-paynl-payment-tooltip-logo {
+        display: unset;
+        float: right;
+    }
+
+    .show_payment_information.paynl-method--description {
+        display: none;
+        float: right;
+    }
+
     .paynl-radio-block, .paynl-payment-template {
-        width: auto;
+        width: 100%;
     }
 
     .paynl-payment-template input {
@@ -169,6 +255,47 @@
     .paynl-payment-method .paynl-ideal-payment-template,
     .account--payment-form .paynl-ideal-payment-template,
     .account--payment-form .paynl-payment-method .paynl-ideal-radio-block {
-        width: auto;
+        width: 100%;
+    }
+
+    .paynl-payment-method .display-inline-middle {
+        display: inline-flex;
+        vertical-align: middle;
+    }
+
+    .paynl-payment-method .method--label {
+        padding-left: 2px;
+    }
+
+    .paynl-radio-block .paynl-method--input {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .paynl-radio-block .method--label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0;
+    }
+
+    .paynl-payment-method .flatpickr-mobile {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 3px;
+        background-clip: padding-box;
+        box-sizing: border-box;
+        line-height: 1.1875rem;
+        font-size: .875rem;
+        padding: .625rem .625rem .5625rem .625rem;
+        box-shadow: inset 0 1px 1px #dadae5;
+        background: #f8f8fa;
+        border: 1px solid #dadae5;
+        border-top-color: #cbcbdb;
+        color: #8798a9;
+        text-align: left;
+        height: 40px;
     }
 }
