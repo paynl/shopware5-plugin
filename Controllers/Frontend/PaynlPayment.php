@@ -58,7 +58,6 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $e->getTraceAsString()
             );
             $this->log($logMessage);
-            $this->View()->assign('message', 'Could not process payment. Please contact your administrator');
         }
     }
 
