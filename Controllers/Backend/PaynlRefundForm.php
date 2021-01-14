@@ -119,7 +119,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
             $message = 'Pay. Refund Incident ID: %s: %s';
             $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp, $e->getMessage())];
             $logMessage = sprintf(
-                'PAY. Refund Incident ID: %s: Error: %s in %s:%s Stack trace: %s',
+                'PAY. Refund Incident ID: %s Error: %s in %s:%s Stack trace: %s',
                 $timestamp,
                 $e->getMessage(),
                 $e->getFile(),

@@ -52,7 +52,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         } catch (Throwable $e) {
             $timestamp = time();
             $logMessage = sprintf(
-                'PAY. Incident ID: %s: Could not start payment. Error: %s in %s:%s Stack trace: %s',
+                'PAY. Incident ID: %s Could not start payment. Error: %s in %s:%s Stack trace: %s',
                 $timestamp,
                 $e->getMessage(),
                 $e->getFile(),
