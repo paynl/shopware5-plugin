@@ -50,14 +50,17 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
                 $this->redirect($result->getRedirectUrl());
             }
         } catch (Throwable $e) {
+            $timestamp = time();
             $logMessage = sprintf(
-                'PAY.: Could not start payment. Error: %s in %s:%s Stack trace: %s',
+                'PAY. Incident ID: %s: Could not start payment. Error: %s in %s:%s Stack trace: %s',
+                $timestamp,
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getLine(),
                 $e->getTraceAsString()
             );
             $this->log($logMessage);
+            $this->View()->assign('incidentId', $timestamp);
         }
     }
 

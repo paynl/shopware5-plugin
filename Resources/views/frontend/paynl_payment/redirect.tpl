@@ -8,7 +8,7 @@
                 <i class="icon--element icon--check"></i>
             </div>
             <div class="alert--content">
-                {s name="PaymentApiError" namespace="frontend/paynl/plugins"}{/s}
+                {s name="PaymentApiError" namespace="frontend/paynl/plugins"}{/s}{$incidentId}
             </div>
         </div>
         <br><br>

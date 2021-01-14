@@ -2,7 +2,7 @@
 
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order\Detail;
-use \Shopware\Models\Shop\Currency;
+use Shopware\Models\Shop\Currency;
 
 /**
  * Example:
@@ -10,6 +10,7 @@ use \Shopware\Models\Shop\Currency;
  */
 class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Action implements \Shopware\Components\CSRFWhitelistAware
 {
+    private $logger;
 
     public function preDispatch()
     {
@@ -63,7 +64,6 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
         /** @var Currency $currencyObj */
         $currencyObj = $currencyRepository->findOneBy(['currency' => $order->getCurrency()]);
 
-
         return $this->view->assign([
             'customerName' => $customer->getFirstname() . ' ' . $customer->getLastname(),
             'orderNumber' => $order->getNumber(),
@@ -114,9 +114,19 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
             $refundResult = $paynlApi->refund($transaction, $amount, $description, $products);
 
             $messages[] = ['type' => 'success', 'content' => 'Refund successful (' . $refundResult->getData()['description'] . ')'];
-
         } catch (Throwable $e) {
-            $messages[] = ['type' => 'danger', 'content' => $e->getMessage()];
+            $timestamp = time();
+            $message = 'Pay. Refund Incident ID: %s: %s';
+            $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp, $e->getMessage())];
+            $logMessage = sprintf(
+                'PAY. Refund Incident ID: %s: Error: %s in %s:%s Stack trace: %s',
+                $timestamp,
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTraceAsString()
+            );
+            $this->log($logMessage);
         }
 
         $this->forward('index', null, null, ['paynlPaymentId' => $paynlPaymentId, 'messages' => $messages]);
@@ -125,5 +135,17 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
     public function getWhitelistedCSRFActions()
     {
         return ['index', 'refund', 'disabled'];
+    }
+
+    /**
+     * @param mixed $message
+     */
+    private function log($message)
+    {
+        if (empty($this->logger)) {
+            $this->logger = $this->container->get('pluginlogger');
+        }
+
+        $this->logger->addError($message);
     }
 }

@@ -257,7 +257,14 @@ class PaynlPayment extends Plugin
                 $db->executeQuery('DROP TABLE `paynl_transactions` ');
             }
         } catch (\Exception $exception) {
-            $this->log('PAY.: Migration: ' . $exception->getMessage());
+            $logMessage = sprintf(
+                'PAY.: Migration: %s in %s:%s Stack trace: %s',
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine(),
+                $exception->getTraceAsString()
+            );
+            $this->log($logMessage);
         }
     }
 
