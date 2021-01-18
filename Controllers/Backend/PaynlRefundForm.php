@@ -58,29 +58,45 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
             array_push($arrDetails, $arrDetail);
         }
 
-        $apiTransaction = $paynlApi->getTransaction($transaction->getTransactionId());
-
         $currencyRepository = $this->getModelManager()->getRepository(Currency::class);
         /** @var Currency $currencyObj */
         $currencyObj = $currencyRepository->findOneBy(['currency' => $order->getCurrency()]);
 
-        return $this->view->assign([
-            'customerName' => $customer->getFirstname() . ' ' . $customer->getLastname(),
-            'orderNumber' => $order->getNumber(),
-            'transactionId' => $order->getTransactionId(),
-            'currency' => $transaction->getCurrency(),
-            'currencyFactor' => $order->getCurrencyFactor(),
-            'currencySymbol' => $currencyObj->getSymbol(),
-            'orderAmount' => $transaction->getAmount(),
-            'paidCurrencyAmount' => $apiTransaction->getCurrencyAmount(),
-            'shippingAmount' => $order->getInvoiceShipping(),
-            'details' => $arrDetails,
-            'paynlPaymentId' => $paynlPaymentId,
-            'paynlOrderId' => $transaction->getTransactionId(),
-            'refundedCurrencyAmount' => $apiTransaction->getRefundedCurrencyAmount(),
-            'availableForRefund' => $apiTransaction->getAmount() - $apiTransaction->getRefundedAmount(),
-            'messages' => $messages
-        ]);
+        try {
+            $apiTransaction = $paynlApi->getTransaction($transaction->getTransactionId());
+
+            return $this->view->assign([
+                'customerName' => $customer->getFirstname() . ' ' . $customer->getLastname(),
+                'orderNumber' => $order->getNumber(),
+                'transactionId' => $order->getTransactionId(),
+                'currency' => $transaction->getCurrency(),
+                'currencyFactor' => $order->getCurrencyFactor(),
+                'currencySymbol' => $currencyObj->getSymbol(),
+                'orderAmount' => $transaction->getAmount(),
+                'paidCurrencyAmount' => $apiTransaction->getCurrencyAmount(),
+                'shippingAmount' => $order->getInvoiceShipping(),
+                'details' => $arrDetails,
+                'paynlPaymentId' => $paynlPaymentId,
+                'paynlOrderId' => $transaction->getTransactionId(),
+                'refundedCurrencyAmount' => $apiTransaction->getRefundedCurrencyAmount(),
+                'availableForRefund' => $apiTransaction->getAmount() - $apiTransaction->getRefundedAmount(),
+                'messages' => $messages
+            ]);
+        } catch (Throwable $e) {
+            $timestamp = time();
+            $message = 'Pay. Refund Incident ID: %s Please contact your administrator.';
+            $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp)];
+            $logMessage = sprintf(
+                'PAY. Refund Incident ID: %s Error: %s in %s:%s Stack trace: %s',
+                $timestamp,
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTraceAsString()
+            );
+            $this->log($logMessage);
+            $this->view()->assign(['messages' => $messages]);
+        }
     }
 
     public function disabledAction()
@@ -116,8 +132,8 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
             $messages[] = ['type' => 'success', 'content' => 'Refund successful (' . $refundResult->getData()['description'] . ')'];
         } catch (Throwable $e) {
             $timestamp = time();
-            $message = 'Pay. Refund Incident ID: %s: %s';
-            $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp, $e->getMessage())];
+            $message = 'Pay. Refund Incident ID: %s Please contact your administrator.';
+            $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp)];
             $logMessage = sprintf(
                 'PAY. Refund Incident ID: %s Error: %s in %s:%s Stack trace: %s',
                 $timestamp,
