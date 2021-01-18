@@ -94,7 +94,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
                 $e->getLine(),
                 $e->getTraceAsString()
             );
-            $this->log($logMessage);
+            $this->logError($logMessage);
             $this->view()->assign(['messages' => $messages]);
         }
     }
@@ -142,7 +142,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
                 $e->getLine(),
                 $e->getTraceAsString()
             );
-            $this->log($logMessage);
+            $this->logError($logMessage);
         }
 
         $this->forward('index', null, null, ['paynlPaymentId' => $paynlPaymentId, 'messages' => $messages]);
@@ -156,7 +156,7 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
     /**
      * @param mixed $message
      */
-    private function log($message)
+    private function logError($message)
     {
         if (empty($this->logger)) {
             $this->logger = $this->container->get('pluginlogger');
