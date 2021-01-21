@@ -28,6 +28,17 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.3.4">
+        <changes lang="nl">
+            - verbeterde error logging
+        </changes>
+        <changes lang="en">
+            - Improved error logging
+        </changes>
+        <changes lang="de">
+            - verbesserte Fehlerprotokollierung
+        </changes>
+    </changelog>
     <changelog version="3.3.3">
         <changes lang="nl">
             - Infoknop toegevoegd voor beschrijving van de betaalmethode
