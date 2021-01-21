@@ -2,7 +2,7 @@
 
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order\Detail;
-use \Shopware\Models\Shop\Currency;
+use Shopware\Models\Shop\Currency;
 
 /**
  * Example:
@@ -10,6 +10,7 @@ use \Shopware\Models\Shop\Currency;
  */
 class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Action implements \Shopware\Components\CSRFWhitelistAware
 {
+    private $logger;
 
     public function preDispatch()
     {
@@ -57,30 +58,45 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
             array_push($arrDetails, $arrDetail);
         }
 
-        $apiTransaction = $paynlApi->getTransaction($transaction->getTransactionId());
-
         $currencyRepository = $this->getModelManager()->getRepository(Currency::class);
         /** @var Currency $currencyObj */
         $currencyObj = $currencyRepository->findOneBy(['currency' => $order->getCurrency()]);
 
+        try {
+            $apiTransaction = $paynlApi->getTransaction($transaction->getTransactionId());
 
-        return $this->view->assign([
-            'customerName' => $customer->getFirstname() . ' ' . $customer->getLastname(),
-            'orderNumber' => $order->getNumber(),
-            'transactionId' => $order->getTransactionId(),
-            'currency' => $transaction->getCurrency(),
-            'currencyFactor' => $order->getCurrencyFactor(),
-            'currencySymbol' => $currencyObj->getSymbol(),
-            'orderAmount' => $transaction->getAmount(),
-            'paidCurrencyAmount' => $apiTransaction->getCurrencyAmount(),
-            'shippingAmount' => $order->getInvoiceShipping(),
-            'details' => $arrDetails,
-            'paynlPaymentId' => $paynlPaymentId,
-            'paynlOrderId' => $transaction->getTransactionId(),
-            'refundedCurrencyAmount' => $apiTransaction->getRefundedCurrencyAmount(),
-            'availableForRefund' => $apiTransaction->getAmount() - $apiTransaction->getRefundedAmount(),
-            'messages' => $messages
-        ]);
+            return $this->view->assign([
+                'customerName' => $customer->getFirstname() . ' ' . $customer->getLastname(),
+                'orderNumber' => $order->getNumber(),
+                'transactionId' => $order->getTransactionId(),
+                'currency' => $transaction->getCurrency(),
+                'currencyFactor' => $order->getCurrencyFactor(),
+                'currencySymbol' => $currencyObj->getSymbol(),
+                'orderAmount' => $transaction->getAmount(),
+                'paidCurrencyAmount' => $apiTransaction->getCurrencyAmount(),
+                'shippingAmount' => $order->getInvoiceShipping(),
+                'details' => $arrDetails,
+                'paynlPaymentId' => $paynlPaymentId,
+                'paynlOrderId' => $transaction->getTransactionId(),
+                'refundedCurrencyAmount' => $apiTransaction->getRefundedCurrencyAmount(),
+                'availableForRefund' => $apiTransaction->getAmount() - $apiTransaction->getRefundedAmount(),
+                'messages' => $messages
+            ]);
+        } catch (Throwable $e) {
+            $timestamp = time();
+            $message = 'Pay. Refund Incident ID: %s Please contact your administrator.';
+            $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp)];
+            $logMessage = sprintf(
+                'PAY. Refund Incident ID: %s Error: %s in %s:%s Stack trace: %s',
+                $timestamp,
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTraceAsString()
+            );
+            $this->logError($logMessage);
+            $this->view()->assign(['messages' => $messages]);
+        }
     }
 
     public function disabledAction()
@@ -114,9 +130,19 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
             $refundResult = $paynlApi->refund($transaction, $amount, $description, $products);
 
             $messages[] = ['type' => 'success', 'content' => 'Refund successful (' . $refundResult->getData()['description'] . ')'];
-
         } catch (Throwable $e) {
-            $messages[] = ['type' => 'danger', 'content' => $e->getMessage()];
+            $timestamp = time();
+            $message = 'Pay. Refund Incident ID: %s Please contact your administrator.';
+            $messages[] = ['type' => 'danger', 'content' => sprintf($message, $timestamp)];
+            $logMessage = sprintf(
+                'PAY. Refund Incident ID: %s Error: %s in %s:%s Stack trace: %s',
+                $timestamp,
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTraceAsString()
+            );
+            $this->logError($logMessage);
         }
 
         $this->forward('index', null, null, ['paynlPaymentId' => $paynlPaymentId, 'messages' => $messages]);
@@ -125,5 +151,17 @@ class Shopware_Controllers_Backend_PaynlRefundForm extends Enlight_Controller_Ac
     public function getWhitelistedCSRFActions()
     {
         return ['index', 'refund', 'disabled'];
+    }
+
+    /**
+     * @param mixed $message
+     */
+    private function logError($message)
+    {
+        if (empty($this->logger)) {
+            $this->logger = $this->container->get('pluginlogger');
+        }
+
+        $this->logger->addError($message);
     }
 }
