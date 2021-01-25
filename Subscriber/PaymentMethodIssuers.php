@@ -3,18 +3,18 @@
 namespace PaynlPayment\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Components_Session_Namespace;
 use Enlight_Controller_Action;
 use Enlight_View;
 use PaynlPayment\Components\Config;
 use PaynlPayment\Components\IssuersProvider;
 use PaynlPayment\Helpers\CustomerHelper;
-use Zend_Session_Abstract;
 use PaynlPayment\Helpers\ExtraFieldsHelper;
 
 class PaymentMethodIssuers implements SubscriberInterface
 {
     /**
-     * @var Zend_Session_Abstract
+     * @var Enlight_Components_Session_Namespace
      */
     private $session;
     /**
@@ -33,7 +33,7 @@ class PaymentMethodIssuers implements SubscriberInterface
     private $extraFieldsHelper;
 
     public function __construct(
-        Zend_Session_Abstract $session,
+        Enlight_Components_Session_Namespace $session,
         Config $config,
         IssuersProvider $issuersProvider,
         CustomerHelper $customerHelper,
