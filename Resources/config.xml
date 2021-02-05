@@ -110,6 +110,15 @@
             <description lang="nl">Schakel dit in wanneer u extra adresveld 1 en 2 gebruikt voor huisnummer en huisnummertoevoeging </description>
             <description lang="de">Aktivieren Sie dies, wenn Sie das zusätzliche Adressfeld 1 und 2 für das Hinzufügen von Hausnummer und Hausnummer verwenden</description>
         </element>
+        <element scope="shop" type="boolean">
+            <name>use_cache</name>
+            <label lang="en">Use cache</label>
+            <label lang="nl">Use cache</label>
+            <label lang="de">Use cache</label>
+            <description lang="en">Use cache.</description>
+            <description lang="nl">Use cache.</description>
+            <description lang="de">Use cache.</description>
+        </element>
         <element type="button">
             <name>buttonTest</name>
             <label lang="de">Test API verbindung</label>

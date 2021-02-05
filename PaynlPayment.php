@@ -150,7 +150,10 @@ class PaynlPayment extends Plugin
     private function installPaymentMethods(\Shopware\Models\Plugin\Plugin $plugin)
     {
         /** @var Config $config */
-        $config = new Config($this->container->get('shopware.plugin.cached_config_reader'));
+        $config = new Config(
+            $this->container->get('shopware.plugin.cached_config_reader'),
+            $this->container->get('shopware.plugin.config_reader')
+        );
 
         try {
             $config->loginSDK();

@@ -31,6 +31,7 @@
 
         <service id="paynl_payment.config" class="PaynlPayment\Components\Config">
             <argument type="service" id="shopware.plugin.cached_config_reader"/>
+            <argument type="service" id="shopware.plugin.config_reader"/>
         </service>
         <service id="paynl_payment.api" class="PaynlPayment\Components\Api">
             <argument type="service" id="paynl_payment.config"/>

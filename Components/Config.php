@@ -2,10 +2,11 @@
 
 namespace PaynlPayment\Components;
 
+use Paynl\Config as SDKConfig;
 use Shopware\Components\Plugin\ConfigReader;
+use Shopware\Components\Plugin\DBALConfigReader;
 use Shopware\Models\Shop\Shop;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Paynl\Config as SDKConfig;
 
 class Config
 {
@@ -13,6 +14,11 @@ class Config
      * @var ConfigReader
      */
     protected $configReader;
+
+    /**
+     * @var DBALConfigReader
+     */
+    protected $dbConfigReader;
 
     /**
      * @var array
@@ -24,29 +30,12 @@ class Config
      */
     protected $shop;
 
-    public function __construct(ConfigReader $configReader)
+    public function __construct(ConfigReader $configReader, DBALConfigReader $dbConfigReader)
     {
         $this->configReader = $configReader;
+        $this->dbConfigReader = $dbConfigReader;
     }
 
-    protected function getShop()
-    {
-        if ($this->shop) {
-            return $this->shop;
-        }
-
-        try {
-            $newShop = Shopware()->Shop();
-        } catch (ServiceNotFoundException $e) {
-            $newShop = null;
-        }
-
-        return $newShop;
-    }
-
-    /**
-     * @param Shop $shop
-     */
     public function setShop(Shop $shop)
     {
         $this->shop = $shop;
@@ -58,7 +47,6 @@ class Config
      *
      * @param string $key Key of the config value, leave empty to get all configs for this plugin
      * @param mixed $default If the config key is not found, this value will be returned
-     * @return mixed
      */
     public function get($key = null, $default = null)
     {
@@ -69,6 +57,11 @@ class Config
             $pluginName = array_shift($parts);
 
             $this->data = $this->configReader->getByPluginName($pluginName, $shop);
+
+            $useCache = $this->data['use_cache'] ?? false;
+            if (!$useCache) {
+                $this->data = $this->dbConfigReader->getByPluginName($pluginName, $shop);
+            }
         }
 
         if (!is_null($key)) {
@@ -103,7 +96,7 @@ class Config
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function testMode()
     {
@@ -111,7 +104,7 @@ class Config
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function sendStatusMail()
     {
@@ -119,7 +112,7 @@ class Config
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function banksIsAllowed()
     {
@@ -135,7 +128,7 @@ class Config
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isRefundAllowed()
     {
@@ -154,6 +147,7 @@ class Config
     {
         $salutations = $this->get('female_salutations', "mrs, ms, miss, ma'am, frau, mevrouw, mevr");
         $arrSalutations = explode(',', $salutations);
+
         return array_map('trim', $arrSalutations);
     }
 
@@ -162,5 +156,20 @@ class Config
         SDKConfig::setTokenCode($this->tokenCode());
         SDKConfig::setApiToken($this->apiToken());
         SDKConfig::setServiceId($this->serviceId());
+    }
+
+    protected function getShop()
+    {
+        if ($this->shop) {
+            return $this->shop;
+        }
+
+        try {
+            $newShop = Shopware()->Shop();
+        } catch (ServiceNotFoundException $e) {
+            $newShop = null;
+        }
+
+        return $newShop;
     }
 }
