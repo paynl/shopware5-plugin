@@ -3,6 +3,7 @@
 use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
 use Shopware\Models\Order;
+use Paynl\Result\Transaction\Start;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -45,6 +46,21 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $paynlApi = $this->get('paynl_payment.api');
         try {
             $result = $paynlApi->startPayment($this, $signature);
+            /** @var \PaynlPayment\Components\Config $config */
+            $config = $this->container->get('paynl_payment.config');
+            if (!($result instanceof Start) && $config->allowEmptyAmount()) {
+                /** @var Transaction\Repository $transactionRepository */
+                $transactionRepository = $this->getTransactionRepository();
+                /** @var Transaction\Transaction $transaction */
+                $transaction = $transactionRepository->findOneBy(['transactionId' => $result]);
+                $this->updateStatus($transaction, Transaction\Transaction::STATUS_PAID, true);
+                $successUrl = sprintf($this->Front()->Router()->assemble([
+                    'controller' => 'checkout',
+                    'action' => 'finish',
+                    'sUniqueID' => $result,
+                ]), '?utm_nooverride=1');
+                $this->redirect($successUrl);
+            }
 
             if ($result->getRedirectUrl()) {
                 $this->redirect($result->getRedirectUrl());

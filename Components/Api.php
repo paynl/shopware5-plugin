@@ -141,6 +141,14 @@ class Api
         );
         $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
 
+        if (empty($amount)) {
+            $newTransactionId = (string) time();
+            $transaction->setTransactionId($newTransactionId);
+            $this->transactionRepository->save($transaction);
+
+            return $newTransactionId;
+        }
+
         try {
             $this->config->loginSDK();
             $result = \Paynl\Transaction::start($arrStartData);
