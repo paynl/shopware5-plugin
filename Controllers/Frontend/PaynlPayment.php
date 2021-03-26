@@ -338,7 +338,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
      * @return string
      * @throws Exception
      */
-    private function getTransactionSuccessUrl(string $transactionId)
+    private function getTransactionSuccessUrl(string $transactionId): string
     {
         return sprintf($this->Front()->Router()->assemble([
             'controller' => 'checkout',
