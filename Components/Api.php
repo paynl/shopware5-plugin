@@ -14,6 +14,7 @@ use Shopware\Models\Payment;
 use Shopware\Models\Article;
 use Shopware\Models\Shop\Shop;
 use Exception;
+use Shopware_Controllers_Frontend_PaynlPayment;
 
 class Api
 {
@@ -87,12 +88,58 @@ class Api
     }
 
     /**
-     * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
-     * @param $signature
+     * @param Shopware_Controllers_Frontend_PaynlPayment $controller
+     * @param Transaction\Transaction $transaction
      * @return \Paynl\Result\Transaction\Start
      * @throws Exception
      */
-    public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
+    public function startPayment(Shopware_Controllers_Frontend_PaynlPayment $controller, Transaction\Transaction $transaction)
+    {
+        $payment_name = $transaction->getPayment()->getName();
+        if (substr($payment_name, 0, 6) !== 'paynl_') {
+            throw new Exception(sprintf('Payment is not a PAY. Payment method. Name: %s', $payment_name));
+        }
+
+        $paymentOptionId = explode('_', $payment_name);
+        $paymentOptionId = $paymentOptionId[1];
+
+        $arrUser = $controller->getUser();
+        $basket = $controller->getBasket();
+
+        $arrStartData = $this->getStartData(
+            $transaction->getAmount(),
+            $paymentOptionId,
+            $transaction->getCurrency(),
+            $transaction->getPaynlPaymentId(),
+            $transaction->getSignature(),
+            $arrUser,
+            $basket,
+            $this->extraFieldsHelper->getSelectedIssuer($arrUser['additional']['user']['id'])
+        );
+        $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
+
+        try {
+            $this->config->loginSDK();
+            $result = \Paynl\Transaction::start($arrStartData);
+            $transaction->setTransactionId($result->getTransactionId());
+            $this->transactionRepository->save($transaction);
+
+            return $result;
+        } catch (\Throwable $objException) {
+            $transaction->addException($objException);
+            $this->transactionRepository->save($transaction);
+
+            throw $objException;
+        }
+    }
+
+    /**
+     * @param Shopware_Controllers_Frontend_PaynlPayment $controller
+     * @param $signature
+     * @return Transaction\Transaction
+     * @throws Exception
+     */
+    public function createTransaction(Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
         $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
@@ -101,14 +148,10 @@ class Api
 
         $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
 
-        $paymentOptionId = explode('_', $payment_name);
-        $paymentOptionId = $paymentOptionId[1];
-
         $arrUser = $controller->getUser();
         /** @var Customer\Customer $customer */
         $customer = $this->customerRepository->find($arrUser['additional']['user']['id']);
 
-        $basket = $controller->getBasket();
         $amount = $controller->getAmount();
         $currency = $controller->getCurrencyShortName();
 
@@ -124,44 +167,18 @@ class Api
             $currency
         );
 
+        if (empty($amount) && $this->config->allowEmptyAmount()) {
+            $newTransactionId = (string) time();
+            $transaction->setTransactionId($newTransactionId);
+        }
+
         $sComment = Shopware()->Session()->sComment;
         $sDispatch = Shopware()->Session()->sDispatch;
 
         $transaction->setSComment($sComment);
         $transaction->setSDispatch($sDispatch);
-        $arrStartData = $this->getStartData(
-            $amount,
-            $paymentOptionId,
-            $currency,
-            $paymentId,
-            $signature,
-            $arrUser,
-            $basket,
-            $this->extraFieldsHelper->getSelectedIssuer($arrUser['additional']['user']['id'])
-        );
-        $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
 
-        if (empty($amount)) {
-            $newTransactionId = (string) time();
-            $transaction->setTransactionId($newTransactionId);
-            $this->transactionRepository->save($transaction);
-
-            return $newTransactionId;
-        }
-
-        try {
-            $this->config->loginSDK();
-            $result = \Paynl\Transaction::start($arrStartData);
-            $transaction->setTransactionId($result->getTransactionId());
-            $this->transactionRepository->save($transaction);
-
-            return $result;
-        } catch (\Throwable $objException) {
-            $transaction->addException($objException);
-            $this->transactionRepository->save($transaction);
-
-            throw $objException;
-        }
+        return $transaction;
     }
 
     /**
