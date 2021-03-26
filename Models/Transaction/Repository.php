@@ -36,6 +36,8 @@ class Repository extends ModelRepository
         $transaction->setAmount($amount);
         $transaction->setCurrency($currency);
 
+        $this->save($transaction);
+
         return $transaction;
     }
 
