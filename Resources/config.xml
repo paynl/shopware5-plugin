@@ -112,9 +112,9 @@
         </element>
         <element scope="shop" type="boolean">
             <name>allow_empty_amount</name>
-            <label lang="en">Allow zero amount</label>
-            <label lang="nl">Allow empty amount</label>
-            <label lang="de">Allow empty amount</label>
+            <label lang="en">Allow zero amount orders in checkout</label>
+            <label lang="nl">Nulbedragen toestaan in checkout</label>
+            <label lang="de">Nullbetragsaufträge erlauben im checkout</label>
             <description lang="en">Allow zero amount orders in checkout: Yes/No</description>
             <description lang="nl">Nulbedragen toestaan in checkout: Ja/Nee</description>
             <description lang="de">Nullbetragsaufträge erlauben im checkout: Ja/Nein</description>

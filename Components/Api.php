@@ -14,7 +14,6 @@ use Shopware\Models\Payment;
 use Shopware\Models\Article;
 use Shopware\Models\Shop\Shop;
 use Exception;
-use Shopware_Controllers_Frontend_PaynlPayment;
 
 class Api
 {
@@ -88,30 +87,54 @@ class Api
     }
 
     /**
-     * @param Shopware_Controllers_Frontend_PaynlPayment $controller
-     * @param Transaction\Transaction $transaction
+     * @param \Shopware_Controllers_Frontend_PaynlPayment $controller
+     * @param $signature
      * @return \Paynl\Result\Transaction\Start
      * @throws Exception
      */
-    public function startPayment(Shopware_Controllers_Frontend_PaynlPayment $controller, Transaction\Transaction $transaction)
+    public function startPayment(\Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
     {
-        $payment_name = $transaction->getPayment()->getName();
+        $payment_name = $controller->getPaymentShortName();
         if (substr($payment_name, 0, 6) !== 'paynl_') {
             throw new Exception(sprintf('Payment is not a PAY. Payment method. Name: %s', $payment_name));
         }
+
+        $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
 
         $paymentOptionId = explode('_', $payment_name);
         $paymentOptionId = $paymentOptionId[1];
 
         $arrUser = $controller->getUser();
-        $basket = $controller->getBasket();
+        /** @var Customer\Customer $customer */
+        $customer = $this->customerRepository->find($arrUser['additional']['user']['id']);
 
+        $basket = $controller->getBasket();
+        $amount = $controller->getAmount();
+        $currency = $controller->getCurrencyShortName();
+
+        /** @var Payment\Payment $payment */
+        $payment = $this->paymentRepository->findOneBy(['name' => $payment_name]);
+
+        $transaction = $this->transactionRepository->createNew(
+            $customer,
+            $paymentId,
+            $payment,
+            $signature,
+            $amount,
+            $currency
+        );
+
+        $sComment = Shopware()->Session()->sComment;
+        $sDispatch = Shopware()->Session()->sDispatch;
+
+        $transaction->setSComment($sComment);
+        $transaction->setSDispatch($sDispatch);
         $arrStartData = $this->getStartData(
-            $transaction->getAmount(),
+            $amount,
             $paymentOptionId,
-            $transaction->getCurrency(),
-            $transaction->getPaynlPaymentId(),
-            $transaction->getSignature(),
+            $currency,
+            $paymentId,
+            $signature,
             $arrUser,
             $basket,
             $this->extraFieldsHelper->getSelectedIssuer($arrUser['additional']['user']['id'])
@@ -131,54 +154,6 @@ class Api
 
             throw $objException;
         }
-    }
-
-    /**
-     * @param Shopware_Controllers_Frontend_PaynlPayment $controller
-     * @param $signature
-     * @return Transaction\Transaction
-     * @throws Exception
-     */
-    public function createTransaction(Shopware_Controllers_Frontend_PaynlPayment $controller, $signature)
-    {
-        $payment_name = $controller->getPaymentShortName();
-        if (substr($payment_name, 0, 6) !== 'paynl_') {
-            throw new Exception(sprintf('Payment is not a PAY. Payment method. Name: %s', $payment_name));
-        }
-
-        $paymentId = $this->numberIncrementer->increment('paynl_payment_id');
-
-        $arrUser = $controller->getUser();
-        /** @var Customer\Customer $customer */
-        $customer = $this->customerRepository->find($arrUser['additional']['user']['id']);
-
-        $amount = $controller->getAmount();
-        $currency = $controller->getCurrencyShortName();
-
-        /** @var Payment\Payment $payment */
-        $payment = $this->paymentRepository->findOneBy(['name' => $payment_name]);
-
-        $transaction = $this->transactionRepository->createNew(
-            $customer,
-            $paymentId,
-            $payment,
-            $signature,
-            $amount,
-            $currency
-        );
-
-        if (empty($amount) && $this->config->allowEmptyAmount()) {
-            $newTransactionId = (string) time();
-            $transaction->setTransactionId($newTransactionId);
-        }
-
-        $sComment = Shopware()->Session()->sComment;
-        $sDispatch = Shopware()->Session()->sDispatch;
-
-        $transaction->setSComment($sComment);
-        $transaction->setSDispatch($sDispatch);
-
-        return $transaction;
     }
 
     /**
