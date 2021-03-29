@@ -57,6 +57,7 @@ Ext.override(Shopware.apps.Order.view.list.List, {
             getClass: function (value, metadata, record) {
                 if (
                     me.hasOrderPaymentName(record) &&
+                    me.validOrderAmount(record) &&
                     me.getOrderPaymentName(record).substring(0, 6) === 'paynl_'
                 ) {
                     return '';
@@ -83,6 +84,7 @@ Ext.override(Shopware.apps.Order.view.list.List, {
             getClass: function (value, metadata, record) {
                 if (
                     me.hasOrderPaymentName(record) &&
+                    me.validOrderAmount(record) &&
                     me.getOrderPaymentName(record).substring(0, 6) === 'paynl_' &&
                     (
                         record.data.cleared == me.paymentStatus.COMPLETELY_PAID ||
@@ -94,6 +96,16 @@ Ext.override(Shopware.apps.Order.view.list.List, {
                 return 'paynl-hidden';
             }
         }
+    },
+
+    /**
+     * @param  object  record
+     * @return Boolean
+     */
+    validOrderAmount: function (record) {
+        return record &&
+            record.data &&
+            record.data.invoiceAmount;
     },
 
     /**

@@ -110,6 +110,15 @@
             <description lang="nl">Schakel dit in wanneer u extra adresveld 1 en 2 gebruikt voor huisnummer en huisnummertoevoeging </description>
             <description lang="de">Aktivieren Sie dies, wenn Sie das zusätzliche Adressfeld 1 und 2 für das Hinzufügen von Hausnummer und Hausnummer verwenden</description>
         </element>
+        <element scope="shop" type="boolean">
+            <name>allow_empty_amount</name>
+            <label lang="en">Allow zero amount orders in checkout</label>
+            <label lang="nl">Nulbedragen toestaan in checkout</label>
+            <label lang="de">Nullbetragsaufträge erlauben im checkout</label>
+            <description lang="en">Allow zero amount orders in checkout: Yes/No</description>
+            <description lang="nl">Nulbedragen toestaan in checkout: Ja/Nee</description>
+            <description lang="de">Nullbetragsaufträge erlauben im checkout: Ja/Nein</description>
+        </element>
         <element type="button">
             <name>buttonTest</name>
             <label lang="de">Test API verbindung</label>
