@@ -28,6 +28,17 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.3.5">
+        <changes lang="nl">
+            - optie toegevoegd om nulbedragen toe te staan in checkout
+        </changes>
+        <changes lang="en">
+            - Improved error logging
+        </changes>
+        <changes lang="de">
+            - Option zum Zulassen von Nullbeträgen hinzugefügt
+        </changes>
+    </changelog>
     <changelog version="3.3.4">
         <changes lang="nl">
             - verbeterde error logging
