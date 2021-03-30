@@ -31,12 +31,15 @@
     <changelog version="3.3.5">
         <changes lang="nl">
             - optie toegevoegd om nulbedragen toe te staan in checkout
+            - Iconen van betaalmethoden bijgewerkt
         </changes>
         <changes lang="en">
-            - Improved error logging
+            - Added option to allow orders with zero amount
+            - Updated icons for PMs
         </changes>
         <changes lang="de">
             - Option zum Zulassen von Nullbeträgen hinzugefügt
+            - Aktualisierte Markensymbole Zahlungsarten
         </changes>
     </changelog>
     <changelog version="3.3.4">
