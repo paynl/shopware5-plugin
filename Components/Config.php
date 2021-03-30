@@ -157,6 +157,14 @@ class Config
         return array_map('trim', $arrSalutations);
     }
 
+    /**
+     * @return bool
+     */
+    public function allowEmptyAmount()
+    {
+        return $this->get('allow_empty_amount', false);
+    }
+
     public function loginSDK()
     {
         SDKConfig::setTokenCode($this->tokenCode());

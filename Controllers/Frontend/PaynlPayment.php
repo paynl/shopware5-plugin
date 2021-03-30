@@ -2,6 +2,7 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 use PaynlPayment\Models\Transaction;
+use Shopware\Components\Random;
 use Shopware\Models\Order;
 
 class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
@@ -44,6 +45,15 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         /** @var \PaynlPayment\Components\Api $paynlApi */
         $paynlApi = $this->get('paynl_payment.api');
         try {
+            /** @var \PaynlPayment\Components\Config $config */
+            $config = $this->container->get('paynl_payment.config');
+            if (($this->getAmount() == 0) && $config->allowEmptyAmount()) {
+                $transactionId = Random::getAlphanumericString(16);
+                $this->saveOrder($transactionId, $transactionId, Transaction\Transaction::STATUS_PAID);
+                $this->redirect($this->getTransactionSuccessUrl($transactionId));
+                return;
+            }
+
             $result = $paynlApi->startPayment($this, $signature);
 
             if ($result->getRedirectUrl()) {
@@ -113,11 +123,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
      */
     private function processPayment($transactionId, $isExchange = false)
     {
-        $successUrl = sprintf($this->Front()->Router()->assemble([
-            'controller' => 'checkout',
-            'action' => 'finish',
-            'sUniqueID' => $transactionId
-        ]), '?utm_nooverride=1');
+        $successUrl = $this->getTransactionSuccessUrl($transactionId);
 
         $cancelUrl = $this->Front()->Router()->assemble([
             'controller' => 'checkout',
@@ -325,5 +331,19 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
         $repository = $this->container->get('models')->getRepository(Order\Order::class);
 
         return $repository->findOneBy(['number' => $orderNumber]);
+    }
+
+    /**
+     * @param string $transactionId
+     * @return string
+     * @throws Exception
+     */
+    private function getTransactionSuccessUrl(string $transactionId): string
+    {
+        return sprintf($this->Front()->Router()->assemble([
+            'controller' => 'checkout',
+            'action' => 'finish',
+            'sUniqueID' => $transactionId,
+        ]), '?utm_nooverride=1');
     }
 }
