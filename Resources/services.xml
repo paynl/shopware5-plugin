@@ -30,7 +30,7 @@
         <service id="paynl_payment.helpers.composer_helper" class="PaynlPayment\Helpers\ComposerHelper" />
 
         <service id="paynl_payment.config" class="PaynlPayment\Components\Config" public="true">
-            <argument type="service" id="shopware.plugin.cached_config_reader"/>
+            <argument type="service" id="shopware.plugin.config_reader"/>
         </service>
         <service id="paynl_payment.api" class="PaynlPayment\Components\Api" public="true">
             <argument type="service" id="paynl_payment.config"/>
