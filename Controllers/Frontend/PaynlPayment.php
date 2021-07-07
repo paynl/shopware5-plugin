@@ -15,7 +15,7 @@ class Shopware_Controllers_Frontend_PaynlPayment extends Shopware_Controllers_Fr
     private function log($message)
     {
         if (empty($this->logger)) {
-            $this->logger = $this->container->get('pluginlogger');
+            $this->logger = $this->container->get('paynl_payment.logger_helper');
         }
 
         $this->logger->addError($message);

@@ -43,5 +43,9 @@
         <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
             <argument type="service" id="models"/>
         </service>
+
+        <service id="paynl_payment.logger_helper" class="PaynlPayment\Helpers\PaynlPaymentLoggerHelper" public="true">
+            <argument type="service" id="pluginlogger" />
+        </service>
     </services>
 </container>

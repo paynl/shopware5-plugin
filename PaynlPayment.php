@@ -15,8 +15,10 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Paynl\Paymentmethods;
 use PaynlPayment\Components\Config;
 use PaynlPayment\Helpers\ExtraFieldsHelper;
+use PaynlPayment\Helpers\PaynlPaymentLoggerHelper;
 use PaynlPayment\Models\Banks\Banks;
 use PaynlPayment\Models\Transaction;
+use Psr\Log\LoggerInterface;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\ActivateContext;
@@ -80,7 +82,7 @@ class PaynlPayment extends Plugin
             $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_transactions`');
             $db->executeQuery('DROP TABLE IF EXISTS `s_plugin_paynlpayment_payment_method_banks`');
         } catch (\Exception $e) {
-            $this->container->get('pluginlogger')->addError('PAY. Uninstall: ' . $e->getMessage());
+            $this->getPaynlPaymentLoggerHelper()->addError('PAY. Uninstall: ' . $e->getMessage());
         }
     }
 
@@ -150,13 +152,13 @@ class PaynlPayment extends Plugin
     private function installPaymentMethods(\Shopware\Models\Plugin\Plugin $plugin)
     {
         /** @var Config $config */
-        $config = new Config($this->container->get('shopware.plugin.cached_config_reader'));
+        $config = $this->getPaynlPaymentConfig();
 
         try {
             $config->loginSDK();
             $methods = Paymentmethods::getList();
         } catch (\Exception $e) {
-            $this->log('PAY.: Activation error: ' . $e->getMessage());
+            $this->getPaynlPaymentLoggerHelper()->addNotice('PAY.: Activation error: ' . $e->getMessage());
             throw new \Exception('Activation error. Please enter valid: Token-Code, API-token and Service-ID');
         }
 
@@ -264,16 +266,8 @@ class PaynlPayment extends Plugin
                 $exception->getLine(),
                 $exception->getTraceAsString()
             );
-            $this->log($logMessage);
+            $this->getPaynlPaymentLoggerHelper()->addNotice($logMessage);
         }
-    }
-
-    /**
-     * @param $message
-     */
-    private function log($message)
-    {
-        $this->container->get('pluginlogger')->addNotice($message);
     }
 
     private function addUserAttributeColumn()
@@ -329,5 +323,21 @@ class PaynlPayment extends Plugin
         $metaDataCache->deleteAll();
 
         $em->generateAttributeModels($tables);
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    private function getPaynlPaymentLoggerHelper()
+    {
+        return new PaynlPaymentLoggerHelper($this->container->get('pluginlogger'));
+    }
+
+    /**
+     * @return Config
+     */
+    private function getPaynlPaymentConfig()
+    {
+        return new Config($this->container->get('shopware.plugin.config_reader'));
     }
 }

@@ -14,7 +14,7 @@ class Shopware_Controllers_Backend_PaynlApiTest extends Enlight_Controller_Actio
     public function testAction()
     {
         $paynlConfig = $this->get('paynl_payment.config');
-        $this->logger = $this->container->get('pluginlogger');
+        $this->logger = $this->container->get('paynl_payment.logger_helper');
 
         try {
             $paynlConfig->loginSDK();
