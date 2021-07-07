@@ -20,7 +20,6 @@ class PaynlPaymentLoggerHelper
         } else {
             // Monolog 2: debug(), info()...
             $name = str_replace('add', '', $name);
-            error_log($name);
             $this->logger->$name(...$arguments);
         }
     }
