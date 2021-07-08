@@ -22,7 +22,7 @@
             <argument type="service" id="models"/>
         </service>
 
-        <service id="paynl_payment.helpers.extra_fields_helper" class="PaynlPayment\Helpers\ExtraFieldsHelper">
+        <service id="paynl_payment.helpers.extra_fields_helper" class="PaynlPayment\Helpers\ExtraFieldsHelper" public="true">
             <argument type="service" id="shopware_attribute.data_persister"/>
             <argument type="service" id="shopware_attribute.data_loader"/>
         </service>
