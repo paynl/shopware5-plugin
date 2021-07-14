@@ -22,17 +22,17 @@
             <argument type="service" id="models"/>
         </service>
 
-        <service id="paynl_payment.helpers.extra_fields_helper" class="PaynlPayment\Helpers\ExtraFieldsHelper">
+        <service id="paynl_payment.helpers.extra_fields_helper" class="PaynlPayment\Helpers\ExtraFieldsHelper" public="true">
             <argument type="service" id="shopware_attribute.data_persister"/>
             <argument type="service" id="shopware_attribute.data_loader"/>
         </service>
 
         <service id="paynl_payment.helpers.composer_helper" class="PaynlPayment\Helpers\ComposerHelper" />
 
-        <service id="paynl_payment.config" class="PaynlPayment\Components\Config">
-            <argument type="service" id="shopware.plugin.cached_config_reader"/>
+        <service id="paynl_payment.config" class="PaynlPayment\Components\Config" public="true">
+            <argument type="service" id="shopware.plugin.config_reader"/>
         </service>
-        <service id="paynl_payment.api" class="PaynlPayment\Components\Api">
+        <service id="paynl_payment.api" class="PaynlPayment\Components\Api" public="true">
             <argument type="service" id="paynl_payment.config"/>
             <argument type="service" id="models"/>
             <argument type="service" id="router"/>
@@ -42,6 +42,10 @@
         </service>
         <service id="paynl_payment.issuers_provider" class="PaynlPayment\Components\IssuersProvider">
             <argument type="service" id="models"/>
+        </service>
+
+        <service id="paynl_payment.logger_helper" class="PaynlPayment\Helpers\PaynlPaymentLoggerHelper" public="true">
+            <argument type="service" id="pluginlogger" />
         </service>
     </services>
 </container>

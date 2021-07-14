@@ -4,7 +4,7 @@
     <label lang="en">PAY. Payment Methods</label>
     <label lang="de">PAY. Zahlungsmethoden</label>
     <label lang="nl">PAY. Betaalmethoden</label>
-    <version>3.3.5</version>
+    <version>3.4.0</version>
     <copyright>(c) by PAY.</copyright>
     <license>MIT</license>
     <link>https://www.pay.nl</link>
@@ -28,6 +28,17 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
+    <changelog version="3.4.0">
+        <changes lang="nl">
+            - De plugin is nu ook geschikt voor Shopware 5.7
+        </changes>
+        <changes lang="en">
+            - Plugin is now Shopware 5.7 compatible
+        </changes>
+        <changes lang="de">
+            - Plugin ist jetzt kompatibel mit Shopware 5.7
+        </changes>
+    </changelog>
     <changelog version="3.3.5">
         <changes lang="nl">
             - optie toegevoegd om nulbedragen toe te staan in checkout
