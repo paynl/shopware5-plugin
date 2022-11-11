@@ -28,7 +28,17 @@
             <p>Dieses Plugin fügt Ihrem Shop die Zahlungsmethoden von <a href='https://admin.pay.nl'>PAY.</a> hinzu</p>
         ]]>
     </description>
-    <changelog version="3.4.0">
+    <changelog version="3.4.1">
+        <changes lang="nl">
+            - Nieuwe AfterPay logo toegevoegd (Riverty)
+        </changes>
+        <changes lang="en">
+            - Updated the AfterPay logo (Riverty)
+        </changes>
+        <changes lang="de">
+            - Das AfterPay-Logo aktualisiert (Riverty)
+        </changes>
+    </changelog><changelog version="3.4.0">
         <changes lang="nl">
             - De plugin is nu ook geschikt voor Shopware 5.7
         </changes>
