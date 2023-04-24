@@ -124,6 +124,8 @@ class Api
             $currency
         );
 
+        $orderNumber = $controller->getOrderNumber();
+
         $sComment = Shopware()->Session()->sComment;
         $sDispatch = Shopware()->Session()->sDispatch;
 
@@ -137,6 +139,7 @@ class Api
             $signature,
             $arrUser,
             $basket,
+            $orderNumber,
             $this->extraFieldsHelper->getSelectedIssuer($arrUser['additional']['user']['id'])
         );
         $arrStartData['object'] = sprintf('shopware %s', $this->composerHelper->getPluginVersion());
@@ -225,6 +228,7 @@ class Api
      * @param $signature
      * @param $arrUser
      * @param $basket
+     * @param $orderNumber
      * @param $bank
      * @return array
      */
@@ -236,6 +240,7 @@ class Api
         $signature,
         $arrUser,
         $basket,
+        $orderNumber,
         $bank = null
     )
     {
@@ -245,7 +250,7 @@ class Api
             'paymentMethod' => $paymentOptionId,
             'currency' => $currency,
             'description' => $paymentId,
-            'orderNumber' => $paymentId,
+            'orderNumber' => $orderNumber,
             'extra1' => $signature,
             'testmode' => $this->config->testMode(),
 
